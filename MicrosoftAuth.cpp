@@ -101,11 +101,7 @@ MicrosoftAuth::MicrosoftAuth()
                                     "   \"identityToken\": \"XBL3.0 x=" + xblUserHash.value() + ";" + xstsToken.value() + "\""
                                     "}";
     response = this->httpsPost(minecraftAuthAddr, minecraftAuthBody, "application/json");
-    std::cout << response << std::endl;
-
-    // {
-    //     "identityToken": "XBL3.0 x=<userhash>;<xsts_token>"
-    // }
+    std::cout << response << std::endl; // Needs approval for this API :(
 
 }
 
