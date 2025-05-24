@@ -1,5 +1,6 @@
 #include "MicrosoftAuth.hpp"
 #include <iostream>
+#include <format>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
@@ -20,12 +21,15 @@ MicrosoftAuth::MicrosoftAuth()
     OpenSSL_add_all_algorithms();
 
     std::string oAuthCreateAddr = "login.microsoftonline.com/consumers/oauth2/v2.0/devicecode";
+    // std::string oAuthCreateAddr = "login.live.com/oauth20_token.srf";
     std::string oAuthCreateBody = "client_id=" + CLIENT_ID + 
+                                //   "&scope=service::user.auth.xboxlive.com::MBI_SSL"
+                                //   "&grant_type=refresh_token";
                                   "&scope=XboxLive.signin";
     std::string response = this->httpsPost(oAuthCreateAddr, oAuthCreateBody, std::nullopt);
     
     // std::cout << "device code: " << deviceCode << std::endl;
-    // std::cout << std::format("Result: {}", response)  << std::endl;
+    std::cout << std::format("Result: {}", response)  << std::endl;
 
     std::optional<std::string> deviceCode = this->readJSON(response, "device_code");
     if (!deviceCode.has_value())

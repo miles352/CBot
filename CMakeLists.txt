@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 3.28)
-project(mineCraft)
+project(CBot)
 
 set(CMAKE_CXX_STANDARD 26)
 
 find_package(OpenSSL REQUIRED)
 
-add_executable(mineCraft main.cpp MicrosoftAuth.cpp)
+add_executable(CBot 
+src/main.cpp 
+src/MicrosoftAuth.cpp
+)
 
-# add_executable(MicrosoftAuth MicrosoftAuth.cpp)
-target_link_libraries(mineCraft OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(CBot OpenSSL::SSL OpenSSL::Crypto)
+target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-
-# add_executable(server server.cpp)
+enable_testing()
+add_subdirectory(tests)
