@@ -110,7 +110,7 @@ int main()
                         
                         
                         std::string hash_string = Utils::SHA1_to_formatted(hashed);
-                        std::string access_token = "eyJraWQiOiIwNDkxODEiLCJhbGciOiJSUzI1NiJ9.eyJ4dWlkIjoiMjUzNTQ0NDYzMDM1NTAxOCIsImFnZyI6IkFkdWx0Iiwic3ViIjoiZTFkYzViYjUtMjlmYi00NGZkLTlkMmMtYTI0MDhiOWY3MWRkIiwiYXV0aCI6IlhCT1giLCJucyI6ImRlZmF1bHQiLCJyb2xlcyI6W10sImlzcyI6ImF1dGhlbnRpY2F0aW9uIiwiZmxhZ3MiOlsibXNhbWlncmF0aW9uX3N0YWdlNCIsInR3b2ZhY3RvcmF1dGgiLCJtdWx0aXBsYXllciIsIm9yZGVyc18yMDIyIl0sInByb2ZpbGVzIjp7Im1jIjoiMTk3ZGI5ZWEtNTZlNC00Y2NlLWE0ZDUtM2UwZGE1OTA0NzZhIn0sInBsYXRmb3JtIjoiVU5LTk9XTiIsInl1aWQiOiI3ZTMxM2ZiYWNjNDNiYjI5ZTJjNzkxZTE4YzE2OTc4NyIsInBmZCI6W3sidHlwZSI6Im1jIiwiaWQiOiIxOTdkYjllYS01NmU0LTRjY2UtYTRkNS0zZTBkYTU5MDQ3NmEiLCJuYW1lIjoiMHg2NTgifV0sIm5iZiI6MTc0ODMyMDE4NSwiZXhwIjoxNzQ4NDA2NTg1LCJpYXQiOjE3NDgzMjAxODV9.S-YRQL2hx26B1R5mnofL4uMzE0SSJWYGLFxMZHi3KuE35IYJvULd3YJHKz97mtOinlBDOpv25KKexlx18vEoJcu6jO1j7F8YeOm29EiGZemMd64aFyL7jGVUYzppjfwfbfRSjnnsjshK43qzID4uvVWLhTfue7irRrh9Zl8Lp3N6p5BpHc2GLw8t4HV9sHN6MRB46dWSNt0dlzTvjNbhiL1ONLvyXJbp-vTkPUHfXbZs6AVcEf5QmK-oOEOHgdb9Tp73-7Tarfm2JDvqB5rI6I9fmF5l4q7Muz1NFghI6qbV2yfTG481_Qkrz1VN_Mg2d-RuH8QNGRhmgzuTrkLI2A";
+                        std::string access_token = "oops";
 
                         std::string oAuthCreateAddr = "sessionserver.mojang.com/session/minecraft/join";
                         std::string oAuthCreateBody = "{"
