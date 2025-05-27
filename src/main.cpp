@@ -46,7 +46,7 @@ int main()
 
     std::vector<uint8_t> handshake;
     
-    std::vector<uint8_t> protocol_version = VarInt::from_int(767); // 1.21.1
+    std::vector<uint8_t> protocol_version = VarInt::from_int(770); // 1.21.5
     handshake.insert(handshake.end(), protocol_version.begin(), protocol_version.end());
     std::vector<uint8_t> serverAddress = MCString::from_string(SERVER_IP);
     handshake.insert(handshake.end(), serverAddress.begin(), serverAddress.end());
@@ -56,13 +56,7 @@ int main()
     std::vector<uint8_t> next_state = VarInt::from_int(2);
     handshake.insert(handshake.end(), next_state.begin(), next_state.end());
 
-    std::vector<uint8_t> packetId = VarInt::from_int(0x0);
-    std::vector<uint8_t> length = VarInt::from_int(handshake.size() + packetId.size());
-    std::vector<uint8_t> packet = length;
-    packet.insert(packet.end(), packetId.begin(), packetId.end());
-    packet.insert(packet.end(), handshake.begin(), handshake.end());
-
-    network_handler.write_raw(packet.data(), packet.size());
+    network_handler.write_packet(Packet(0x0, handshake));
 
 
     std::vector<uint8_t> name = MCString::from_string("0x658");
@@ -72,23 +66,14 @@ int main()
     std::vector<uint8_t> login = name;
     login.insert(login.end(), uuid_bytes, uuid_bytes + 16);
 
-    packetId = VarInt::from_int(0x0);
-    length = VarInt::from_int(login.size() + packetId.size());
-    packet = length;
-    packet.insert(packet.end(), packetId.begin(), packetId.end());
-    packet.insert(packet.end(), login.begin(), login.end());
-
-    network_handler.write_raw(packet.data(), packet.size());
-
-    char buffer[4096];
-    int bytes;
+    network_handler.write_packet(Packet(0x0, login));
 
     while (true) 
     {
         printf("\n");
         Packet read_packet = network_handler.read_packet();
 
-        printf("Received packet id %d with data size %d.\n", read_packet.id, read_packet.data.size());
+        printf("Received packet id 0x%02x with data size %d.\n", read_packet.id, read_packet.data.size());
 
         uint8_t* ptr = read_packet.data.data();
 
@@ -112,7 +97,7 @@ int main()
                         unsigned char shared_secret[16];
                         if (RAND_bytes(shared_secret, 16) <= 0)
                         {
-                            std::runtime_error("Failed to generate shared secret!");
+                            throw std::runtime_error("Failed to generate shared secret!");
                         }
 
                         std::vector<uint8_t> unhashed;
@@ -137,9 +122,8 @@ int main()
                         std::string response = MicrosoftAuth::httpsPost(oAuthCreateAddr, oAuthCreateBody, "application/json");
                         if (response.find("204 No Content") == std::string::npos)
                         {
-                            std::runtime_error("Failed to join session!");
+                            throw std::runtime_error("Failed to join session!");
                         }
-
 
                         const uint8_t* ptr = public_key.data();
                         RSA* rsa = d2i_RSA_PUBKEY(NULL, &ptr, public_key.size());
@@ -154,14 +138,7 @@ int main()
                         std::vector<uint8_t> encryption_response = prefixed_shared_secret;
                         encryption_response.insert(encryption_response.end(), prefixed_verify_token.begin(), prefixed_verify_token.end());
 
-                        std::vector<uint8_t> packet_id = VarInt::from_int(0x01);
-                        std::vector<uint8_t> length = VarInt::from_int(encryption_response.size() + packet_id.size());
-
-                        std::vector<uint8_t> packet = length;
-                        packet.insert(packet.end(), packet_id.begin(), packet_id.end());
-                        packet.insert(packet.end(), encryption_response.begin(), encryption_response.end());
-
-                        network_handler.write_raw(packet.data(), packet.size());
+                        network_handler.write_packet(Packet(0x01, encryption_response));
 
                         network_handler.enable_encryption(shared_secret);
 
@@ -198,7 +175,7 @@ int main()
                     {
                         std::vector<uint8_t> name_space = MCString::from_string("minecraft");
                         std::vector<uint8_t> ID = MCString::from_string("core");
-                        std::vector<uint8_t> version = MCString::from_string("1.21.1");
+                        std::vector<uint8_t> version = MCString::from_string("1.21.5");
 
                         std::vector<uint8_t> core_pack = name_space;
                         core_pack.insert(core_pack.end(), ID.begin(), ID.end());
