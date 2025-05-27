@@ -16,15 +16,8 @@
 
 MicrosoftAuth::MicrosoftAuth()
 {
-    SSL_library_init();
-    SSL_load_error_strings();
-    OpenSSL_add_all_algorithms();
-
     std::string oAuthCreateAddr = "login.microsoftonline.com/consumers/oauth2/v2.0/devicecode";
-    // std::string oAuthCreateAddr = "login.live.com/oauth20_token.srf";
     std::string oAuthCreateBody = "client_id=" + CLIENT_ID + 
-                                //   "&scope=service::user.auth.xboxlive.com::MBI_SSL"
-                                //   "&grant_type=refresh_token";
                                   "&scope=XboxLive.signin";
     std::string response = this->httpsPost(oAuthCreateAddr, oAuthCreateBody, std::nullopt);
     
@@ -111,6 +104,9 @@ MicrosoftAuth::MicrosoftAuth()
 
 std::string MicrosoftAuth::sendRequest(const std::string& fullURL, const std::string& method, const std::string& body, std::optional<std::string> contentType)
 {
+    SSL_library_init();
+    SSL_load_error_strings();
+    OpenSSL_add_all_algorithms();
 
 
     int firstSlash = fullURL.find('/'); // TODO: Error handling
@@ -196,7 +192,7 @@ std::string MicrosoftAuth::httpsGet(const std::string& addr)
 
 std::string MicrosoftAuth::httpsPost(const std::string& addr, const std::string& body, std::optional<std::string> contentType)
 {
-    return this->sendRequest(addr, "POST", body, contentType);
+    return sendRequest(addr, "POST", body, contentType);
 }
 
 std::optional<std::string> MicrosoftAuth::readJSON(const std::string& json, const std::string& key)

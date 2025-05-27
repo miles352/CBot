@@ -2,6 +2,9 @@
 #include "conversions/VarInt.hpp"
 #include "conversions/MCString.hpp"
 #include "conversions/UUID.hpp"
+#include "conversions/PrefixedArray.hpp"
+#include "conversions/Utils.hpp"
+#include "NetworkHandler.hpp"
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -11,67 +14,43 @@
 #include <unistd.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <openssl/rand.h>
+#include <openssl/sha.h>
 #include <iostream>
 
 #include <cstdint>
 
 const char* SERVER_IP = "localhost";
-// const char* SERVER_IP = "tcpshield.horizonanarchy.net";
+const char* SERVER_PORT = "25566";
+// const char* SERVER_IP = "connect.2b2t.org";
+
+// 197db9ea-56e4-4cce-a4d5-3e0da590476a
+const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
+
+
+enum STATE
+{
+    LOGIN,
+    CONFIGURATION,
+    PLAY
+};
 
 
 // packet struct will contain size method that calls size for things like VarInt and adds them
 
 int main()
 {
-    // MicrosoftAuth();
+    NetworkHandler network_handler(SERVER_IP, SERVER_PORT);
 
-    
-
-    // std::vector<uint8_t> x = VarInt::from_int(128);
-    // printf("x: %p\n", x.data());
-
-    // while (true)
-    // {
-
-    // };
-
-    // printf("Total size: %d\n", packet.size());
-    // return 0;
-
-    addrinfo hints;
-    addrinfo* servInfo;
-    int status;
-    memset(&hints, 0, sizeof(hints)); // make sure hints is zeroed
-    hints.ai_family = AF_UNSPEC; // ipv4 or v6
-    hints.ai_socktype = SOCK_STREAM; // tcp
-    hints.ai_flags = AI_PASSIVE;
-    if ((status = getaddrinfo(SERVER_IP, "25566", &hints, &servInfo)) != 0) 
-    {
-        printf("Error getting info: %s\n", gai_strerror(status));
-    }
-
-    int s = socket(servInfo->ai_family, servInfo->ai_socktype, 0);
-
-    if (s == -1)
-    {
-        perror("Error creating socket: ");
-    }
-
-    status = connect(s, servInfo->ai_addr, servInfo->ai_addrlen);
-    if (status == -1)
-    {
-        perror("Error connecting: ");
-    }
-
-    // struct packet;
+    STATE current_state = STATE::LOGIN;
 
     std::vector<uint8_t> handshake;
     
-    std::vector<uint8_t> protocol_version = VarInt::from_int(767);
+    std::vector<uint8_t> protocol_version = VarInt::from_int(767); // 1.21.1
     handshake.insert(handshake.end(), protocol_version.begin(), protocol_version.end());
-    std::vector<uint8_t> serverAddress = MCString::from_string("horizonanarchy.net");
+    std::vector<uint8_t> serverAddress = MCString::from_string(SERVER_IP);
     handshake.insert(handshake.end(), serverAddress.begin(), serverAddress.end());
-    uint16_t server_port = htons(25566);
+    uint16_t server_port = htons(std::stoi(SERVER_PORT));
     handshake.emplace_back(server_port >> 8);
     handshake.emplace_back(server_port & 0x00FF);
     std::vector<uint8_t> next_state = VarInt::from_int(2);
@@ -83,12 +62,12 @@ int main()
     packet.insert(packet.end(), packetId.begin(), packetId.end());
     packet.insert(packet.end(), handshake.begin(), handshake.end());
 
-    write(s, packet.data(), packet.size());
+    network_handler.write_raw(packet.data(), packet.size());
 
 
-    std::vector<uint8_t> name = MCString::from_string("x658");
+    std::vector<uint8_t> name = MCString::from_string("0x658");
     uint8_t uuid_bytes[16];
-    UUID::to_big_endian_bytes("df53a8c3-e235-47c5-8466-311dc35d23b0", uuid_bytes);
+    UUID::to_big_endian_bytes(PLAYER_UUID, uuid_bytes);
 
     std::vector<uint8_t> login = name;
     login.insert(login.end(), uuid_bytes, uuid_bytes + 16);
@@ -99,45 +78,158 @@ int main()
     packet.insert(packet.end(), packetId.begin(), packetId.end());
     packet.insert(packet.end(), login.begin(), login.end());
 
-    write(s, packet.data(), packet.size());
+    network_handler.write_raw(packet.data(), packet.size());
 
-
-
-    std::string out;
     char buffer[4096];
     int bytes;
 
-    while (true)
+    while (true) 
     {
-        // bytes = read(s, buffer, sizeof(buffer));
-        // if (bytes <= 0) break;
-        // out.append(buffer, bytes);
+        printf("\n");
+        Packet read_packet = network_handler.read_packet();
 
-        // int size[1];
-        // read(s, size, 5);
-        // printf("Size: %d\n", *size);
-        int packet_size = VarInt::from_stream(s);
-        int packet_id = VarInt::from_stream(s);
-        printf("Read packet id 0x%x with size %d\n", packet_id, packet_size);
+        printf("Received packet id %d with data size %d.\n", read_packet.id, read_packet.data.size());
 
-        int remaining_bytes = packet_size - VarInt::from_int(packet_id).size();
+        uint8_t* ptr = read_packet.data.data();
 
-        uint8_t* data;
-        read(s, data, remaining_bytes);
-
-        // uint8_t* ptr = data;
-
-        switch (packet_id)
+        switch (current_state)
         {
-            case 0x01:
+            case STATE::LOGIN:
             {
-                std::string server_id = MCString::from_array(data);
-                printf("Server Id: %s\n", server_id.c_str());
+                switch (read_packet.id)
+                {
+                    case 0x00: // Disconnect (login)
+                    {
+                        break;
+                    }
+                    case 0x01: // Encryption Request
+                    {
+                        std::string server_id = MCString::from_array(ptr);
+                        std::vector<uint8_t> public_key = PrefixedArray::from_array<uint8_t>(ptr);
+                        std::vector<uint8_t> verify_token = PrefixedArray::from_array<uint8_t>(ptr);
+                        bool should_authenticate = *ptr;
+
+                        unsigned char shared_secret[16];
+                        if (RAND_bytes(shared_secret, 16) <= 0)
+                        {
+                            std::runtime_error("Failed to generate shared secret!");
+                        }
+
+                        std::vector<uint8_t> unhashed;
+                        unhashed.insert(unhashed.end(), server_id.begin(), server_id.end());
+                        unhashed.insert(unhashed.end(), shared_secret, shared_secret + 16);
+                        unhashed.insert(unhashed.end(), public_key.begin(), public_key.end());
+
+                        uint8_t hashed[SHA_DIGEST_LENGTH];
+                        SHA1(unhashed.data(), unhashed.size(), hashed);
+                        
+                        
+                        std::string hash_string = Utils::SHA1_to_formatted(hashed);
+                        std::string access_token = "temp-auth-token";
+
+                        std::string oAuthCreateAddr = "sessionserver.mojang.com/session/minecraft/join";
+                        std::string oAuthCreateBody = "{"
+                                                            "\"accessToken\": \"" + access_token + "\","
+                                                            "\"selectedProfile\": \"" + PLAYER_UUID + "\","
+                                                            "\"serverId\": \"" + hash_string + "\""
+                                                    "}";
+
+                        std::string response = MicrosoftAuth::httpsPost(oAuthCreateAddr, oAuthCreateBody, "application/json");
+                        if (response.find("204 No Content") == std::string::npos)
+                        {
+                            std::runtime_error("Failed to join session!");
+                        }
+
+
+                        const uint8_t* ptr = public_key.data();
+                        RSA* rsa = d2i_RSA_PUBKEY(NULL, &ptr, public_key.size());
+                        uint8_t encrypted_secret[128];
+                        uint8_t encrypted_token[128];
+                        RSA_public_encrypt(16, shared_secret, encrypted_secret, rsa, RSA_PKCS1_PADDING);
+                        RSA_public_encrypt(verify_token.size(), verify_token.data(), encrypted_token, rsa, RSA_PKCS1_PADDING);
+
+                        std::vector<uint8_t> prefixed_shared_secret = PrefixedArray::array_to_prefixed_bytes<uint8_t>(encrypted_secret, sizeof(encrypted_secret));
+                        std::vector<uint8_t> prefixed_verify_token = PrefixedArray::array_to_prefixed_bytes<uint8_t>(encrypted_token, sizeof(encrypted_token));
+
+                        std::vector<uint8_t> encryption_response = prefixed_shared_secret;
+                        encryption_response.insert(encryption_response.end(), prefixed_verify_token.begin(), prefixed_verify_token.end());
+
+                        std::vector<uint8_t> packet_id = VarInt::from_int(0x01);
+                        std::vector<uint8_t> length = VarInt::from_int(encryption_response.size() + packet_id.size());
+
+                        std::vector<uint8_t> packet = length;
+                        packet.insert(packet.end(), packet_id.begin(), packet_id.end());
+                        packet.insert(packet.end(), encryption_response.begin(), encryption_response.end());
+
+                        network_handler.write_raw(packet.data(), packet.size());
+
+                        network_handler.enable_encryption(shared_secret);
+
+                        printf("Enabled encryption\n");
+
+                        break;
+                    }
+                    case 0x02: // Login Success
+                    {
+                        std::vector<uint8_t> data;
+                        Packet loginAcknowledged(0x03, data);
+
+                        network_handler.write_packet(loginAcknowledged);
+
+                        current_state = STATE::CONFIGURATION;
+
+                        break;
+                    }
+                    case 0x03: // Set Compression
+                    {
+                        int threshold = VarInt::from_array(ptr, nullptr);
+                        network_handler.enable_compression(threshold);
+                        printf("Enabled compression\n");
+                        break;
+                    }
+                }
+                break;
+            }
+            case STATE::CONFIGURATION:
+            {
+                switch (read_packet.id)
+                {
+                    case 0x0E: // Clientbound Known Packs
+                    {
+                        // The vanilla client requires the minecraft:core pack with version 1.21.5 for a normal login sequence. This packet must be sent before the Registry Data packets. 
+                        std::vector<uint8_t> name_space = MCString::from_string("minecraft");
+                        std::vector<uint8_t> ID = MCString::from_string("core");
+                        std::vector<uint8_t> version = MCString::from_string("1.21.1");
+
+                        std::vector<uint8_t> core_pack = name_space;
+                        core_pack.insert(core_pack.end(), ID.begin(), ID.end());
+                        core_pack.insert(core_pack.end(), version.begin(), version.end());
+
+                        std::vector<uint8_t> prefix = VarInt::from_int(1);
+                        std::vector<uint8_t> bytes = prefix;
+                        bytes.insert(bytes.end(), core_pack.begin(), core_pack.end()); // TODO: Make better prefixed array method
+
+                        Packet serverboundKnownPacks(0x07, bytes);
+
+                        network_handler.write_packet(serverboundKnownPacks);
+                        break;
+                    }
+                    case 0x03: // Finish Configuration
+                    {
+                        std::vector<uint8_t> data;
+                        Packet configurationAcknowledge(0x03, data);
+
+                        network_handler.write_packet(configurationAcknowledge);
+
+                        current_state = STATE::PLAY;
+                    }
+                }
+                break;
+            }
+            case STATE::PLAY:
+            {
+                break;
             }
         }
     }
-
-    std::cout << out << std::endl;
-
-    close(s);
 }

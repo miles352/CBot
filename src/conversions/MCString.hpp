@@ -21,7 +21,8 @@ namespace MCString
     static std::string from_array(uint8_t*& array)
     {
         std::string res = "";
-        for (int i = 0; i < VarInt::from_array(array); i++) // first VarInt is the length of the string
+        int length = VarInt::from_array(array, nullptr);
+        for (int i = 0; i < length; i++)
         {
             res.push_back(*array);
             array++;

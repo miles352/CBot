@@ -1,18 +1,12 @@
 // every packet type includes encode and parse method.
 
 #include <cstdint>
+#include <vector>
 
 
-#include "conversions/VarInt.hpp"
-
-class Packet
+struct Packet
 {
-    std::vector<uint8_t> length;
-    std::vector<uint8_t> id;
+    int id;
     std::vector<uint8_t> data;
-
-    Packet(int id, std::vector<uint8_t> data);
-
-    virtual std::vector<uint8_t> encode() = 0;
-
+    Packet(int id, std::vector<uint8_t> data) : id(id), data(data) {};
 };

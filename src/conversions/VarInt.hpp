@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <stdexcept>
 
+#include "NetworkHandler.hpp"
+
 const uint8_t SEGMENT_BITMASK = 0b01111111;
 const uint8_t CONTINUE_BIT = 0b10000000;
 
@@ -25,17 +27,18 @@ namespace VarInt
             data.emplace_back((number & SEGMENT_BITMASK) | CONTINUE_BIT);
             number = (unsigned int)number >> 7;
         }
-        // check if more than 5 bytes
     }
 
-    static int from_stream(int sockfd)
+    static int from_stream(NetworkHandler& network_handler, int* bytes_read)
     {
         int num = 0;
         uint8_t byte = 0;
         int pos = 0;
+        int amount_read = 0;
         while (true)
         {
-            read(sockfd, &byte, 1); // TODO: Error handling for socket
+            network_handler.read_raw(&byte, 1);
+            amount_read++;
             num |= (byte & SEGMENT_BITMASK) << pos; // only add the segment
             if ((byte & CONTINUE_BIT) == 0) break;
         
@@ -43,18 +46,21 @@ namespace VarInt
 
             if (pos >= 32) throw std::runtime_error("VarInt is too big!");
         }
+        if (bytes_read != nullptr) *bytes_read = amount_read;
         return num;
     }
 
-    static int from_array(uint8_t*& array)
+    static int from_array(uint8_t*& array, int* bytes_read)
     {
         int num = 0;
         uint8_t byte = 0;
         int pos = 0;
+        int amount_read = 0;
         while (true)
         {
             byte = *array;
             array++;
+            amount_read++;
             num |= (byte & SEGMENT_BITMASK) << pos; // only add the segment
             if ((byte & CONTINUE_BIT) == 0) break;
         
@@ -62,6 +68,7 @@ namespace VarInt
             
             if (pos >= 32) throw std::runtime_error("VarInt is too big!");
         }
+        if (bytes_read != nullptr) *bytes_read = amount_read;
         return num;
     }
 
