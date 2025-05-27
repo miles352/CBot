@@ -24,20 +24,20 @@ NetworkHandler::NetworkHandler(std::string server_ip, std::string server_port)
     hints.ai_flags = AI_PASSIVE;
     if ((status = getaddrinfo(server_ip.c_str(), server_port.c_str(), &hints, &servInfo)) != 0) 
     {
-        std::runtime_error("Error getting address info!");
+        throw std::runtime_error("Error getting address info!");
     }
 
     this->sockfd = socket(servInfo->ai_family, servInfo->ai_socktype, 0);
 
     if (this->sockfd == -1)
     {
-        std::runtime_error("Error creating socket!");
+        throw std::runtime_error("Error creating socket!");
     }
 
     status = connect(this->sockfd, servInfo->ai_addr, servInfo->ai_addrlen);
     if (status == -1)
     {
-        std::runtime_error("Error connecting to socket!");
+        throw std::runtime_error("Error connecting to socket!");
     }
 
 
@@ -58,10 +58,14 @@ void NetworkHandler::write_raw(const void* data, int size)
 {
     if (this->use_encryption)
     {
-        unsigned char out[size];
+        std::vector<unsigned char> out(size);
         int out_len;
-        EVP_EncryptUpdate(this->encrypt_ctx, out, &out_len, reinterpret_cast<const unsigned char*>(data), size);
-        write(this->sockfd, out, out_len);
+        EVP_EncryptUpdate(this->encrypt_ctx, out.data(), &out_len, reinterpret_cast<const unsigned char*>(data), size);
+        if (out_len != size)
+        {
+            throw std::runtime_error("Failed to encrypt packet!");
+        }
+        write(this->sockfd, out.data(), out_len);
     }
     else
     {
@@ -75,9 +79,13 @@ int NetworkHandler::read_raw(void* buffer, int size)
     if (this->use_encryption)
     {
         int out_len;
-        unsigned char decrypted[bytes_read];
-        EVP_DecryptUpdate(this->decrypt_ctx, decrypted, &out_len, reinterpret_cast<unsigned char*>(buffer), bytes_read);
-        memcpy(buffer, decrypted, bytes_read);
+        std::vector<unsigned char> decrypted(bytes_read);
+        EVP_DecryptUpdate(this->decrypt_ctx, decrypted.data(), &out_len, reinterpret_cast<unsigned char*>(buffer), bytes_read);
+        if (out_len != bytes_read)
+        {
+            throw std::runtime_error("Failed to decrypt packet!");
+        }
+        memcpy(buffer, decrypted.data(), bytes_read);
     } 
     return bytes_read;
 }
@@ -85,10 +93,6 @@ int NetworkHandler::read_raw(void* buffer, int size)
 Packet NetworkHandler::read_packet()
 {
     int packet_size = VarInt::from_stream(*this, nullptr);
-
-    printf("Packet size: %d\n", packet_size);
-
-    // printf("Packet size: %d\n", packet_size);
 
     int remaining_bytes;
     int packet_id;
@@ -100,7 +104,6 @@ Packet NetworkHandler::read_packet()
         int data_length_bytes;
         // Data length is the length of the uncompressed data, or 0 if the data is not compressed
         data_length = VarInt::from_stream(*this, &data_length_bytes);
-        // printf("Length of uncompressed data %d\n", data_length);
 
         if (data_length > 0) // if compression is enabled and this packet is larger than the threshold
         {
@@ -122,13 +125,13 @@ Packet NetworkHandler::read_packet()
     }
 
     std::vector<uint8_t> data_array(remaining_bytes);
-    int read_bytes = this->read_raw(data_array.data(), remaining_bytes);
+    int total_read_bytes = 0;
 
-    // TODO: all the bytes may not be ready, so we need to wait for the exact amount of bytes we need.
-    if (read_bytes != remaining_bytes)
-    {
-        std::runtime_error("Did not read all the bytes!");
-    }
+    do
+    { // the full packet might not be read at once, so we loop until we read it all
+        total_read_bytes += this->read_raw(data_array.data() + total_read_bytes, remaining_bytes - total_read_bytes);
+    } 
+    while (total_read_bytes < remaining_bytes);
 
     std::vector<uint8_t> data;
 
@@ -137,7 +140,10 @@ Packet NetworkHandler::read_packet()
         std::vector<uint8_t> uncompressed(data_length);
         uLongf uncompressed_len = data_length;
         uncompress(uncompressed.data(), &uncompressed_len, data_array.data(), remaining_bytes);
-        printf("Uncompressed length: %ld\n", uncompressed_len);
+        if (uncompressed_len != data_length)
+        {
+            throw std::runtime_error("Failed to uncompress packet.");
+        }
         uint8_t* uncompressed_ptr = uncompressed.data();
         int packet_id_bytes;
         packet_id = VarInt::from_array(uncompressed_ptr, &packet_id_bytes);
@@ -155,19 +161,14 @@ void NetworkHandler::write_packet(const Packet& packet)
 {
     std::vector<uint8_t> packet_id = VarInt::from_int(packet.id);
 
-    // printf("Packet id: %d\n", packet.id);
-
     std::vector<uint8_t> bytes;
 
     bool using_compression = false;
-
-    
 
     if (this->use_compression)
     {
         if (packet_id.size() + packet.data.size() >= this->compression_threshold)
         {
-            // printf("Higher than threshold\n");
             using_compression = true;
             std::vector<uint8_t> uncompressed_data = packet_id;
             uncompressed_data.insert(uncompressed_data.end(), packet.data.begin(), packet.data.end());
@@ -186,7 +187,6 @@ void NetworkHandler::write_packet(const Packet& packet)
         {
             std::vector<uint8_t> data_length = VarInt::from_int(0);
             bytes.insert(bytes.end(), data_length.begin(), data_length.end());
-            // printf("Added data length\n");
         }
     }
 
@@ -194,15 +194,12 @@ void NetworkHandler::write_packet(const Packet& packet)
     {
         bytes.insert(bytes.end(), packet_id.begin(), packet_id.end());
         bytes.insert(bytes.end(), packet.data.begin(), packet.data.end());
-        // printf("Data size: %d\n", packet.data.size());
     }
 
     std::vector<uint8_t> full_packet = VarInt::from_int(bytes.size());
     full_packet.insert(full_packet.end(), bytes.begin(), bytes.end());
 
     this->write_raw(full_packet.data(), full_packet.size());
-
-    // printf("Wrote packet\n");
 }
 
 void NetworkHandler::enable_encryption(unsigned char (&shared_secret)[16])
