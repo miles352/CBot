@@ -1,12 +1,14 @@
-// every packet type includes encode and parse method.
+#pragma once
 
 #include <cstdint>
 #include <vector>
 
 
-struct Packet
+class Packet
 {
+    public:
     int id;
     std::vector<uint8_t> data;
     Packet(int id, std::vector<uint8_t> data) : id(id), data(data) {};
+    Packet() = default;
 };

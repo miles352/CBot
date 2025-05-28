@@ -11,6 +11,8 @@ add_executable(CBot
 src/main.cpp 
 src/MicrosoftAuth.cpp
 src/NetworkHandler.cpp
+src/packets/handshaking/HandshakeC2SPacket.cpp
+src/packets/login/LoginStartC2SPacket.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

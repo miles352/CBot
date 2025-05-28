@@ -90,6 +90,8 @@ int NetworkHandler::read_raw(void* buffer, int size)
     return bytes_read;
 }
 
+
+
 Packet NetworkHandler::read_packet()
 {
     int packet_size = VarInt::from_stream(*this, nullptr);

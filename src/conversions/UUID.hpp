@@ -7,7 +7,7 @@
 
 namespace UUID
 {
-    void to_big_endian_bytes(const std::string& uuid, uint8_t buffer[16]) 
+    static void to_big_endian_bytes(const std::string& uuid, uint8_t buffer[16]) 
     {
         std::string hex;
         for (char c : uuid) {

@@ -5,6 +5,12 @@
 #include "conversions/PrefixedArray.hpp"
 #include "conversions/Utils.hpp"
 #include "NetworkHandler.hpp"
+#include "config.hpp"
+
+#include "packets/Packet.hpp"
+#include "packets/handshaking/HandshakeC2SPacket.hpp"
+#include "packets/login/LoginStartC2SPacket.hpp"
+
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -20,9 +26,9 @@
 
 #include <cstdint>
 
-// const char* SERVER_IP = "localhost";
+const char* SERVER_IP = "localhost";
 const char* SERVER_PORT = "25565";
-const char* SERVER_IP = "tcpshield.horizonanarchy.net";
+// const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
 // 197db9ea-56e4-4cce-a4d5-3e0da590476a
 const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
@@ -44,29 +50,10 @@ int main()
 
     STATE current_state = STATE::LOGIN;
 
-    std::vector<uint8_t> handshake;
-    
-    std::vector<uint8_t> protocol_version = VarInt::from_int(770); // 1.21.5
-    handshake.insert(handshake.end(), protocol_version.begin(), protocol_version.end());
-    std::vector<uint8_t> serverAddress = MCString::from_string(SERVER_IP);
-    handshake.insert(handshake.end(), serverAddress.begin(), serverAddress.end());
-    uint16_t server_port = htons(std::stoi(SERVER_PORT));
-    handshake.emplace_back(server_port >> 8);
-    handshake.emplace_back(server_port & 0x00FF);
-    std::vector<uint8_t> next_state = VarInt::from_int(2);
-    handshake.insert(handshake.end(), next_state.begin(), next_state.end());
+    //                                   1.21.5
+    network_handler.write_packet(HandshakeC2SPacket(770, SERVER_IP, SERVER_PORT, HandshakeC2SPacket::HandshakeIntent::LOGIN));
 
-    network_handler.write_packet(Packet(0x0, handshake));
-
-
-    std::vector<uint8_t> name = MCString::from_string("0x658");
-    uint8_t uuid_bytes[16];
-    UUID::to_big_endian_bytes(PLAYER_UUID, uuid_bytes);
-
-    std::vector<uint8_t> login = name;
-    login.insert(login.end(), uuid_bytes, uuid_bytes + 16);
-
-    network_handler.write_packet(Packet(0x0, login));
+    network_handler.write_packet(LoginStartC2SPacket("0x658", PLAYER_UUID));
 
     while (true) 
     {
@@ -85,6 +72,9 @@ int main()
                 {
                     case 0x00: // Disconnect (login)
                     {
+                        std::string disconnect_message(read_packet.data.begin(), read_packet.data.end());
+                        printf("Disconnected during login: %s\n", disconnect_message.c_str());
+                        return 0;
                         break;
                     }
                     case 0x01: // Encryption Request
@@ -110,11 +100,10 @@ int main()
                         
                         
                         std::string hash_string = Utils::SHA1_to_formatted(hashed);
-                        std::string access_token = "oops";
 
                         std::string oAuthCreateAddr = "sessionserver.mojang.com/session/minecraft/join";
                         std::string oAuthCreateBody = "{"
-                                                            "\"accessToken\": \"" + access_token + "\","
+                                                            "\"accessToken\": \"" + ACCESS_TOKEN + "\","
                                                             "\"selectedProfile\": \"" + PLAYER_UUID + "\","
                                                             "\"serverId\": \"" + hash_string + "\""
                                                     "}";
