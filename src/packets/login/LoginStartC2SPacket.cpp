@@ -5,10 +5,6 @@
 
 LoginStartC2SPacket::LoginStartC2SPacket(const std::string& username, const std::string& uuid)
 {
-    // if (username.size() > 16)
-    // {
-    //     throw std::length_error("d");
-    // }
     std::vector<uint8_t> name = MCString::from_string(username);
     uint8_t uuid_bytes[16];
     UUID::to_big_endian_bytes(uuid, uuid_bytes);

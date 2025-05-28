@@ -26,7 +26,7 @@
 
 #include <cstdint>
 
-const char* SERVER_IP = "localhost";
+const char* SERVER_IP = "connect.2b2t.org";
 const char* SERVER_PORT = "25565";
 // const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
@@ -193,6 +193,19 @@ int main()
             }
             case STATE::PLAY:
             {
+                switch (read_packet.id)
+                {
+                    case 0x6F: // Start Configuration
+                    {
+                        std::vector<uint8_t> data;
+                        Packet configurationAcknowledge(0x0E, data);
+
+                        network_handler.write_packet(configurationAcknowledge);
+
+                        current_state = STATE::CONFIGURATION;
+                        break;
+                    }
+                }
                 break;
             }
         }
