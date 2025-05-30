@@ -2,8 +2,12 @@
 
 #include <string>
 #include <cstdint>
+#include <optional>
 
 #include "packets/Packet.hpp"
+#include "packets/ClientboundPacket.hpp"
+#include "packets/ServerboundPacket.hpp"
+#include "registry/PacketRegistry.hpp"
 
 #include <openssl/ssl.h>
 
@@ -20,7 +24,10 @@ class NetworkHandler
     bool use_compression;
     int compression_threshold;
 
+    
+
     public:
+    ClientState client_state; // TODO: make private
     /** The constructor, which creates the socket connection using the specified server ip and port. */
     NetworkHandler(std::string server_ip, std::string server_port);
 
@@ -40,11 +47,18 @@ class NetworkHandler
      */
     int read_raw(void* buffer, int size);
 
-    Packet read_packet();
+    /** Reads packets until a valid one is read, and returns the packet. */
+    std::unique_ptr<ClientboundPacket> read_packet();
 
-    void write_packet(const Packet& packet);
+    void write_packet(std::unique_ptr<ServerboundPacket> packet);
 
     void enable_encryption(unsigned char (&shared_secret)[16]);
 
     void enable_compression(int threshold);
+
+    void set_client_state(ClientState client_state);
+
+    private: 
+    /** Reads a packet, and optionally returns it if it is a known packet type. */
+    std::optional<std::unique_ptr<ClientboundPacket>> attempt_read_packet();
 };

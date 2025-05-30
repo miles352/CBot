@@ -14,6 +14,8 @@ NetworkHandler::NetworkHandler(std::string server_ip, std::string server_port)
 {
     this->use_encryption = false;
     this->use_compression = false;
+    
+    this->client_state = ClientState::HANDSHAKING;
 
     addrinfo hints;
     addrinfo* servInfo;
@@ -40,7 +42,7 @@ NetworkHandler::NetworkHandler(std::string server_ip, std::string server_port)
         throw std::runtime_error("Error connecting to socket!");
     }
 
-
+    freeaddrinfo(servInfo);
 }
 
 NetworkHandler::~NetworkHandler()
@@ -90,9 +92,19 @@ int NetworkHandler::read_raw(void* buffer, int size)
     return bytes_read;
 }
 
+std::unique_ptr<ClientboundPacket> NetworkHandler::read_packet()
+{
+    while (true)
+    {
+        std::optional<std::unique_ptr<ClientboundPacket>> packet = this->attempt_read_packet();
+        if (packet.has_value())
+        {
+            return std::move(packet.value());
+        }
+    }
+}
 
-
-Packet NetworkHandler::read_packet()
+std::optional<std::unique_ptr<ClientboundPacket>> NetworkHandler::attempt_read_packet()
 {
     int packet_size = VarInt::from_stream(*this, nullptr);
 
@@ -135,7 +147,7 @@ Packet NetworkHandler::read_packet()
     } 
     while (total_read_bytes < remaining_bytes);
 
-    std::vector<uint8_t> data;
+    std::vector<uint8_t> data = data_array;
 
     if (is_data_compressed)
     {
@@ -151,17 +163,26 @@ Packet NetworkHandler::read_packet()
         packet_id = VarInt::from_array(uncompressed_ptr, &packet_id_bytes);
         data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - packet_id_bytes);
     }
-    else
+
+    PacketRegistryKey key = std::make_pair(this->client_state, packet_id);
+
+    
+
+    if (!clientbound_packet_registry.contains(key))
     {
-        data = data_array;
+        printf("Cannot find packet matching id: 0x%02x\n", packet_id);
+        return std::nullopt;
     }
 
-    return Packet(packet_id, data);
+    std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>)> packet_ptr = clientbound_packet_registry[key];
+
+    return packet_ptr(data);
 }
 
-void NetworkHandler::write_packet(const Packet& packet)
+void NetworkHandler::write_packet(std::unique_ptr<ServerboundPacket> packet)
 {
-    std::vector<uint8_t> packet_id = VarInt::from_int(packet.id);
+    std::vector<uint8_t> packet_id = VarInt::from_int(packet->get_id());
+    std::vector<uint8_t> packet_data = packet->encode();
 
     std::vector<uint8_t> bytes;
 
@@ -169,11 +190,11 @@ void NetworkHandler::write_packet(const Packet& packet)
 
     if (this->use_compression)
     {
-        if (packet_id.size() + packet.data.size() >= this->compression_threshold)
+        if (packet_id.size() + packet_data.size() >= this->compression_threshold)
         {
             using_compression = true;
             std::vector<uint8_t> uncompressed_data = packet_id;
-            uncompressed_data.insert(uncompressed_data.end(), packet.data.begin(), packet.data.end());
+            uncompressed_data.insert(uncompressed_data.end(), packet_data.begin(), packet_data.end());
 
             std::vector<uint8_t> data_length = VarInt::from_int(uncompressed_data.size());
             bytes.insert(bytes.end(), data_length.begin(), data_length.end());
@@ -195,7 +216,7 @@ void NetworkHandler::write_packet(const Packet& packet)
     if (!using_compression)
     {
         bytes.insert(bytes.end(), packet_id.begin(), packet_id.end());
-        bytes.insert(bytes.end(), packet.data.begin(), packet.data.end());
+        bytes.insert(bytes.end(), packet_data.begin(), packet_data.end());
     }
 
     std::vector<uint8_t> full_packet = VarInt::from_int(bytes.size());
@@ -221,4 +242,9 @@ void NetworkHandler::enable_compression(int threshold)
 {
     this->compression_threshold = threshold;
     this->use_compression = true;
+}
+
+void NetworkHandler::set_client_state(ClientState client_state)
+{
+    this->client_state = client_state;
 }

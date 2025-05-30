@@ -1,10 +1,10 @@
 #pragma once
 
-#include "packets/Packet.hpp"
+#include "packets/ServerboundPacket.hpp"
 
 #include <string>
 
-class HandshakeC2SPacket : public Packet
+class HandshakeC2SPacket : public ServerboundPacket
 {
     public:
     enum HandshakeIntent
@@ -14,5 +14,15 @@ class HandshakeC2SPacket : public Packet
         TRANSFER = 3
     };
 
+    static const int id = 0x00;
+
     HandshakeC2SPacket(int protocol_version, const std::string& server_address, const std::string& server_port, HandshakeIntent intent);
+
+    int protocol_version;
+    std::string server_address;
+    std::string server_port;
+    HandshakeIntent intent;
+
+    std::vector<uint8_t> encode() override;
+    int get_id() const override { return this->id; };
 };
