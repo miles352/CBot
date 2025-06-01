@@ -13,6 +13,7 @@ tests.cpp
 ../src/packets/configuration/KnownPacksS2CPacket.cpp
 ../src/packets/configuration/FinishConfigurationS2CPacket.cpp
 ../src/packets/configuration/AcknowledgeFinishConfigurationC2SPacket.cpp
+../src/EventBus.cpp
 )
 
 find_package(OpenSSL REQUIRED)
