@@ -7,7 +7,6 @@
 #include "NetworkHandler.hpp"
 #include "config.hpp"
 
-#include "packets/Packet.hpp"
 #include "packets/handshaking/HandshakeC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
 #include "packets/login/EncryptionRequestS2CPacket.hpp"
@@ -22,20 +21,17 @@
 
 #include "registry/PacketRegistry.hpp"
 
+#include "EventBus.hpp"
+
 
 #include <sys/socket.h>
-#include <arpa/inet.h>
 #include <sys/types.h>
 #include <netdb.h>
-#include <memory.h>
 #include <unistd.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
 #include <openssl/sha.h>
-#include <iostream>
-
-#include <cstdint>
 
 // const char* SERVER_IP = "connect.2b2t.org";
 const char* SERVER_PORT = "25565";
@@ -43,6 +39,21 @@ const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
 // 197db9ea-56e4-4cce-a4d5-3e0da590476a
 const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
+
+// TODO:
+
+// packets also in event bus,
+// implement priority system, default events get priority level 0
+// allow the data to be modified
+// emit packet event before writing so it gets modified
+
+// give each packet unique event name
+// move all this code into Bot default event handler
+// create 50 ms tick delay event handler
+
+// incoming packet events are emitted inside of decode method / constructor
+
+// outgoing packet events are emitted inside of the default event handlers
 
 int main()
 {
@@ -82,7 +93,7 @@ int main()
                     }
                     case 0x01: // Encryption Request
                     {
-                        std::unique_ptr<EncryptionRequestS2CPacket> encrypt_request(static_cast<EncryptionRequestS2CPacket*>(read_packet.release()));
+                        std::unique_ptr<EncryptionRequestS2CPacket> encrypt_request(dynamic_cast<EncryptionRequestS2CPacket*>(read_packet.release()));
                         unsigned char shared_secret[16];
                         if (RAND_bytes(shared_secret, 16) <= 0)
                         {
@@ -130,7 +141,7 @@ int main()
                     }
                     case 0x02: // Login Success
                     {
-                        std::unique_ptr<LoginSuccessS2CPacket> login_success(static_cast<LoginSuccessS2CPacket*>(read_packet.release()));
+                        std::unique_ptr<LoginSuccessS2CPacket> login_success(dynamic_cast<LoginSuccessS2CPacket*>(read_packet.release()));
 
                         network_handler.write_packet(std::make_unique<LoginAcknowledgedC2SPacket>());
 
@@ -140,7 +151,7 @@ int main()
                     }
                     case 0x03: // Set Compression
                     {
-                        std::unique_ptr<SetCompressionS2CPacket> set_compression(static_cast<SetCompressionS2CPacket*>(read_packet.release()));
+                        std::unique_ptr<SetCompressionS2CPacket> set_compression(dynamic_cast<SetCompressionS2CPacket*>(read_packet.release()));
                         network_handler.enable_compression(set_compression->compression_threshold);
                         printf("Enabled compression\n");
                         break;
@@ -154,7 +165,7 @@ int main()
                 {
                     case 0x0E: // Clientbound Known Packs
                     {
-                        std::unique_ptr<KnownPacksS2CPacket> known_server_packs(static_cast<KnownPacksS2CPacket*>(read_packet.release()));
+                        std::unique_ptr<KnownPacksS2CPacket> known_server_packs(dynamic_cast<KnownPacksS2CPacket*>(read_packet.release()));
 
                         network_handler.write_packet(std::make_unique<KnownPacksC2SPacket>());
 
@@ -162,7 +173,7 @@ int main()
                     }
                     case 0x03: // Finish Configuration
                     {
-                        std::unique_ptr<FinishConfigurationS2CPacket> finish_configuration(static_cast<FinishConfigurationS2CPacket*>(read_packet.release()));
+                        std::unique_ptr<FinishConfigurationS2CPacket> finish_configuration(dynamic_cast<FinishConfigurationS2CPacket*>(read_packet.release()));
 
                         network_handler.write_packet(std::make_unique<AcknowledgeFinishConfigurationC2SPacket>());
 

@@ -1,19 +1,18 @@
 #pragma once
 
-#include "packets/ClientboundPacket.hpp"
-#include "packets/ServerboundPacket.hpp"
-
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <map>
 #include <functional>
 #include <typeindex>
 #include <any>
-#include <utility>
-#include <concepts>
+#include <optional>
+#include <string>
+#include <variant>
 
 template <typename T>
-concept EventType = requires { typename T::data; };
+concept HasData = requires { typename T::data; };
 
 class EventBus
 {
@@ -21,12 +20,12 @@ class EventBus
     struct EventListener
     {
         EventListener() = default;
-        EventListener(std::function<void(std::any&)> callback, int priority, bool once) : callback(callback), priority(priority), once(once) {};
+        EventListener(std::function<void(std::any&)> callback, const int priority, const bool once) : callback(std::move(callback)), priority(priority), once(once) {};
         std::function<void(std::any&)> callback;
         /** Higher numbers run before lower numbers. */
-        int priority;
+        int priority{};
         /** If the event should only run once and then be removed. */
-        bool once;
+        bool once{};
     };
 
     struct EventListenerTypes 
@@ -44,19 +43,37 @@ class EventBus
     EventBus() = default;
 
     /** A method to add a callback when this event is fired.
-     * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string is the same as calling this function without the `listener_name` param.
      * @param callback The callback function to run when the event is emitted.
+     * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string leaves the callback unnamed.
+     * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
-    template <typename EventType>
-    void on(std::function<void(typename EventType::data)> callback, const std::string& listener_name, int priority)
+    template <typename EventType, typename Callable>
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    void on(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
-        std::function<void(std::any&)> callback_any = [callback](std::any& data) {
-            // All callbacks are stored as having a reference in the parameter, so it is stripped when the method without a reference is called.
-            callback(std::any_cast<typename EventType::data>(data));
-        };
+        std::function<void(std::any&)> callback_any;
+
+        // not sure if necessary, I think it prevents a crash when passing a reference to a function
+        Callable cb = std::forward<Callable>(callback);
+
+        // If the callback doesn't have any params, then just call it
+        if constexpr (std::is_invocable_v<Callable>)
+        {
+            callback_any = [cb](std::any&) {
+                cb();
+            };
+        }
+        // If the callback has params, make sure it matches the EventType::data type
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        {
+            callback_any = [cb](std::any& data) {
+                cb(std::any_cast<typename EventType::data>(data));
+            };
+        }
+
         if (listener_name.empty())
         {
-            this->event_listeners[std::type_index(typeid(EventType))].unnamed.push_back(EventListener{callback_any, priority, false});
+            this->event_listeners[std::type_index(typeid(EventType))].unnamed.emplace_back(callback_any, priority, false);
         }
         else
         {
@@ -64,69 +81,144 @@ class EventBus
         }
     }
 
-    /** A method to add a callback when this event is fired.
-     * @param callback The callback function to run when the event is emitted.
-     */
-    template <typename EventType>
-    void on(std::function<void(typename EventType::data)> callback)
-    {
-        this->on<EventType>(callback, "");
-    }
-
     /** Runs a callback when an event is fired, using a reference as the type parameter. 
      * Callbacks that run after this (lower priority) will have the modified value.
-     * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string is the same as calling this function without the `listener_name` param.
      * @param callback The callback function to run when the event is emitted.
+     * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string leaves the callback unnamed.
+     * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
-    template <typename EventType>
-    void on_ref(const std::string& listener_name, std::function<void(typename EventType::data&)> callback)
+    template <typename EventType, typename Callable>
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    void on_ref(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
-        std::function<void(std::any&)> callback_any = [callback](std::any& data) {
-            callback(std::any_cast<typename EventType::data&>(data));
-        };
+        std::function<void(std::any&)> callback_any;
+
+        Callable cb = std::forward<Callable>(callback);
+
+        if constexpr (std::is_invocable_v<Callable>)
+        {
+            callback_any = [cb](std::any&) {
+                cb();
+            };
+        }
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        {
+            callback_any = [cb](std::any& data) {
+                cb(std::any_cast<typename EventType::data&>(data));
+            };
+        }
+
         if (listener_name.empty())
         {
-            this->event_listeners[std::type_index(typeid(EventType))].unnamed.push_back(EventListener{callback_any, 0, false});
+            this->event_listeners[std::type_index(typeid(EventType))].unnamed.emplace_back(callback_any, priority, false);
         }
         else
         {
-            this->event_listeners[std::type_index(typeid(EventType))].named[listener_name] = EventListener{callback_any, 0, false};
+            this->event_listeners[std::type_index(typeid(EventType))].named[listener_name] = EventListener{callback_any, priority, false};
         }
     }
 
-    /** Runs a callback when an event is fired, using a reference as the type parameter. 
+    /** A method to add a callback that will only run once after the event is emitted.
+     * @param callback The callback function to run when the event is emitted.
+     * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
+     */
+    template <typename EventType, typename Callable>
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    void once(Callable&& callback, int priority = 0)
+    {
+
+        std::function<void(std::any&)> callback_any;
+
+        Callable cb = std::forward<Callable>(callback);
+
+        if constexpr (std::is_invocable_v<Callable>)
+        {
+            callback_any = [cb](std::any&) {
+                cb();
+            };
+        }
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        {
+            callback_any = [cb](std::any& data) {
+                cb(std::any_cast<typename EventType::data>(data));
+            };
+        }
+
+        this->event_listeners[std::type_index(typeid(EventType))].unnamed.emplace_back(callback_any, priority, true);
+    }
+
+    /** A method to add a callback that will only run once after the event is emitted.
      * Callbacks that run after this (lower priority) will have the modified value.
      * @param callback The callback function to run when the event is emitted.
+     * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
-    template <typename EventType>
-    void on_ref(std::function<void(typename EventType::data&)> callback)
+    template <typename EventType, typename Callable>
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    void once_ref(std::function<void(typename EventType::data&)> callback, int priority = 0)
     {
-        this->on_ref<EventType>("", callback);
+        std::function<void(std::any&)> callback_any;
+
+        Callable cb = std::forward<Callable>(callback);
+
+        if constexpr (std::is_invocable_v<Callable>)
+        {
+            callback_any = [cb](std::any&) {
+                cb();
+            };
+        }
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        {
+            callback_any = [cb](std::any& data) {
+                cb(std::any_cast<typename EventType::data&>(data));
+            };
+        }
+
+        this->event_listeners[std::type_index(typeid(EventType))].unnamed.emplace_back(callback_any, priority, true);
     }
 
-    /** Emits an event to all listeners of that event, with the specified data. */
+    /** Emits an event to all listeners of that event, with the specified data.
+     * @param data If the EventType has a data field, then you must specify the data to emit. If you leave it out the default constructor for the type will be called. If there is not a data field then you can call this without parameters.
+     */
     template <typename EventType>
-    void emit(typename EventType::data data)
+    void emit(std::conditional_t<HasData<EventType>, typename EventType::data, std::monostate> data = {})
     {
-        auto listeners = this->event_listeners[std::type_index(typeid(EventType))];
-        std::map<int, std::vector<std::function<void(std::any&)>>, std::greater<int>> callbacks;
+        EventListenerTypes& listeners = this->event_listeners[std::type_index(typeid(EventType))];
+        std::map<int, std::vector<std::function<void(std::any&)>>, std::greater<>> callbacks;
 
-        for (auto& [name, listener] : listeners.named)
+        // Collect all the callbacks into one map and sort them by priority
+
+        for (auto it = listeners.named.begin(); it != listeners.named.end(); )
         {
-            callbacks[listener.priority].push_back(listener.callback);
+            callbacks[it->second.priority].push_back(it->second.callback);
+            if (it->second.once)
+            {
+                // once listeners cant current be named, but im leaving this here in case that changes
+                it = listeners.named.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
         }
 
-        for (EventBus::EventListener listener : listeners.unnamed)
+        for (auto it = listeners.unnamed.begin(); it != listeners.unnamed.end(); )
         {
-            callbacks[listener.priority].push_back(listener.callback);
+            callbacks[it->priority].push_back(it->callback);
+            if (it->once)
+            {
+                it = listeners.unnamed.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
         }
 
-        // Creates a copy so that you can pass an rvalue and this still works to emit a reference
         std::any data_copy = data;
 
         for (auto& vec : callbacks)
         {
-            for (std::function<void(std::any&)> callback : vec.second)
+            for (const std::function<void(std::any&)>& callback : vec.second)
             {
                 callback(data_copy);
             }
@@ -139,6 +231,10 @@ class EventBus
     template <typename EventType>
     bool remove_listener(const std::string& listener_name)
     {
-        return this->event_listeners[std::type_index(typeid(EventType))].named.erase(listener_name);
+        if (this->event_listeners.contains(std::type_index(typeid(EventType))))
+        {
+            return this->event_listeners[std::type_index(typeid(EventType))].named.erase(listener_name);
+        }
+        return false;
     }
 };
