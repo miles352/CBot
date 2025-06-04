@@ -9,7 +9,7 @@
 
 std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>)>> clientbound_packet_registry;
 
-void register_all_packets()
+void register_clientbound_packets()
 {
     register_packet<EncryptionRequestS2CPacket>(ClientState::LOGIN);
     register_packet<SetCompressionS2CPacket>(ClientState::LOGIN);

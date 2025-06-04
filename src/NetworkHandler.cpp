@@ -170,7 +170,7 @@ std::optional<std::unique_ptr<ClientboundPacket>> NetworkHandler::attempt_read_p
 
     if (!clientbound_packet_registry.contains(key))
     {
-        printf("Cannot find packet matching id: 0x%02x\n", packet_id);
+        // printf("Cannot find packet matching id: 0x%02x\n", packet_id);
         return std::nullopt;
     }
 

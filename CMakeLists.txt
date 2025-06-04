@@ -24,6 +24,7 @@ src/packets/configuration/KnownPacksS2CPacket.cpp
 src/packets/configuration/FinishConfigurationS2CPacket.cpp
 src/packets/configuration/AcknowledgeFinishConfigurationC2SPacket.cpp
 src/EventBus.cpp
+src/Bot.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
