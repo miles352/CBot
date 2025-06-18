@@ -1,13 +1,26 @@
 #pragma once
 
+#include <cstdint>
+#include <vector>
+
+#include "EventBus.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class LoginSuccessS2CPacket : public ClientboundPacket
 {
     public:
-    LoginSuccessS2CPacket(std::vector<uint8_t> data);
+    LoginSuccessS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
 
-    // TODO: Add all the stuff 
+    using Data = struct
+    {
+        std::string uuid;
+        std::string username;
+        // TODO: Add this: https://minecraft.wiki/w/Mojang_API#UUID_to_Profile_and_Skin/Cape
+    };
+
+    Data data{};
+
+    static void default_handler(Bot& bot, Data data);
 
     static constexpr int id = 0x02;
 

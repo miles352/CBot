@@ -12,8 +12,13 @@ class LoginStartC2SPacket : public ServerboundPacket
 
     LoginStartC2SPacket(const std::string& username, const std::string& uuid);
 
-    std::string username;
-    std::string uuid;
+    using Data = struct
+    {
+        std::string username;
+        std::string uuid;
+    };
+
+    Data data{};
 
     std::vector<uint8_t> encode() override;
 

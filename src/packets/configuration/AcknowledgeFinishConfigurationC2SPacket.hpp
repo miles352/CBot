@@ -1,6 +1,7 @@
 #pragma once
 
 #include "packets/ServerboundPacket.hpp"
+#include <cstdint>
 
 class AcknowledgeFinishConfigurationC2SPacket : public ServerboundPacket
 {

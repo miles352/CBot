@@ -18,10 +18,15 @@ class HandshakeC2SPacket : public ServerboundPacket
 
     HandshakeC2SPacket(int protocol_version, const std::string& server_address, const std::string& server_port, HandshakeIntent intent);
 
-    int protocol_version;
-    std::string server_address;
-    std::string server_port;
-    HandshakeIntent intent;
+    using Data = struct
+    {
+        int protocol_version;
+        std::string server_address;
+        std::string server_port;
+        HandshakeIntent intent;
+    };
+
+    Data data{};
 
     std::vector<uint8_t> encode() override;
     int get_id() const override { return this->id; };

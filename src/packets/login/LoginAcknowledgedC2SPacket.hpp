@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "packets/ServerboundPacket.hpp"
 
 class LoginAcknowledgedC2SPacket : public ServerboundPacket

@@ -1,6 +1,16 @@
 #include "packets/configuration/FinishConfigurationS2CPacket.hpp"
 
-FinishConfigurationS2CPacket::FinishConfigurationS2CPacket(std::vector<uint8_t> data)
+#include "AcknowledgeFinishConfigurationC2SPacket.hpp"
+
+
+FinishConfigurationS2CPacket::FinishConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
-    
+    event_bus.emit<FinishConfigurationS2CPacket>();
+}
+
+void FinishConfigurationS2CPacket::default_handler(Bot &bot)
+{
+    bot.network_handler->write_packet(std::make_unique<AcknowledgeFinishConfigurationC2SPacket>());
+
+    bot.network_handler->set_client_state(ClientState::PLAY);
 }

@@ -5,7 +5,9 @@
 #include <memory>
 #include <concepts>
 
+#include "EventBus.hpp"
 #include "packets/ClientboundPacket.hpp"
+#include "packets/ServerboundPacket.hpp"
 
 enum ClientState
 {
@@ -21,6 +23,9 @@ using PacketRegistryKey = std::pair<ClientState, int>;
 template <typename T>
 concept IncomingPacket = std::derived_from<T, ClientboundPacket>;
 
+template <typename T>
+concept OutgoingPacket = std::derived_from<T, ServerboundPacket>;
+
 namespace std
 {
     template<>
@@ -35,10 +40,18 @@ namespace std
 }
 
 /** A map of unique packet identifiers to a function that decodes the packet. */
-extern std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>)>> clientbound_packet_registry;
+extern std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
+
+// extern std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ServerboundPacket>()>> serverbound_packet_registry;
 
 template <IncomingPacket T>
-void register_packet(ClientState client_state);
+void register_clientbound_packet(ClientState client_state);
 
 /** Registers all the clientbound packets. */
 void register_clientbound_packets();
+
+template <OutgoingPacket T>
+void register_serverbound_packet(ClientState client_state, EventBus& event_bus);
+
+/** Registers all serverbound packets */
+void register_serverbound_packets(EventBus& event_bus);

@@ -6,7 +6,7 @@ class KnownPacksC2SPacket : public ServerboundPacket
 {
     public:
 
-    static const int id = 0x07;
+    static constexpr int id = 0x07;
 
     KnownPacksC2SPacket();
 

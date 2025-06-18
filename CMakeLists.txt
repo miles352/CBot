@@ -23,6 +23,8 @@ src/packets/configuration/KnownPacksC2SPacket.cpp
 src/packets/configuration/KnownPacksS2CPacket.cpp
 src/packets/configuration/FinishConfigurationS2CPacket.cpp
 src/packets/configuration/AcknowledgeFinishConfigurationC2SPacket.cpp
+src/packets/play/StartConfigurationS2CPacket.cpp
+src/packets/play/AcknowledgeConfigurationC2SPacket.cpp
 src/EventBus.cpp
 src/Bot.cpp
 )

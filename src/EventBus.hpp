@@ -10,9 +10,12 @@
 #include <optional>
 #include <string>
 #include <variant>
+#include <memory>
+
+class Bot;
 
 template <typename T>
-concept HasData = requires { typename T::data; };
+concept HasData = requires { typename T::Data; };
 
 class EventBus
 {
@@ -20,8 +23,8 @@ class EventBus
     struct EventListener
     {
         EventListener() = default;
-        EventListener(std::function<void(std::any&)> callback, const int priority, const bool once) : callback(std::move(callback)), priority(priority), once(once) {};
-        std::function<void(std::any&)> callback;
+        EventListener(std::function<void(Bot&, std::any&)> callback, const int priority, const bool once) : callback(std::move(callback)), priority(priority), once(once) {};
+        std::function<void(Bot&, std::any&)> callback;
         /** Higher numbers run before lower numbers. */
         int priority{};
         /** If the event should only run once and then be removed. */
@@ -39,8 +42,11 @@ class EventBus
     /** A map of event names to the event listeners.*/
     std::unordered_map<std::type_index, EventListenerTypes> event_listeners;
 
+    std::weak_ptr<Bot> bot{};
+
     public:
-    EventBus() = default;
+    explicit EventBus(std::shared_ptr<Bot> bot) : bot(bot) {};
+    EventBus();
 
     /** A method to add a callback when this event is fired.
      * @param callback The callback function to run when the event is emitted.
@@ -48,26 +54,26 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, typename EventType::Data>
     void on(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
-        std::function<void(std::any&)> callback_any;
+        std::function<void(Bot&, std::any&)> callback_any;
 
         // not sure if necessary, I think it prevents a crash when passing a reference to a function
         Callable cb = std::forward<Callable>(callback);
 
-        // If the callback doesn't have any params, then just call it
-        if constexpr (std::is_invocable_v<Callable>)
+        // If the callback can be called with just the bot param.
+        if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](std::any&) {
-                cb();
+            callback_any = [cb](Bot& bot, std::any&) {
+                cb(bot);
             };
         }
-        // If the callback has params, make sure it matches the EventType::data type
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        // If the callback has params, make sure it matches the EventType::Data type
+        else if constexpr (std::is_invocable_v<Callable, Bot&, typename EventType::Data>)
         {
-            callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::data>(data));
+            callback_any = [cb](Bot& bot, std::any& data) {
+                cb(bot, std::any_cast<typename EventType::Data>(data));
             };
         }
 
@@ -83,15 +89,16 @@ class EventBus
 
     /** Runs a callback when an event is fired, using a reference as the type parameter. 
      * Callbacks that run after this (lower priority) will have the modified value.
+     * @param data
      * @param callback The callback function to run when the event is emitted.
      * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string leaves the callback unnamed.
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::Data>
     void on_ref(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
-        std::function<void(std::any&)> callback_any;
+        std::function<void(Bot&, std::any&)> callback_any;
 
         Callable cb = std::forward<Callable>(callback);
 
@@ -101,10 +108,10 @@ class EventBus
                 cb();
             };
         }
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::Data>)
         {
             callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::data&>(data));
+                cb(std::any_cast<typename EventType::Data&>(data));
             };
         }
 
@@ -123,11 +130,11 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::Data>
     void once(Callable&& callback, int priority = 0)
     {
 
-        std::function<void(std::any&)> callback_any;
+        std::function<void(Bot&, std::any&)> callback_any;
 
         Callable cb = std::forward<Callable>(callback);
 
@@ -137,10 +144,10 @@ class EventBus
                 cb();
             };
         }
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::Data>)
         {
             callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::data>(data));
+                cb(std::any_cast<typename EventType::Data>(data));
             };
         }
 
@@ -153,10 +160,10 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::data>
-    void once_ref(std::function<void(typename EventType::data&)> callback, int priority = 0)
+    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::Data>
+    void once_ref(std::function<void(typename EventType::Data&)> callback, int priority = 0)
     {
-        std::function<void(std::any&)> callback_any;
+        std::function<void(Bot&, std::any&)> callback_any;
 
         Callable cb = std::forward<Callable>(callback);
 
@@ -166,10 +173,10 @@ class EventBus
                 cb();
             };
         }
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::data>)
+        else if constexpr (std::is_invocable_v<Callable, typename EventType::Data>)
         {
             callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::data&>(data));
+                cb(std::any_cast<typename EventType::Data&>(data));
             };
         }
 
@@ -180,10 +187,10 @@ class EventBus
      * @param data If the EventType has a data field, then you must specify the data to emit. If you leave it out the default constructor for the type will be called. If there is not a data field then you can call this without parameters.
      */
     template <typename EventType>
-    void emit(std::conditional_t<HasData<EventType>, typename EventType::data, std::monostate> data = {})
+    void emit(std::any data = {})
     {
         EventListenerTypes& listeners = this->event_listeners[std::type_index(typeid(EventType))];
-        std::map<int, std::vector<std::function<void(std::any&)>>, std::greater<>> callbacks;
+        std::map<int, std::vector<std::function<void(Bot&, std::any&)>>, std::greater<>> callbacks;
 
         // Collect all the callbacks into one map and sort them by priority
 
@@ -218,9 +225,14 @@ class EventBus
 
         for (auto& vec : callbacks)
         {
-            for (const std::function<void(std::any&)>& callback : vec.second)
+
+            for (const std::function<void(Bot&, std::any&)>& callback : vec.second)
             {
-                callback(data_copy);
+                // callback(data_copy);
+                if (auto p = this->bot.lock())
+                {
+                    callback(*p, data_copy);
+                }
             }
         }
     }
