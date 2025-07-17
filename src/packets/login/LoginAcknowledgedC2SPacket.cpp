@@ -2,7 +2,7 @@
 
 LoginAcknowledgedC2SPacket::LoginAcknowledgedC2SPacket()
 {
-    
+
 }
 
 std::vector<uint8_t> LoginAcknowledgedC2SPacket::encode()

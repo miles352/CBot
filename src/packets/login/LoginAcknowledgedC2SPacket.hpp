@@ -15,4 +15,9 @@ class LoginAcknowledgedC2SPacket : public ServerboundPacket
     std::vector<uint8_t> encode() override;
 
     int get_id() const override { return this->id; };
+
+    using Data = struct
+    {
+
+    };
 };

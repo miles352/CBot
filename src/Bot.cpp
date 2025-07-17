@@ -45,7 +45,7 @@ void Bot::init()
 
 void Bot::start()
 {
-    network_handler->write_packet(std::make_unique<HandshakeC2SPacket>(770, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
+    network_handler->write_packet(std::make_unique<HandshakeC2SPacket>(772, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
 
     network_handler->set_client_state(ClientState::LOGIN);
 

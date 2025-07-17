@@ -9,8 +9,9 @@
 #include <any>
 #include <optional>
 #include <string>
-#include <variant>
 #include <memory>
+
+#include "EventType.hpp"
 
 class Bot;
 
@@ -232,6 +233,7 @@ class EventBus
                 if (auto p = this->bot.lock())
                 {
                     callback(*p, data_copy);
+                    // check if data is cancelled to end loop
                 }
             }
         }

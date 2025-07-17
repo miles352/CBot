@@ -27,6 +27,8 @@ class ClientboundPacket
     // static void default_handler(Bot& bot, Data data);
     // static void default_handler(Bot& bot); is also valid
 
+
+
     protected:
     ClientboundPacket() = default;
 };
