@@ -13,5 +13,12 @@ public:
 
     std::vector<uint8_t> encode() override;
 
+    using Data = struct
+    {
+
+    };
+
+    Data data{};
+
     static void default_handler(Bot& bot);
 };

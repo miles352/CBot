@@ -15,5 +15,10 @@ class FinishConfigurationS2CPacket : public ClientboundPacket
 
     static void default_handler(Bot& bot);
 
+    using Data = struct
+    {
+
+    };
+
     int get_id() const override { return this->id; };
 };

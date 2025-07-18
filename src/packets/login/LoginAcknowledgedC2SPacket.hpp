@@ -20,4 +20,6 @@ class LoginAcknowledgedC2SPacket : public ServerboundPacket
     {
 
     };
+
+    Data data{};
 };

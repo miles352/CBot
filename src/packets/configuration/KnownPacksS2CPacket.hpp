@@ -21,7 +21,7 @@ class KnownPacksS2CPacket : public ClientboundPacket
 
     Data data{};
 
-    static void default_handler(Bot& bot, Data data);
+    static void default_handler(Bot& bot, Event<KnownPacksS2CPacket>& event);
 
     static constexpr int id = 0x0E;
 

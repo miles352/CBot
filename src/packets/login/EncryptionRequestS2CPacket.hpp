@@ -27,5 +27,5 @@ class EncryptionRequestS2CPacket : public ClientboundPacket
 
     Data data;
 
-    static void default_handler(Bot& bot, Data data);
+    static void default_handler(Bot& bot, Event<EncryptionRequestS2CPacket>& event);
 };

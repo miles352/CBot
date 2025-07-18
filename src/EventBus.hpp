@@ -11,12 +11,30 @@
 #include <string>
 #include <memory>
 
-#include "EventType.hpp"
+// #include "EventType.hpp"
 
 class Bot;
 
 template <typename T>
 concept HasData = requires { typename T::Data; };
+
+template <HasData T>
+class Event
+{
+public:
+    void cancel() { cancelled = true; }
+    typename T::Data data;
+    bool cancelled = false;
+};
+
+template <HasData T>
+class EventRef
+{
+public:
+    void cancel() { cancelled = true; }
+    typename T::Data& data;
+    bool cancelled = false;
+};
 
 class EventBus
 {
@@ -24,8 +42,8 @@ class EventBus
     struct EventListener
     {
         EventListener() = default;
-        EventListener(std::function<void(Bot&, std::any&)> callback, const int priority, const bool once) : callback(std::move(callback)), priority(priority), once(once) {};
-        std::function<void(Bot&, std::any&)> callback;
+        EventListener(std::function<bool(Bot&, std::any&)> callback, const int priority, const bool once) : callback(std::move(callback)), priority(priority), once(once) {};
+        std::function<bool(Bot&, std::any&)> callback;
         /** Higher numbers run before lower numbers. */
         int priority{};
         /** If the event should only run once and then be removed. */
@@ -55,10 +73,10 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, typename EventType::Data>
+    requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, Event<EventType>&>
     void on(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
-        std::function<void(Bot&, std::any&)> callback_any;
+        std::function<bool(Bot&, std::any&)> callback_any;
 
         // not sure if necessary, I think it prevents a crash when passing a reference to a function
         Callable cb = std::forward<Callable>(callback);
@@ -66,15 +84,18 @@ class EventBus
         // If the callback can be called with just the bot param.
         if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](Bot& bot, std::any&) {
+            callback_any = [cb](Bot& bot, std::any&) -> bool {
                 cb(bot);
+                return false;
             };
         }
         // If the callback has params, make sure it matches the EventType::Data type
-        else if constexpr (std::is_invocable_v<Callable, Bot&, typename EventType::Data>)
+        else if constexpr (std::is_invocable_v<Callable, Bot&, Event<EventType>&>)
         {
-            callback_any = [cb](Bot& bot, std::any& data) {
-                cb(bot, std::any_cast<typename EventType::Data>(data));
+            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+                Event event = Event<EventType>(std::any_cast<typename EventType::Data>(data), false);
+                cb(bot, event);
+                return event.cancelled;
             };
         }
 
@@ -96,23 +117,29 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::Data>
+    requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, EventRef<EventType>&>
     void on_ref(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
-        std::function<void(Bot&, std::any&)> callback_any;
+        std::function<bool(Bot&, std::any&)> callback_any;
 
+        // not sure if necessary, I think it prevents a crash when passing a reference to a function
         Callable cb = std::forward<Callable>(callback);
 
-        if constexpr (std::is_invocable_v<Callable>)
+        // If the callback can be called with just the bot param.
+        if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](std::any&) {
-                cb();
+            callback_any = [cb](Bot& bot, std::any&) -> bool {
+                cb(bot);
+                return false;
             };
         }
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::Data>)
+        // If the callback has params, make sure it matches the EventType::Data type
+        else if constexpr (std::is_invocable_v<Callable, Bot&, EventRef<EventType>&>)
         {
-            callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::Data&>(data));
+            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+                EventRef event = EventRef<EventType>(std::any_cast<typename EventType::Data&>(data), false);
+                cb(bot, event);
+                return event.cancelled;
             };
         }
 
@@ -131,24 +158,29 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::Data>
+    requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, Event<EventType>&>
     void once(Callable&& callback, int priority = 0)
     {
+        std::function<bool(Bot&, std::any&)> callback_any;
 
-        std::function<void(Bot&, std::any&)> callback_any;
-
+        // not sure if necessary, I think it prevents a crash when passing a reference to a function
         Callable cb = std::forward<Callable>(callback);
 
-        if constexpr (std::is_invocable_v<Callable>)
+        // If the callback can be called with just the bot param.
+        if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](std::any&) {
-                cb();
+            callback_any = [cb](Bot& bot, std::any&) -> bool {
+                cb(bot);
+                return false;
             };
         }
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::Data>)
+        // If the callback has params, make sure it matches the EventType::Data type
+        else if constexpr (std::is_invocable_v<Callable, Bot&, Event<EventType>&>)
         {
-            callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::Data>(data));
+            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+                Event event = Event<EventType>(std::any_cast<typename EventType::Data>(data), false);
+                cb(bot, event);
+                return event.cancelled;
             };
         }
 
@@ -161,23 +193,29 @@ class EventBus
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
     template <typename EventType, typename Callable>
-    requires std::invocable<Callable> || std::invocable<Callable, typename EventType::Data>
-    void once_ref(std::function<void(typename EventType::Data&)> callback, int priority = 0)
+    requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, EventRef<EventType>&>
+    void once_ref(Callable&& callback, int priority = 0)
     {
-        std::function<void(Bot&, std::any&)> callback_any;
+        std::function<bool(Bot&, std::any&)> callback_any;
 
+        // not sure if necessary, I think it prevents a crash when passing a reference to a function
         Callable cb = std::forward<Callable>(callback);
 
-        if constexpr (std::is_invocable_v<Callable>)
+        // If the callback can be called with just the bot param.
+        if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](std::any&) {
-                cb();
+            callback_any = [cb](Bot& bot, std::any&) -> bool {
+                cb(bot);
+                return false;
             };
         }
-        else if constexpr (std::is_invocable_v<Callable, typename EventType::Data>)
+        // If the callback has params, make sure it matches the EventType::Data type
+        else if constexpr (std::is_invocable_v<Callable, Bot&, EventRef<EventType>&>)
         {
-            callback_any = [cb](std::any& data) {
-                cb(std::any_cast<typename EventType::Data&>(data));
+            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+                EventRef event = EventRef<EventType>(std::any_cast<typename EventType::Data&>(data), false);
+                cb(bot, event);
+                return event.cancelled;
             };
         }
 
@@ -187,11 +225,11 @@ class EventBus
     /** Emits an event to all listeners of that event, with the specified data.
      * @param data If the EventType has a data field, then you must specify the data to emit. If you leave it out the default constructor for the type will be called. If there is not a data field then you can call this without parameters.
      */
-    template <typename EventType>
-    void emit(std::any data = {})
+    template <HasData EventType>
+    void emit(typename EventType::Data data = {})
     {
         EventListenerTypes& listeners = this->event_listeners[std::type_index(typeid(EventType))];
-        std::map<int, std::vector<std::function<void(Bot&, std::any&)>>, std::greater<>> callbacks;
+        std::map<int, std::vector<std::function<bool(Bot&, std::any&)>>, std::greater<>> callbacks;
 
         // Collect all the callbacks into one map and sort them by priority
 
@@ -227,13 +265,14 @@ class EventBus
         for (auto& vec : callbacks)
         {
 
-            for (const std::function<void(Bot&, std::any&)>& callback : vec.second)
+            for (const std::function<bool(Bot&, std::any&)>& callback : vec.second)
             {
-                // callback(data_copy);
                 if (auto p = this->bot.lock())
                 {
-                    callback(*p, data_copy);
-                    // check if data is cancelled to end loop
+                    if (callback(*p, data_copy)) // true if cancelled
+                    {
+                        return;
+                    }
                 }
             }
         }

@@ -12,5 +12,12 @@ class KnownPacksC2SPacket : public ServerboundPacket
 
     std::vector<uint8_t> encode() override;
 
+    using Data = struct
+    {
+
+    };
+
+    Data data{};
+
     int get_id() const override { return this->id; };
 };

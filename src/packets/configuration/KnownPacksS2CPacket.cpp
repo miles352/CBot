@@ -6,13 +6,9 @@
 KnownPacksS2CPacket::KnownPacksS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
     event_bus.emit<KnownPacksS2CPacket>(this->data);
-    // need to be typed and be generic / cancellable
-
-    // emit should be typed
-    // .on should take the generic struct containing the typed data and the cancel method
 }
 
-void KnownPacksS2CPacket::default_handler(Bot& bot, Data data)
+void KnownPacksS2CPacket::default_handler(Bot& bot, Event<KnownPacksS2CPacket>& event)
 {
-    bot.network_handler->write_packet(std::make_unique<KnownPacksC2SPacket>());
+    bot.network_handler->write_packet(KnownPacksC2SPacket{});
 }

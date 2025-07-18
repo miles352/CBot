@@ -45,11 +45,11 @@ void Bot::init()
 
 void Bot::start()
 {
-    network_handler->write_packet(std::make_unique<HandshakeC2SPacket>(772, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
+    network_handler->write_packet(HandshakeC2SPacket(772, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
 
     network_handler->set_client_state(ClientState::LOGIN);
 
-    network_handler->write_packet(std::make_unique<LoginStartC2SPacket>("0x658", UUID));
+    network_handler->write_packet(LoginStartC2SPacket("0x658", UUID));
 
     while (true)
     {

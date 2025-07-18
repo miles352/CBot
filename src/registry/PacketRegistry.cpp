@@ -1,5 +1,6 @@
 #include "PacketRegistry.hpp"
 
+#include "packets/configuration/AcknowledgeFinishConfigurationC2SPacket.hpp"
 #include "packets/login/EncryptionRequestS2CPacket.hpp"
 #include "packets/login/SetCompressionS2CPacket.hpp"
 #include "packets/login/LoginSuccessS2CPacket.hpp"
@@ -32,6 +33,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<LoginAcknowledgedC2SPacket>(ClientState::LOGIN, event_bus);
 
     register_serverbound_packet<KnownPacksC2SPacket>(ClientState::CONFIGURATION, event_bus);
+    register_serverbound_packet<AcknowledgeFinishConfigurationC2SPacket>(ClientState::PLAY, event_bus);
 
     register_serverbound_packet<AcknowledgeConfigurationC2SPacket>(ClientState::PLAY, event_bus);
 }

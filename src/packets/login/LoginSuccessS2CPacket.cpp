@@ -9,9 +9,10 @@ LoginSuccessS2CPacket::LoginSuccessS2CPacket(std::vector<uint8_t> data, EventBus
     event_bus.emit<LoginSuccessS2CPacket>(this->data);
 }
 
-void LoginSuccessS2CPacket::default_handler(Bot& bot, Data data)
+void LoginSuccessS2CPacket::default_handler(Bot& bot, Event<LoginSuccessS2CPacket>& event)
 {
-    bot.network_handler->write_packet(std::make_unique<LoginAcknowledgedC2SPacket>());
+    printf("Default login success handler\n");
+    bot.network_handler->write_packet(LoginAcknowledgedC2SPacket{});
 
     bot.network_handler->set_client_state(ClientState::CONFIGURATION);
 }

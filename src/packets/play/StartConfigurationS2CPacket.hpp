@@ -11,5 +11,10 @@ public:
 
     StartConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
 
+    using Data = struct
+    {
+
+    };
+
     static void default_handler(Bot& bot);
 };

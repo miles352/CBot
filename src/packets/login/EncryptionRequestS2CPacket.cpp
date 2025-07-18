@@ -21,8 +21,9 @@ EncryptionRequestS2CPacket::EncryptionRequestS2CPacket(std::vector<uint8_t> byte
     event_bus.emit<EncryptionRequestS2CPacket>(this->data);
 }
 
-void EncryptionRequestS2CPacket::default_handler(Bot& bot, Data data)
+void EncryptionRequestS2CPacket::default_handler(Bot& bot, Event<EncryptionRequestS2CPacket>& event)
 {
+    Data data = event.data;
     unsigned char shared_secret[16];
     if (RAND_bytes(shared_secret, 16) <= 0)
     {
@@ -60,7 +61,7 @@ void EncryptionRequestS2CPacket::default_handler(Bot& bot, Data data)
     RSA_public_encrypt(16, shared_secret, encrypted_secret.data(), rsa, RSA_PKCS1_PADDING);
     RSA_public_encrypt(data.verify_token.size(), data.verify_token.data(), encrypted_token.data(), rsa, RSA_PKCS1_PADDING);
 
-    bot.network_handler->write_packet(std::make_unique<EncryptionResponseC2SPacket>(encrypted_secret, encrypted_token));
+    bot.network_handler->write_packet(EncryptionResponseC2SPacket(encrypted_secret, encrypted_token));
 
     bot.network_handler->enable_encryption(shared_secret);
     printf("Enabled encryption\n");

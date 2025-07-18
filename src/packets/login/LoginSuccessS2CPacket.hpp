@@ -20,7 +20,7 @@ class LoginSuccessS2CPacket : public ClientboundPacket
 
     Data data{};
 
-    static void default_handler(Bot& bot, Data data);
+    static void default_handler(Bot& bot, Event<LoginSuccessS2CPacket>& event);
 
     static constexpr int id = 0x02;
 

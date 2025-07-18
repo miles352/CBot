@@ -22,5 +22,5 @@ class SetCompressionS2CPacket : public ClientboundPacket
 
     Data data{};
 
-    static void default_handler(Bot& bot, Data data);
+    static void default_handler(Bot& bot, Event<SetCompressionS2CPacket>& event);
 };
