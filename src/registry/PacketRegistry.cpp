@@ -10,6 +10,7 @@
 #include "packets/login/EncryptionResponseC2SPacket.hpp"
 #include "packets/login/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/play/AcknowledgeConfigurationC2SPacket.hpp"
+#include "packets/play/ConfirmTeleportationC2SPacket.hpp"
 #include "packets/play/KeepAliveS2CPacket.hpp"
 #include "packets/play/StartConfigurationS2CPacket.hpp"
 #include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
@@ -40,6 +41,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<AcknowledgeFinishConfigurationC2SPacket>(ClientState::CONFIGURATION, event_bus);
 
     register_serverbound_packet<AcknowledgeConfigurationC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<ConfirmTeleportationC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>

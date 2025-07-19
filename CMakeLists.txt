@@ -28,6 +28,7 @@ src/packets/play/AcknowledgeConfigurationC2SPacket.cpp
 src/packets/play/KeepAliveS2CPacket.cpp
 src/packets/play/KeepAliveC2SPacket.cpp
 src/packets/play/SynchronizePlayerPositionS2CPacket.cpp
+src/packets/play/ConfirmTeleportationC2SPacket.cpp
 src/EventBus.cpp
 src/Bot.cpp
 )
