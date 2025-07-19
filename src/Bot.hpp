@@ -18,7 +18,8 @@ public:
     std::unique_ptr<EventBus> event_bus;
     std::unique_ptr<NetworkHandler> network_handler;
 
-    int ticks;
+    /** Returns the number of ticks that have passed since the bot was started */
+    int get_ticks() const;
 
     // TODO: Set this when authenticating with microsoft
     const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";
@@ -29,6 +30,8 @@ private:
     void tick_loop();
 
     void packet_read_loop();
+
+    int ticks;
 
     std::mutex loop_mutex;
 

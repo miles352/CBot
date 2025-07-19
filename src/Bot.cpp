@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "MicrosoftAuth.hpp"
 #include "conversions/Utils.hpp"
+#include "events/TickEvent.hpp"
 #include "packets/configuration/AcknowledgeFinishConfigurationC2SPacket.hpp"
 #include "packets/configuration/FinishConfigurationS2CPacket.hpp"
 #include "packets/configuration/KnownPacksC2SPacket.hpp"
@@ -47,6 +48,11 @@ void Bot::init()
     register_serverbound_packets(*this->event_bus);
 }
 
+int Bot::get_ticks() const
+{
+    return this->ticks;
+}
+
 void Bot::start()
 {
     network_handler->write_packet(HandshakeC2SPacket(772, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
@@ -84,6 +90,8 @@ void Bot::packet_read_loop()
     }
 }
 
+
+
 void Bot::tick_loop()
 {
     while (true)
@@ -91,6 +99,8 @@ void Bot::tick_loop()
         std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
 
         std::unique_lock<std::mutex> lock(this->loop_mutex);
+
+        this->event_bus->emit<TickEvent>();
 
         for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
         {
@@ -117,7 +127,6 @@ void Bot::tick_loop()
         std::this_thread::sleep_until(current_time + std::chrono::milliseconds(50));
 
         this->ticks++;
-        printf("Tick %d\n", this->ticks);
     }
 
 }

@@ -11,7 +11,6 @@ LoginSuccessS2CPacket::LoginSuccessS2CPacket(std::vector<uint8_t> data, EventBus
 
 void LoginSuccessS2CPacket::default_handler(Bot& bot, Event<LoginSuccessS2CPacket>& event)
 {
-    printf("Default login success handler\n");
     bot.network_handler->write_packet(LoginAcknowledgedC2SPacket{});
 
     bot.network_handler->set_client_state(ClientState::CONFIGURATION);

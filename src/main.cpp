@@ -1,6 +1,7 @@
 #include "conversions/MCString.hpp"
 
 #include "Bot.hpp"
+#include "events/TickEvent.hpp"
 #include "packets/configuration/KnownPacksC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
 #include "packets/login/LoginSuccessS2CPacket.hpp"
@@ -21,6 +22,10 @@ int main()
 
     bot->event_bus->on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
        printf("Position: %f %f %f\n", event.data.x, event.data.y, event.data.z);
+    });
+
+    bot->event_bus->on<TickEvent>([](Bot& bot) {
+        printf("Tick %d\n", bot.get_ticks());
     });
 
     bot->start();
