@@ -93,19 +93,7 @@ int NetworkHandler::read_raw(void* buffer, int size) const
     return bytes_read;
 }
 
-std::unique_ptr<ClientboundPacket> NetworkHandler::read_packet()
-{
-    while (true)
-    {
-        std::optional<std::unique_ptr<ClientboundPacket>> packet = this->attempt_read_packet();
-        if (packet.has_value())
-        {
-            return std::move(packet.value());
-        }
-    }
-}
-
-std::optional<std::unique_ptr<ClientboundPacket>> NetworkHandler::attempt_read_packet()
+RawPacket NetworkHandler::read_packet()
 {
     int packet_size = this->read_varint(nullptr);
 
@@ -131,7 +119,7 @@ std::optional<std::unique_ptr<ClientboundPacket>> NetworkHandler::attempt_read_p
             packet_id = this->read_varint(&packet_id_bytes);
             remaining_bytes = packet_size - data_length_bytes - packet_id_bytes;
         }
-    } 
+    }
     else // compression not enabled
     {
         int packet_id_bytes;
@@ -145,7 +133,7 @@ std::optional<std::unique_ptr<ClientboundPacket>> NetworkHandler::attempt_read_p
     do
     { // the full packet might not be read at once, so we loop until we read it all
         total_read_bytes += this->read_raw(data_array.data() + total_read_bytes, remaining_bytes - total_read_bytes);
-    } 
+    }
     while (total_read_bytes < remaining_bytes);
 
     std::vector<uint8_t> data = data_array;
@@ -165,20 +153,8 @@ std::optional<std::unique_ptr<ClientboundPacket>> NetworkHandler::attempt_read_p
         data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - packet_id_bytes);
     }
 
-    const PacketRegistryKey key = std::make_pair(this->client_state, packet_id);
-
-    if (!clientbound_packet_registry.contains(key))
-    {
-        printf("Cannot find packet matching id: 0x%02x\n", packet_id);
-        return std::nullopt;
-    }
-
-    const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
-
-    return packet_ptr(data, this->event_bus);
+    return RawPacket(packet_id, data);
 }
-
-
 
 void NetworkHandler::enable_encryption(unsigned char (&shared_secret)[16])
 {

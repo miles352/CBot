@@ -13,9 +13,14 @@
 #include "EventBus.hpp"
 #include "conversions/VarInt.hpp"
 
+struct RawPacket
+{
+    int id;
+    std::vector<uint8_t> data;
+};
+
 class NetworkHandler
 {
-
     int sockfd;
     
     bool use_encryption;
@@ -27,6 +32,7 @@ class NetworkHandler
     int compression_threshold{};
 
     public:
+
     ClientState client_state; // TODO: make private
     /** The constructor, which creates the socket connection using the specified server ip and port. */
     NetworkHandler(std::string server_ip, std::string server_port, EventBus& event_bus);
@@ -47,14 +53,14 @@ class NetworkHandler
      */
     int read_raw(void* buffer, int size) const;
 
-    /** Reads packets until a valid one is read, and returns the packet. */
-    std::unique_ptr<ClientboundPacket> read_packet();
+    /** Blocks the thread until a packet is read. */
+    RawPacket read_packet();
 
-    template <typename T>
-    requires std::is_base_of_v<ClientboundPacket, T> || std::is_base_of_v<ServerboundPacket, T>
-    void write_packet(T packet)
+    template <typename C2SPacket>
+    requires std::is_base_of_v<ServerboundPacket, C2SPacket>
+    void write_packet(C2SPacket packet)
     {
-        this->event_bus.once<T>([this, &packet](Bot& bot, Event<T>& event) {
+        this->event_bus.once<C2SPacket>([this, &packet](Bot& bot, Event<C2SPacket>& event) {
             std::vector<uint8_t> packet_id = VarInt::from_int(packet.get_id());
             packet.data = event.data;
             std::vector<uint8_t> packet_data = packet.encode();
@@ -100,13 +106,13 @@ class NetworkHandler
             this->write_raw(full_packet.data(), full_packet.size());
         });
 
-        if constexpr (HasData<T> && requires { packet.data; })
+        if constexpr (HasData<C2SPacket> && requires { packet.data; })
         {
-            this->event_bus.emit<T>(packet.data);
+            this->event_bus.emit<C2SPacket>(packet.data);
         }
         else
         {
-            this->event_bus.emit<T>();
+            this->event_bus.emit<C2SPacket>();
         }
     }
 
@@ -119,10 +125,6 @@ class NetworkHandler
     int read_varint(int *bytes_read) const;
 
 private:
-    /** Reads a packet, and optionally returns it if it is a known packet type. */
-    std::optional<std::unique_ptr<ClientboundPacket>> attempt_read_packet();
-
-
 
     EventBus& event_bus;
 };

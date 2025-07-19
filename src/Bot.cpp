@@ -1,5 +1,7 @@
 #include "Bot.hpp"
 
+#include <mutex>
+#include <thread>
 #include <openssl/rand.h>
 
 #include "config.hpp"
@@ -32,6 +34,7 @@ std::shared_ptr<Bot> Bot::create(const std::string &server_ip, const std::string
 Bot::Bot(const std::string& server_ip, const std::string& server_port):
     server_ip(server_ip), server_port(server_port)
 {
+    this->ticks = 0;
     // Do authentication
 }
 
@@ -52,11 +55,73 @@ void Bot::start()
 
     network_handler->write_packet(LoginStartC2SPacket("0x658", UUID));
 
+    std::thread packet_thread(&Bot::packet_read_loop, this);
+    std::thread tick_thread(&Bot::tick_loop, this);
+
+    packet_thread.join();
+    tick_thread.join();
+}
+
+void Bot::packet_read_loop()
+{
     while (true)
     {
-        printf("\n");
-        std::unique_ptr<ClientboundPacket> read_packet = network_handler->read_packet();
+        RawPacket raw_packet = network_handler->read_packet();
 
-        printf("Received packet id 0x%02x with data size %d.\n", read_packet->get_id(), read_packet->size);
+        std::lock_guard<std::mutex> lock(this->loop_mutex);
+
+        // if packet is set compression we need to instantly handle it before reading next packets
+        if (raw_packet.id == 0x03 && this->network_handler->client_state == ClientState::LOGIN)
+        {
+            const PacketRegistryKey key = std::make_pair(this->network_handler->client_state, raw_packet.id);
+            const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
+            packet_ptr(raw_packet.data, *this->event_bus);
+        }
+        else
+        {
+            this->packets_to_process.emplace(raw_packet);
+        }
     }
 }
+
+void Bot::tick_loop()
+{
+    while (true)
+    {
+        std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
+
+        std::unique_lock<std::mutex> lock(this->loop_mutex);
+
+        for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
+        {
+            // printf("Read packet!\n");
+            RawPacket& raw_packet = this->packets_to_process.front();
+
+            const PacketRegistryKey key = std::make_pair(this->network_handler->client_state, raw_packet.id);
+
+            if (!clientbound_packet_registry.contains(key))
+            {
+                printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
+                continue;
+            }
+
+            const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
+
+            printf("Received packet id 0x%02x\n", raw_packet.id);
+
+            packet_ptr(raw_packet.data, *this->event_bus);
+        }
+
+        lock.unlock();
+
+        std::this_thread::sleep_until(current_time + std::chrono::milliseconds(50));
+
+        this->ticks++;
+        printf("Tick %d\n", this->ticks);
+    }
+
+}
+
+
+
+
