@@ -11,8 +11,6 @@
 #include <string>
 #include <memory>
 
-// #include "EventType.hpp"
-
 class Bot;
 
 template <typename T>

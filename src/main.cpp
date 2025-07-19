@@ -5,6 +5,7 @@
 #include "packets/configuration/KnownPacksC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
 #include "packets/login/LoginSuccessS2CPacket.hpp"
+#include "packets/play/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
 
 
@@ -26,6 +27,7 @@ int main()
 
     bot->event_bus->on<TickEvent>([](Bot& bot) {
         printf("Tick %d\n", bot.get_ticks());
+        bot.network_handler->write_packet(SetPlayerRotationC2SPacket(69, 88, false, false));
     });
 
     bot->start();

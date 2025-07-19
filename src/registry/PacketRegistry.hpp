@@ -43,10 +43,10 @@ namespace std
 extern std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
 
 template <IncomingPacket T>
-void register_clientbound_packet(ClientState client_state);
+void register_clientbound_packet(ClientState client_state, EventBus& event_bus);
 
 /** Registers all the clientbound packets. */
-void register_clientbound_packets();
+void register_clientbound_packets(EventBus& event_bus);
 
 template <OutgoingPacket T>
 void register_serverbound_packet(ClientState client_state, EventBus& event_bus);

@@ -1,13 +1,18 @@
 #include "KeepAliveS2CPacket.hpp"
 
+#include "Bot.hpp"
+#include "KeepAliveC2SPacket.hpp"
+#include "conversions/StandardTypes.hpp"
+
 KeepAliveS2CPacket::KeepAliveS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
 {
-    printf("Keep Alive Packet\n");
+    uint8_t* ptr = data.data();
+    this->data.keep_alive_id = StandardTypes::from_array<long>(ptr);
 
     event_bus.emit<KeepAliveS2CPacket>(this->data);
 }
 
 void KeepAliveS2CPacket::default_handler(Bot &bot, Event<KeepAliveS2CPacket> &event)
 {
-    printf("Received keep alive!\n");
+    bot.network_handler->write_packet(KeepAliveC2SPacket(event.data.keep_alive_id));
 }

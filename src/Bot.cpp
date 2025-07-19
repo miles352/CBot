@@ -44,7 +44,7 @@ void Bot::init()
     this->event_bus = std::make_unique<EventBus>(this->shared_from_this());
     // TODO: Change to pass shared/weak ptr
     this->network_handler = std::make_unique<NetworkHandler>(this->server_ip, this->server_port, *this->event_bus);
-    register_clientbound_packets();
+    register_clientbound_packets(*this->event_bus);
     register_serverbound_packets(*this->event_bus);
 }
 
@@ -83,6 +83,10 @@ void Bot::packet_read_loop()
             const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
             packet_ptr(raw_packet.data, *this->event_bus);
         }
+        else if (raw_packet.id == 0x1C && this->network_handler->client_state == ClientState::PLAY) // disconnect packet
+        {
+
+        }
         else
         {
             this->packets_to_process.emplace(raw_packet);
@@ -100,7 +104,11 @@ void Bot::tick_loop()
 
         std::unique_lock<std::mutex> lock(this->loop_mutex);
 
-        this->event_bus->emit<TickEvent>();
+        if (this->network_handler->client_state == ClientState::PLAY)
+        {
+            this->event_bus->emit<TickEvent>();
+        }
+
 
         for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
         {

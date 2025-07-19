@@ -21,7 +21,7 @@ class ClientboundPacket
     //       Whatever data that gets decoded from the bytes
     // };
 
-    // Data data;
+    // Data data{};
 
     // Optional default handler for the packet:
     // static void default_handler(Bot& bot, Event<PacketName>& event);

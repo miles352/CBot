@@ -79,6 +79,10 @@ void NetworkHandler::write_raw(const void* data, int size)
 int NetworkHandler::read_raw(void* buffer, int size) const
 {
     int bytes_read = read(this->sockfd, buffer, size);
+    if (bytes_read <= 0)
+    {
+        printf("Connection closed!\n");
+    }
     if (this->use_encryption)
     {
         int out_len;
@@ -152,6 +156,8 @@ RawPacket NetworkHandler::read_packet()
         packet_id = VarInt::from_array(uncompressed_ptr, &packet_id_bytes);
         data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - packet_id_bytes);
     }
+
+    // printf("Cannot find packet matching id: 0x%02x\n", packet_id);
 
     return RawPacket(packet_id, data);
 }
