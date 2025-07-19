@@ -5,6 +5,7 @@
 #include "conversions/VarInt.hpp"
 #include "conversions/MCString.hpp"
 #include "conversions/Utils.hpp"
+#include "conversions/StandardTypes.hpp"
 
 #include <openssl/sha.h>
 
@@ -54,6 +55,21 @@ void test_SHA1_formatting()
     SHA1(test3, sizeof(test3) - 1, hash);
     converted = Utils::SHA1_to_formatted(hash);
     assert(converted == "88e16a1019277b15d58faf0541e11910eb756f6");
+}
+
+void test_standard_type_conversions()
+{
+    int number = 129999995;
+    std::vector<uint8_t> vec = StandardTypes::to_array<int>(number);
+    uint8_t* vec_ptr = vec.data();
+    int converted = StandardTypes::from_array<int>(vec_ptr);
+    assert(converted == number);
+
+    float fraction = 3.14159265;
+    std::vector<uint8_t> vec2 = StandardTypes::to_array<float>(fraction);
+    uint8_t* vec2_ptr = vec2.data();
+    float converted2 = StandardTypes::from_array<float>(vec2_ptr);
+    assert(converted2 == fraction);
 }
 
 

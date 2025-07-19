@@ -21,4 +21,17 @@ namespace StandardTypes
         if (bytes_read != nullptr) *bytes_read = size;
         return result;
     }
+
+    template <typename T>
+    std::vector<uint8_t> to_array(T input)
+    {
+        constexpr int size = sizeof(T);
+        std::vector<uint8_t> result(size);
+        for (int i = 0; i < size; i++)
+        {
+            result[size - i - 1] = static_cast<uint8_t>(*(&input + i));
+        }
+
+        return result;
+    }
 }
