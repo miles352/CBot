@@ -59,7 +59,7 @@ void test_SHA1_formatting()
 
 void test_standard_type_conversions()
 {
-    int number = 129999995;
+    int number = 154545545;
     std::vector<uint8_t> vec = StandardTypes::to_array<int>(number);
     uint8_t* vec_ptr = vec.data();
     int converted = StandardTypes::from_array<int>(vec_ptr);
@@ -70,6 +70,18 @@ void test_standard_type_conversions()
     uint8_t* vec2_ptr = vec2.data();
     float converted2 = StandardTypes::from_array<float>(vec2_ptr);
     assert(converted2 == fraction);
+
+    uint8_t byte = 12;
+    std::vector<uint8_t> vec3 = StandardTypes::to_array<uint8_t>(byte);
+    uint8_t* vec3_ptr = vec3.data();
+    uint8_t converted3 = StandardTypes::from_array<uint8_t>(vec3_ptr);
+    assert(converted3 == byte);
+
+    long big_num = 398726378263;
+    std::vector<uint8_t> vec4 = StandardTypes::to_array<long>(big_num);
+    uint8_t* vec4_ptr = vec4.data();
+    long converted4 = StandardTypes::from_array<long>(vec4_ptr);
+    assert(converted4 == big_num);
 }
 
 
@@ -77,5 +89,6 @@ int main() {
     test_VarInt();
     test_MCString();
     test_SHA1_formatting();
+    test_standard_type_conversions();
     return 0;
 }

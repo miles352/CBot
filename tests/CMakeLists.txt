@@ -21,6 +21,8 @@ tests.cpp
 ../src/packets/play/SynchronizePlayerPositionS2CPacket.cpp
 ../src/packets/play/ConfirmTeleportationC2SPacket.cpp
 ../src/packets/play/SetPlayerRotationC2SPacket.cpp
+../src/packets/play/PingS2CPacket.cpp
+../src/packets/play/PongC2SPacket.cpp
 ../src/events/TickEvent.cpp
 ../src/EventBus.cpp
 ../src/Bot.cpp

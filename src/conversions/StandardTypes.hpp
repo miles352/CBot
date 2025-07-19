@@ -27,9 +27,11 @@ namespace StandardTypes
     {
         constexpr int size = sizeof(T);
         std::vector<uint8_t> result(size);
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(&input);
+
         for (int i = 0; i < size; i++)
         {
-            result[size - i - 1] = static_cast<uint8_t>(*(&input + i));
+            result[size - i - 1] = *(ptr + i);
         }
 
         return result;
