@@ -1,6 +1,10 @@
 #include "conversions/MCString.hpp"
 
 #include "Bot.hpp"
+#include "packets/configuration/KnownPacksC2SPacket.hpp"
+#include "packets/login/LoginStartC2SPacket.hpp"
+#include "packets/login/LoginSuccessS2CPacket.hpp"
+#include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -14,6 +18,10 @@ int main()
 {
 
     std::shared_ptr<Bot> bot = Bot::create(SERVER_IP, SERVER_PORT);
+
+    bot->event_bus->on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
+       printf("Position: %f %f %f\n", event.data.x, event.data.y, event.data.z);
+    });
 
     bot->start();
 }

@@ -16,6 +16,7 @@
 #include "packets/login/LoginStartC2SPacket.hpp"
 #include "packets/login/LoginSuccessS2CPacket.hpp"
 #include "packets/login/SetCompressionS2CPacket.hpp"
+#include "packets/play/KeepAliveC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
 
 

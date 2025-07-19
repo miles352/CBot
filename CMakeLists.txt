@@ -25,6 +25,9 @@ src/packets/configuration/FinishConfigurationS2CPacket.cpp
 src/packets/configuration/AcknowledgeFinishConfigurationC2SPacket.cpp
 src/packets/play/StartConfigurationS2CPacket.cpp
 src/packets/play/AcknowledgeConfigurationC2SPacket.cpp
+src/packets/play/KeepAliveS2CPacket.cpp
+src/packets/play/KeepAliveC2SPacket.cpp
+src/packets/play/SynchronizePlayerPositionS2CPacket.cpp
 src/EventBus.cpp
 src/Bot.cpp
 )

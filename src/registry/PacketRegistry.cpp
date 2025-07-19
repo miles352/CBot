@@ -10,7 +10,9 @@
 #include "packets/login/EncryptionResponseC2SPacket.hpp"
 #include "packets/login/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/play/AcknowledgeConfigurationC2SPacket.hpp"
+#include "packets/play/KeepAliveS2CPacket.hpp"
 #include "packets/play/StartConfigurationS2CPacket.hpp"
+#include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
 
 
 std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
@@ -24,7 +26,9 @@ void register_clientbound_packets()
     register_clientbound_packet<KnownPacksS2CPacket>(ClientState::CONFIGURATION);
     register_clientbound_packet<FinishConfigurationS2CPacket>(ClientState::CONFIGURATION);
 
-    register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::CONFIGURATION);
+    register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY);
+    register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY);
+    register_clientbound_packet<SynchronizePlayerPositionS2CPacket>(ClientState::PLAY);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
@@ -33,7 +37,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<LoginAcknowledgedC2SPacket>(ClientState::LOGIN, event_bus);
 
     register_serverbound_packet<KnownPacksC2SPacket>(ClientState::CONFIGURATION, event_bus);
-    register_serverbound_packet<AcknowledgeFinishConfigurationC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<AcknowledgeFinishConfigurationC2SPacket>(ClientState::CONFIGURATION, event_bus);
 
     register_serverbound_packet<AcknowledgeConfigurationC2SPacket>(ClientState::PLAY, event_bus);
 }

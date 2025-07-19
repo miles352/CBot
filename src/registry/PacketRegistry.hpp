@@ -42,8 +42,6 @@ namespace std
 /** A map of unique packet identifiers to a function that decodes the packet. */
 extern std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
 
-// extern std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ServerboundPacket>()>> serverbound_packet_registry;
-
 template <IncomingPacket T>
 void register_clientbound_packet(ClientState client_state);
 
