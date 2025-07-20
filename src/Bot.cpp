@@ -128,13 +128,13 @@ void Bot::tick_loop()
 
             if (!clientbound_packet_registry.contains(key))
             {
-                printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
+                // printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
                 continue;
             }
 
             const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
 
-            printf("Received packet id 0x%02x\n", raw_packet.id);
+            // printf("Received packet id 0x%02x\n", raw_packet.id);
 
             packet_ptr(raw_packet.data, *this->event_bus);
         }

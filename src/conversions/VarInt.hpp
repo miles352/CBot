@@ -10,9 +10,10 @@ constexpr uint8_t CONTINUE_BIT = 0b10000000;
 
 class NetworkHandler;
 
-namespace VarInt
+class VarInt
 {
-    inline std::vector<uint8_t> from_int(int number)
+public:
+    static std::vector<uint8_t> from_int(int number)
     {
         std::vector<uint8_t> data;
         while (true)
@@ -29,7 +30,7 @@ namespace VarInt
         }
     }
 
-    inline int from_array(uint8_t*& array, int* bytes_read)
+    static int from_array(uint8_t*& array, int* bytes_read = nullptr)
     {
         int num = 0;
         uint8_t byte = 0;

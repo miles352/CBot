@@ -7,6 +7,7 @@
 
 namespace PrefixedArray
 {
+    /** Converts an array of fixed size elements of type T, prefixed with a VarInt that gives the size of the array. */
     template<typename T>
     static std::vector<T> from_array(uint8_t*& array)
     {
@@ -20,6 +21,23 @@ namespace PrefixedArray
             memcpy(&t, array, type_size);
             res.push_back(t);
             array += type_size;
+        }
+        return res;
+    }
+
+    /** Converts an array of variably sized elements of type T, prefixed with a VarInt that gives the size of the array
+     * T must be a class with a <code>type</code> type defined and a <code>from_array</code> method defined.
+     */
+    template<typename T>
+    static std::vector<typename T::type> from_array_variably_sized(uint8_t*& array)
+    {
+        int arr_length = VarInt::from_array(array, nullptr);
+        std::vector<typename T::type> res;
+
+        for (int i = 0; i < arr_length; i++)
+        {
+            T t;
+            res.push_back(T::from_array(array));
         }
         return res;
     }

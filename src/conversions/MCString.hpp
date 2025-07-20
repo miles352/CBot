@@ -5,8 +5,10 @@
 
 #include <string>
 
-namespace MCString
+class MCString
 {
+public:
+    using type = std::string;
     /** Converts an ASCII ONLY string to a VarInt length prefixed utf-8 string */
     static std::vector<std::uint8_t> from_string(const std::string& str)
     {

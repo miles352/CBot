@@ -27,7 +27,7 @@ int main()
     });
 
     bot->event_bus->on<TickEvent>([](Bot& bot) {
-        printf("Tick %d\n", bot.get_ticks());
+        // printf("Tick %d\n", bot.get_ticks());
         // bot.network_handler->write_packet(SetPlayerRotationC2SPacket(69, 88, false, false));
         bot.network_handler->write_packet(SwingArmC2SPacket());
     });

@@ -13,6 +13,7 @@
 #include "packets/play/ConfirmTeleportationC2SPacket.hpp"
 #include "packets/play/KeepAliveC2SPacket.hpp"
 #include "packets/play/KeepAliveS2CPacket.hpp"
+#include "packets/play/LoginS2CPacket.hpp"
 #include "packets/play/PingS2CPacket.hpp"
 #include "packets/play/PongC2SPacket.hpp"
 #include "packets/play/SetPlayerRotationC2SPacket.hpp"
@@ -36,6 +37,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SynchronizePlayerPositionS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PingS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<LoginS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
