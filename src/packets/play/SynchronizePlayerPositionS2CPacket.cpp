@@ -10,13 +10,13 @@ SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(std::vect
     uint8_t* data_ptr = data.data();
     this->data.teleport_id = VarInt::from_array(data_ptr, nullptr);
 
-    this->data.x = StandardTypes::from_array<double>(data_ptr);
-    this->data.y = StandardTypes::from_array<double>(data_ptr);
-    this->data.z = StandardTypes::from_array<double>(data_ptr);
+    this->data.position.x = StandardTypes::from_array<double>(data_ptr);
+    this->data.position.y = StandardTypes::from_array<double>(data_ptr);
+    this->data.position.z = StandardTypes::from_array<double>(data_ptr);
 
-    this->data.velocity_x = StandardTypes::from_array<double>(data_ptr);
-    this->data.velocity_y = StandardTypes::from_array<double>(data_ptr);
-    this->data.velocity_z = StandardTypes::from_array<double>(data_ptr);
+    this->data.velocity.x = StandardTypes::from_array<double>(data_ptr);
+    this->data.velocity.y = StandardTypes::from_array<double>(data_ptr);
+    this->data.velocity.z = StandardTypes::from_array<double>(data_ptr);
 
     this->data.yaw = StandardTypes::from_array<float>(data_ptr);
     this->data.pitch = StandardTypes::from_array<float>(data_ptr);

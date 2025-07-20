@@ -23,7 +23,7 @@ int main()
     std::shared_ptr<Bot> bot = Bot::create(SERVER_IP, SERVER_PORT);
 
     bot->event_bus->on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
-       printf("Position: %f %f %f\n", event.data.x, event.data.y, event.data.z);
+       printf("Position: %s\n", event.data.position.to_string().c_str());
     });
 
     bot->event_bus->on<TickEvent>([](Bot& bot) {

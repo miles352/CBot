@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "EventBus.hpp"
+#include "math/Vec3.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class SynchronizePlayerPositionS2CPacket : public ClientboundPacket
@@ -18,12 +19,8 @@ class SynchronizePlayerPositionS2CPacket : public ClientboundPacket
     using Data = struct
     {
         int teleport_id;
-        double x;
-        double y;
-        double z;
-        double velocity_x;
-        double velocity_y;
-        double velocity_z;
+        Vec3d position;
+        Vec3d velocity;
         float yaw;
         float pitch;
         int teleport_flags;

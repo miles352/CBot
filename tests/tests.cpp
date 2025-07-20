@@ -9,6 +9,8 @@
 
 #include <openssl/sha.h>
 
+#include "math/Vec3.hpp"
+
 void test_VarInt()
 {
     assert(VarInt::from_int(0) == std::vector<uint8_t>{0x00});
@@ -84,11 +86,26 @@ void test_standard_type_conversions()
     assert(converted4 == big_num);
 }
 
+void test_vec3()
+{
+    Vec3i vec(1, 1, 1);
+    assert(vec.scale(5) == Vec3i(5, 5, 5));
+    assert(vec.length() == std::sqrt(3));
+    assert(vec + Vec3i(0, 1, 2) == Vec3i(1, 2, 3));
+    assert(vec.add(Vec3i(0, 1, 2)) == Vec3i(1, 2, 3));
+    assert(vec.dot(Vec3i(1, 2, 3)) == (1 + 2 + 3));
+    assert(Vec3i(1, 0, 0).cross(Vec3i(0, 2, 0)) == Vec3i(0, 0, 2));
+    assert(Vec3i(1, 0, 0).normalize() == Vec3i(1, 0, 0));
+    assert(Vec3d(1.0, 0, 0).normalize() == Vec3d(1, 0, 0));
+    std::cout << vec.to_string() << std::endl;
+}
+
 
 int main() {
     test_VarInt();
     test_MCString();
     test_SHA1_formatting();
     test_standard_type_conversions();
+    test_vec3();
     return 0;
 }
