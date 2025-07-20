@@ -4,7 +4,7 @@ class KeepAliveC2SPacket : public ServerboundPacket
 {
     public:
 
-    KeepAliveC2SPacket(long keep_alive_id);
+    KeepAliveC2SPacket(int64_t keep_alive_id);
 
     static constexpr int id = 0x1B;
 
@@ -12,7 +12,7 @@ class KeepAliveC2SPacket : public ServerboundPacket
 
     using Data = struct
     {
-        long keep_alive_id;
+        int64_t keep_alive_id;
     };
 
     Data data{};

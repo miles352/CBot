@@ -19,7 +19,7 @@ LoginS2CPacket::LoginS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
     this->data.limited_crafting = StandardTypes::from_array<bool>(ptr);
     this->data.dimension_type = VarInt::from_array(ptr);
     this->data.current_dimension_identifier = MCString::from_array(ptr);
-    this->data.hashed_seed = StandardTypes::from_array<long>(ptr);
+    this->data.hashed_seed = StandardTypes::from_array<int64_t>(ptr);
     this->data.gamemode = static_cast<Gamemode>(StandardTypes::from_array<uint8_t>(ptr));
     int8_t previous_gamemode = StandardTypes::from_array<int8_t>(ptr);
     if (previous_gamemode < 0)

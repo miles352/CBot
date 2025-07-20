@@ -27,7 +27,7 @@ public:
         int dimension_type;
         std::string current_dimension_identifier;
         /** First 8 bytes of the SHA-256 hash of the world's seed. */
-        long hashed_seed;
+        int64_t hashed_seed;
         Gamemode gamemode;
         std::optional<Gamemode> previous_gamemode;
         bool debug_mode_world;

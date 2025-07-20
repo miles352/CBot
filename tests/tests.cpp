@@ -79,10 +79,10 @@ void test_standard_type_conversions()
     uint8_t converted3 = StandardTypes::from_array<uint8_t>(vec3_ptr);
     assert(converted3 == byte);
 
-    long big_num = 398726378263;
-    std::vector<uint8_t> vec4 = StandardTypes::to_array<long>(big_num);
+    int64_t big_num = 398726378263;
+    std::vector<uint8_t> vec4 = StandardTypes::to_array<int64_t>(big_num);
     uint8_t* vec4_ptr = vec4.data();
-    long converted4 = StandardTypes::from_array<long>(vec4_ptr);
+    int64_t converted4 = StandardTypes::from_array<int64_t>(vec4_ptr);
     assert(converted4 == big_num);
 }
 

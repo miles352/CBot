@@ -13,7 +13,7 @@ public:
 
     using Data = struct
     {
-        long keep_alive_id;
+        int64_t keep_alive_id;
     };
 
     Data data{};
