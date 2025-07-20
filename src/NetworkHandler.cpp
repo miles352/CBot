@@ -79,10 +79,7 @@ void NetworkHandler::write_raw(const void* data, int size)
 int NetworkHandler::read_raw(void* buffer, int size) const
 {
     int bytes_read = read(this->sockfd, buffer, size);
-    if (bytes_read <= 0)
-    {
-        printf("Connection closed!\n");
-    }
+
     if (this->use_encryption)
     {
         int out_len;
@@ -93,13 +90,18 @@ int NetworkHandler::read_raw(void* buffer, int size) const
             throw std::runtime_error("Failed to decrypt packet!");
         }
         memcpy(buffer, decrypted.data(), bytes_read);
-    } 
+    }
     return bytes_read;
 }
 
 RawPacket NetworkHandler::read_packet()
 {
     int packet_size = this->read_varint(nullptr);
+
+    if (packet_size == 0)
+    {
+        return RawPacket(-1, {});
+    }
 
     int remaining_bytes;
     int packet_id;

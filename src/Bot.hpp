@@ -34,6 +34,7 @@ private:
     int ticks;
 
     std::mutex loop_mutex;
+    bool disconnected;
 
     std::queue<RawPacket> packets_to_process;
 

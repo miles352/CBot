@@ -36,6 +36,7 @@ Bot::Bot(const std::string& server_ip, const std::string& server_port):
     server_ip(server_ip), server_port(server_port)
 {
     this->ticks = 0;
+    this->disconnected = false;
     // Do authentication
 }
 
@@ -75,6 +76,7 @@ void Bot::packet_read_loop()
         RawPacket raw_packet = network_handler->read_packet();
 
         std::lock_guard<std::mutex> lock(this->loop_mutex);
+        if (this->disconnected) return;
 
         // if packet is set compression we need to instantly handle it before reading next packets
         if (raw_packet.id == 0x03 && this->network_handler->client_state == ClientState::LOGIN)
@@ -85,7 +87,8 @@ void Bot::packet_read_loop()
         }
         else if (raw_packet.id == 0x1C && this->network_handler->client_state == ClientState::PLAY) // disconnect packet
         {
-
+            this->disconnected = true;
+            return;
         }
         else
         {
@@ -103,6 +106,7 @@ void Bot::tick_loop()
         std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
 
         std::unique_lock<std::mutex> lock(this->loop_mutex);
+        if (this->disconnected) return;
 
         if (this->network_handler->client_state == ClientState::PLAY)
         {
@@ -112,8 +116,13 @@ void Bot::tick_loop()
 
         for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
         {
-            // printf("Read packet!\n");
             RawPacket& raw_packet = this->packets_to_process.front();
+
+            if (raw_packet.id == -1) // socket closed for some reason
+            {
+                this->disconnected = true;
+                return;
+            }
 
             const PacketRegistryKey key = std::make_pair(this->network_handler->client_state, raw_packet.id);
 
