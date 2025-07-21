@@ -4,6 +4,7 @@
 
 #include "EventBus.hpp"
 #include "NetworkHandler.hpp"
+#include "math/Vec3.hpp"
 
 
 class Bot : public std::enable_shared_from_this<Bot>
@@ -20,12 +21,22 @@ public:
 
     /** The number of ticks that have passed since the bot was started */
     int ticks;
-    /** The amount of health the player has. 0-20 */
+    /** The amount of health the bot has. 0-20 */
     float health;
-    /** The amount of food the player has. 0-20 */
+    /** The amount of food the bot has. 0-20 */
     int food;
-    /** The amount of saturation the player has. 0-5 */
+    /** The amount of saturation the bot has. 0-5 */
     float saturation;
+    /** The bots exact position */
+    Vec3d position;
+    /** The bots velocity */
+    Vec3d velocity;
+    /** The bots yaw */
+    float yaw;
+    /** The bots pitch */
+    float pitch;
+
+    void disconnect();
 
     // TODO: Set this when authenticating with microsoft
     const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";

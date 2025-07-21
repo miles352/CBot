@@ -26,8 +26,13 @@ SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(std::vect
     event_bus.emit<SynchronizePlayerPositionS2CPacket>(this->data);
 }
 
-void SynchronizePlayerPositionS2CPacket::default_handler(const Bot& bot, const Event<SynchronizePlayerPositionS2CPacket>& event)
+void SynchronizePlayerPositionS2CPacket::default_handler(Bot& bot, const Event<SynchronizePlayerPositionS2CPacket>& event)
 {
+    bot.position = event.data.position;
+    bot.velocity = event.data.velocity;
+    bot.yaw = event.data.yaw;
+    bot.pitch = event.data.pitch;
+
     bot.network_handler->write_packet(ConfirmTeleportationC2SPacket(event.data.teleport_id));
 }
 

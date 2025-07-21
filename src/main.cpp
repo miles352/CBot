@@ -1,6 +1,7 @@
 #include "conversions/MCString.hpp"
 
 #include "Bot.hpp"
+#include "events/DisconnectEvent.hpp"
 #include "events/TickEvent.hpp"
 #include "packets/configuration/KnownPacksC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
@@ -33,6 +34,15 @@ int main()
         {
             bot.network_handler->write_packet(SwingArmC2SPacket());
         }
+
+        if (bot.ticks > 20 * 10)
+        {
+            bot.disconnect();
+        }
+    });
+
+    bot->event_bus->on<DisconnectEvent>([](Bot& bot) {
+       printf("Disconnected at %s\n", bot.position.to_string().c_str());
     });
 
     bot->start();

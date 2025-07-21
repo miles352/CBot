@@ -28,5 +28,5 @@ class SynchronizePlayerPositionS2CPacket : public ClientboundPacket
 
     Data data{};
 
-    static void default_handler(const Bot& bot, const Event<SynchronizePlayerPositionS2CPacket>& event);
+    static void default_handler(Bot& bot, const Event<SynchronizePlayerPositionS2CPacket>& event);
 };

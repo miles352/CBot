@@ -5,21 +5,13 @@
 #include <openssl/rand.h>
 
 #include "config.hpp"
-#include "MicrosoftAuth.hpp"
 #include "conversions/Utils.hpp"
 #include "events/TickEvent.hpp"
-#include "packets/configuration/AcknowledgeFinishConfigurationC2SPacket.hpp"
+#include "events/DisconnectEvent.hpp"
 #include "packets/configuration/FinishConfigurationS2CPacket.hpp"
-#include "packets/configuration/KnownPacksC2SPacket.hpp"
 #include "packets/configuration/KnownPacksS2CPacket.hpp"
 #include "packets/handshaking/HandshakeC2SPacket.hpp"
-#include "packets/login/EncryptionRequestS2CPacket.hpp"
-#include "packets/login/EncryptionResponseC2SPacket.hpp"
-#include "packets/login/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
-#include "packets/login/LoginSuccessS2CPacket.hpp"
-#include "packets/login/SetCompressionS2CPacket.hpp"
-#include "packets/play/KeepAliveC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
 
 
@@ -143,6 +135,9 @@ void Bot::tick_loop()
 
 }
 
-
-
+void Bot::disconnect()
+{
+    this->event_bus->emit<DisconnectEvent>();
+    this->disconnected = true;
+}
 
