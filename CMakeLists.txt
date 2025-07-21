@@ -34,6 +34,7 @@ src/packets/play/PingS2CPacket.cpp
 src/packets/play/PongC2SPacket.cpp
 src/packets/play/SwingArmC2SPacket.cpp
 src/packets/play/LoginS2CPacket.cpp
+src/packets/play/PlayerAbilitiesS2CPacket.cpp
 src/events/TickEvent.cpp
 src/EventBus.cpp
 src/Bot.cpp
