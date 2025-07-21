@@ -18,8 +18,14 @@ public:
     std::unique_ptr<EventBus> event_bus;
     std::unique_ptr<NetworkHandler> network_handler;
 
-    /** Returns the number of ticks that have passed since the bot was started */
-    int get_ticks() const;
+    /** The number of ticks that have passed since the bot was started */
+    int ticks;
+    /** The amount of health the player has. 0-20 */
+    float health;
+    /** The amount of food the player has. 0-20 */
+    int food;
+    /** The amount of saturation the player has. 0-5 */
+    float saturation;
 
     // TODO: Set this when authenticating with microsoft
     const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";
@@ -30,8 +36,6 @@ private:
     void tick_loop();
 
     void packet_read_loop();
-
-    int ticks;
 
     std::mutex loop_mutex;
     bool disconnected;

@@ -49,11 +49,6 @@ void Bot::init()
     register_serverbound_packets(*this->event_bus);
 }
 
-int Bot::get_ticks() const
-{
-    return this->ticks;
-}
-
 void Bot::start()
 {
     network_handler->write_packet(HandshakeC2SPacket(772, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));

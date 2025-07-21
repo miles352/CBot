@@ -36,6 +36,7 @@ src/packets/play/SwingArmC2SPacket.cpp
 src/packets/play/LoginS2CPacket.cpp
 src/packets/play/PlayerAbilitiesS2CPacket.cpp
 src/packets/play/SetHeldItemS2CPacket.cpp
+src/packets/play/SetHealthS2CPacket.cpp
 src/events/TickEvent.cpp
 src/EventBus.cpp
 src/Bot.cpp

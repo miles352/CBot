@@ -15,5 +15,7 @@ PlayerAbilitiesS2CPacket::PlayerAbilitiesS2CPacket(std::vector<uint8_t> data, Ev
     this->data.flying_speed = StandardTypes::from_array<float>(ptr);
     this->data.fov_modifier = StandardTypes::from_array<float>(ptr);
 
+    // printf("Invulnerable: %d, flying: %d, allow flying: %d, instant break: %d\n", this->data.invulnerable, this->data.flying, this->data.allow_flying, this->data.instant_break);
+
     event_bus.emit<PlayerAbilitiesS2CPacket>(this->data);
 }
