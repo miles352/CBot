@@ -17,6 +17,7 @@
 #include "packets/play/PingS2CPacket.hpp"
 #include "packets/play/PlayerAbilitiesS2CPacket.hpp"
 #include "packets/play/PongC2SPacket.hpp"
+#include "packets/play/SetHeldItemS2CPacket.hpp"
 #include "packets/play/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/StartConfigurationS2CPacket.hpp"
 #include "packets/play/SwingArmC2SPacket.hpp"
@@ -40,6 +41,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<PingS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<LoginS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerAbilitiesS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SetHeldItemS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
