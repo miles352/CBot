@@ -37,6 +37,7 @@ src/packets/play/LoginS2CPacket.cpp
 src/packets/play/PlayerAbilitiesS2CPacket.cpp
 src/packets/play/SetHeldItemS2CPacket.cpp
 src/packets/play/SetHealthS2CPacket.cpp
+src/packets/play/SetPlayerPositionRotationC2SPacket.cpp
 src/events/TickEvent.cpp
 src/events/DisconnectEvent.cpp
 src/EventBus.cpp

@@ -19,6 +19,7 @@
 #include "packets/play/PongC2SPacket.hpp"
 #include "packets/play/SetHealthS2CPacket.hpp"
 #include "packets/play/SetHeldItemS2CPacket.hpp"
+#include "packets/play/SetPlayerPositionRotationC2SPacket.hpp"
 #include "packets/play/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/StartConfigurationS2CPacket.hpp"
 #include "packets/play/SwingArmC2SPacket.hpp"
@@ -60,6 +61,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<SetPlayerRotationC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<PongC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<SwingArmC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<SetPlayerPositionRotationC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>

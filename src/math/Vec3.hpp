@@ -26,7 +26,7 @@ public:
         return x * other.x + y * other.y + z * other.z;
     }
 
-    [[nodiscard]] T dot(int x, int y, int z) const
+    [[nodiscard]] T dot(T x, T y, T z) const
     {
         return this->x * x + this->y * y + this->z * z;
     }
@@ -36,7 +36,7 @@ public:
         return Vec3<T>(y * other.z - z * other.y, -(x * other.z - z * other.x), x * other.y - y * other.x);
     }
 
-    [[nodiscard]] Vec3<T> cross(int x, int y, int z) const
+    [[nodiscard]] Vec3<T> cross(T x, T y, T z) const
     {
         return Vec3<T>(this->y * z - this->z * y, -(this->x * z - this->z * x), this->x * y - this->y * x);
     }
@@ -46,7 +46,7 @@ public:
         return Vec3<T>(x + other.x, y + other.y, z + other.z);
     }
 
-    [[nodiscard]] Vec3<T> add(int x, int y, int z) const
+    [[nodiscard]] Vec3<T> add(T x, T y, T z) const
     {
         return Vec3<T>(this->x + x, this->y + y, this->z + z);
     }
@@ -56,7 +56,7 @@ public:
         return Vec3<T>(x - other.x, y - other.y, z - other.z);
     }
 
-    [[nodiscard]] Vec3<T> subtract(int x, int y, int z) const
+    [[nodiscard]] Vec3<T> subtract(T x, T y, T z) const
     {
         return Vec3<T>(this->x - x, this->y - y, this->z - z);
     }

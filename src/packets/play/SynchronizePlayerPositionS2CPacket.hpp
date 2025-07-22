@@ -2,19 +2,17 @@
 #include <vector>
 
 #include "EventBus.hpp"
+#include "conversions/TeleportFlags.hpp"
 #include "math/Vec3.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class SynchronizePlayerPositionS2CPacket : public ClientboundPacket
 {
-    public:
+public:
+    SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
 
     static constexpr int id = 0x41;
-
     int get_id() const override { return this->id; }
-
-
-    SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
 
     using Data = struct
     {
@@ -23,7 +21,7 @@ class SynchronizePlayerPositionS2CPacket : public ClientboundPacket
         Vec3d velocity;
         float yaw;
         float pitch;
-        int teleport_flags;
+        TeleportFlags teleport_flags;
     };
 
     Data data{};
