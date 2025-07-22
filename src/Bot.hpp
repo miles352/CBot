@@ -36,6 +36,20 @@ public:
     /** The bots pitch */
     float pitch;
 
+    struct Input
+    {
+        bool forwards;
+        bool backwards;
+        bool left;
+        bool right;
+    };
+
+    /** The input for the bot, used for movement. */
+    Input input;
+    /** Clears the input by disabling each direction. */
+    void clear_input();
+
+    /** Disconnects the bot by closing the TCP connection like the vanilla client. */
     void disconnect();
 
     // TODO: Set this when authenticating with microsoft
@@ -47,6 +61,8 @@ private:
     void tick_loop();
 
     void packet_read_loop();
+
+    void tick();
 
     std::mutex loop_mutex;
     bool disconnected;

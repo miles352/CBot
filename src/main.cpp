@@ -30,6 +30,8 @@ int main()
        printf("Position: %s\n", event.data.position.to_string().c_str());
     });
 
+    bot->input.forwards = true;
+
     bot->event_bus->on<TickEvent>([](Bot& bot) {
         // printf("Tick %d\n", bot.get_ticks());
         // bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.get_ticks(), 90, false, false));
@@ -38,8 +40,7 @@ int main()
             bot.network_handler->write_packet(SwingArmC2SPacket());
         }
 
-        Vec3d new_pos = bot.position.add(PLAYER_WALK_SPEED, 0, 0);
-        bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(new_pos, -90, 0, true, false));
+        bot.yaw = bot.ticks * 2;
 
         // movement * 0.2F if using item
 

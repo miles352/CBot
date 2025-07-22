@@ -8,10 +8,13 @@
 #include "conversions/Utils.hpp"
 #include "events/TickEvent.hpp"
 #include "events/DisconnectEvent.hpp"
+#include "math/AngleHelper.hpp"
+#include "math/Physics.hpp"
 #include "packets/configuration/FinishConfigurationS2CPacket.hpp"
 #include "packets/configuration/KnownPacksS2CPacket.hpp"
 #include "packets/handshaking/HandshakeC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
+#include "packets/play/SetPlayerPositionRotationC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
 
 
@@ -97,6 +100,7 @@ void Bot::tick_loop()
 
         if (this->network_handler->client_state == ClientState::PLAY)
         {
+            this->tick();
             this->event_bus->emit<TickEvent>();
         }
 
@@ -140,4 +144,22 @@ void Bot::disconnect()
     this->event_bus->emit<DisconnectEvent>();
     this->disconnected = true;
 }
+
+void Bot::clear_input()
+{
+    this->input = Input();
+}
+
+void Bot::tick()
+{
+    Vec3d movement_input = Vec3d(this->input.left - this->input.right, 0, this->input.forwards - this->input.backwards);
+    Vec3d movement_with_speed = (movement_input.length_squared() > 1.0 ? movement_input.normalize() : movement_input).scale(Physics::PLAYER_WALK_SPEED);
+    Vec3d direction = AngleHelper::unit_direction_vec(this->yaw);
+    Vec3d velocity = Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
+                            0,
+                            movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
+
+    this->network_handler->write_packet(SetPlayerPositionRotationC2SPacket(this->position + velocity, this->yaw, this->pitch, true, false));
+}
+
 

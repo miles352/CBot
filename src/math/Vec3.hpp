@@ -16,6 +16,11 @@ public:
         return std::sqrt(x * x + y * y + z * z);
     }
 
+    [[nodiscard]] double length_squared() const
+    {
+        return x * x + y * y + z * z;
+    }
+
     [[nodiscard]] Vec3<T> scale(T scale) const
     {
         return Vec3<T>(x * scale, y * scale, z * scale);
