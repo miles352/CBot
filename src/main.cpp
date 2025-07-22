@@ -6,9 +6,12 @@
 #include "packets/configuration/KnownPacksC2SPacket.hpp"
 #include "packets/login/LoginStartC2SPacket.hpp"
 #include "packets/login/LoginSuccessS2CPacket.hpp"
+#include "packets/play/SetHealthS2CPacket.hpp"
+#include "packets/play/SetPlayerPositionRotationC2SPacket.hpp"
 #include "packets/play/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/SwingArmC2SPacket.hpp"
 #include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
+#include "math/Physics.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -35,14 +38,30 @@ int main()
             bot.network_handler->write_packet(SwingArmC2SPacket());
         }
 
-        if (bot.ticks > 20 * 10)
+        Vec3d new_pos = bot.position.add(PLAYER_WALK_SPEED, 0, 0);
+        bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(new_pos, -90, 0, true, false));
+
+        // movement * 0.2F if using item
+
+        // Entity.java
+        // boolean bl = !MathHelper.approximatelyEquals(movement.x, vec3d.x);
+        // boolean bl2 = !MathHelper.approximatelyEquals(movement.z, vec3d.z);
+        // this.horizontalCollision = bl || bl2;
+        // this.verticalCollision = movement.y != vec3d.y;
+        // this.groundCollision = this.verticalCollision && movement.y < 0.0;
+
+        // PlayerEntity.java
+        // adjustMovementForSneaking
+
+
+    });
+
+    bot->event_bus->on<SetHealthS2CPacket>([](Bot& bot, Event<SetHealthS2CPacket>& event) {
+        if (event.data.health < 15)
         {
             bot.disconnect();
         }
-    });
-
-    bot->event_bus->on<DisconnectEvent>([](Bot& bot) {
-       printf("Disconnected at %s\n", bot.position.to_string().c_str());
+        printf("Health: %f, Food: %d\n", event.data.health, event.data.food);
     });
 
     bot->start();
