@@ -32,7 +32,6 @@ namespace PrefixedArray
     static std::vector<T> from_bytes_variable_typed(uint8_t*& array)
     {
         int arr_length = VarInt::from_bytes(array, nullptr);
-        printf("Arr length: %d\n", arr_length);
         std::vector<T> res;
 
         for (int i = 0; i < arr_length; i++)

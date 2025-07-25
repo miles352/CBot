@@ -5,9 +5,9 @@
 ChunkDataS2CPacket::ChunkDataS2CPacket(std::vector<std::uint8_t> data, EventBus &event_bus)
 {
     uint8_t* ptr = data.data();
-    // this->data.x = StandardTypes::from_bytes<int>(ptr);
-    // this->data.z = StandardTypes::from_bytes<int>(ptr);
-    // this->data.chunk_data = ChunkData::from_bytes(ptr);
+    this->data.x = StandardTypes::from_bytes<int>(ptr);
+    this->data.z = StandardTypes::from_bytes<int>(ptr);
+    this->data.chunk_data = ChunkData::from_bytes(ptr);
     // this->data.light_data = LightData::from_bytes(ptr);
 
     // event_bus.emit<ChunkDataS2CPacket>(this->data);
