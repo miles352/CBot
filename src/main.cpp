@@ -41,7 +41,7 @@ int main()
         // bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, true, false));
         if (bot.ticks % 60 == 0)
         {
-            // bot.network_handler->write_packet(SwingArmC2SPacket());
+            bot.network_handler->write_packet(SwingArmC2SPacket());
         }
 
         // bot.yaw = bot.ticks * 2;

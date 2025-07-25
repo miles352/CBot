@@ -6,7 +6,7 @@ class SwingArmC2SPacket : public ServerboundPacket
 public:
     SwingArmC2SPacket(bool offhand = false);
 
-    static constexpr int id = 0x3C;
+    static constexpr int id = 0x3B;
     int get_id() const override { return this->id; }
     std::vector<uint8_t> encode() override;
 

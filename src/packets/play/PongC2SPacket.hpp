@@ -6,7 +6,7 @@ class PongC2SPacket : public ServerboundPacket
 public:
     PongC2SPacket(int id);
 
-    static constexpr int id = 0x2C;
+    static constexpr int id = 0x2B;
     int get_id() const override { return this->id; }
     std::vector<uint8_t> encode() override;
 

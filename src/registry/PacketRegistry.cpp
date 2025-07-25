@@ -39,15 +39,15 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<KnownPacksS2CPacket>(ClientState::CONFIGURATION, event_bus);
     register_clientbound_packet<FinishConfigurationS2CPacket>(ClientState::CONFIGURATION, event_bus);
 
-    // register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<SynchronizePlayerPositionS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SynchronizePlayerPositionS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PingS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<LoginS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<PlayerAbilitiesS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<SetHeldItemS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<SetHealthS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<LoginS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<PlayerAbilitiesS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SetHeldItemS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SetHealthS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<DisconnectS2CPacket>(ClientState::PLAY, event_bus);
 }
 

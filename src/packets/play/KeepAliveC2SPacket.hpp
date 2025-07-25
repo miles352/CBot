@@ -6,7 +6,7 @@ class KeepAliveC2SPacket : public ServerboundPacket
 
     KeepAliveC2SPacket(int64_t keep_alive_id);
 
-    static constexpr int id = 0x1B;
+    static constexpr int id = 0x1A;
 
     int get_id() const override { return this->id; }
 

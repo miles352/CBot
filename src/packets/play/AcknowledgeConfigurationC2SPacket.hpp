@@ -7,7 +7,7 @@ class AcknowledgeConfigurationC2SPacket : public ServerboundPacket
 public:
     AcknowledgeConfigurationC2SPacket();
 
-    static constexpr int id = 0x0F;
+    static constexpr int id = 0x0E;
 
     int get_id() const override { return this->id; }
 
