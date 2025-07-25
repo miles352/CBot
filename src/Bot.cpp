@@ -64,7 +64,7 @@ void Bot::packet_read_loop()
     while (true)
     {
         RawPacket raw_packet = network_handler->read_packet();
-        printf("Read packet id: 0x%02x\n", raw_packet.id);
+        // printf("Read packet id: 0x%02x\n", raw_packet.id);
 
         std::lock_guard<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;

@@ -25,7 +25,6 @@ const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
 
 int main()
 {
-
     std::shared_ptr<Bot> bot = Bot::create(SERVER_IP, SERVER_PORT);
 
     bot->event_bus->on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {

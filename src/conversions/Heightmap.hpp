@@ -21,7 +21,6 @@ public:
         Heightmap hm;
         hm.type = static_cast<Type>(VarInt::from_bytes(bytes));
         hm.data = PrefixedArray::from_bytes_fixed<int64_t>(bytes);
-        printf("Read heightmap with type: %d and length %d\n", hm.type, hm.data.size());
         return hm;
     }
 

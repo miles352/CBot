@@ -23,6 +23,8 @@ public:
         // TODO: Read world height from registry_data packet. https://minecraft.wiki/w/Java_Edition_protocol/Registry_data
         // For testing in the nether, world height is 256
         // sections are 16 blocks tall, so 16 sections
+        int temp = VarInt::from_bytes(bytes);
+        // printf("Weird length: %d\n", temp);
         int world_height = 256;
         int chunk_section_length = world_height / 16;
         chunk_data.data.reserve(chunk_section_length);
