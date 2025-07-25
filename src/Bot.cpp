@@ -46,7 +46,7 @@ void Bot::init()
 
 void Bot::start()
 {
-    network_handler->write_packet(HandshakeC2SPacket(772, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
+    network_handler->write_packet(HandshakeC2SPacket(770, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
 
     network_handler->set_client_state(ClientState::LOGIN);
 
@@ -64,6 +64,7 @@ void Bot::packet_read_loop()
     while (true)
     {
         RawPacket raw_packet = network_handler->read_packet();
+        printf("Read packet id: 0x%02x\n", raw_packet.id);
 
         std::lock_guard<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;
@@ -75,14 +76,14 @@ void Bot::packet_read_loop()
             const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
             packet_ptr(raw_packet.data, *this->event_bus);
         }
-        else if (raw_packet.id == 0x1C && this->network_handler->client_state == ClientState::PLAY) // disconnect packet
-        {
-            this->disconnected = true;
-            return;
-        }
         else
         {
             this->packets_to_process.emplace(raw_packet);
+            if (raw_packet.id == 0x1C && this->network_handler->client_state == ClientState::PLAY)
+            {
+                this->network_handler->connection_closed = true;
+                return;
+            }; // disconnect packet, stop reading from stream
         }
     }
 }
@@ -100,7 +101,7 @@ void Bot::tick_loop()
 
         if (this->network_handler->client_state == ClientState::PLAY)
         {
-            this->tick();
+            // this->tick();
             this->event_bus->emit<TickEvent>();
         }
 
@@ -128,6 +129,11 @@ void Bot::tick_loop()
             // printf("Received packet id 0x%02x\n", raw_packet.id);
 
             packet_ptr(raw_packet.data, *this->event_bus);
+            if (raw_packet.id == 0x1C && this->network_handler->client_state == ClientState::PLAY)
+            {
+                this->disconnected = true;
+                return;
+            }
         }
 
         lock.unlock();
@@ -160,6 +166,7 @@ void Bot::tick()
                             movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
 
     this->network_handler->write_packet(SetPlayerPositionRotationC2SPacket(this->position + velocity, this->yaw, this->pitch, true, false));
+
 }
 
 

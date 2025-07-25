@@ -5,7 +5,7 @@
 namespace StandardTypes
 {
     template <typename T>
-    T from_array(uint8_t*& array, int* bytes_read = nullptr)
+    T from_bytes(uint8_t*& array, int* bytes_read = nullptr)
     {
         constexpr int size = sizeof(T);
         uint8_t reversed_bytes[size];
@@ -23,7 +23,7 @@ namespace StandardTypes
     }
 
     template <typename T>
-    std::vector<uint8_t> to_array(T input)
+    std::vector<uint8_t> to_bytes(T input)
     {
         constexpr int size = sizeof(T);
         std::vector<uint8_t> result(size);

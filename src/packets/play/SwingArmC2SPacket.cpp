@@ -9,5 +9,5 @@ SwingArmC2SPacket::SwingArmC2SPacket(bool offhand)
 
 std::vector<uint8_t> SwingArmC2SPacket::encode()
 {
-    return VarInt::from_int(this->data.offhand);
+    return VarInt::to_bytes(this->data.offhand);
 }

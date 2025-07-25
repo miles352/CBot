@@ -13,7 +13,9 @@ class NetworkHandler;
 class VarInt
 {
 public:
-    static std::vector<uint8_t> from_int(int number)
+    using type = int;
+
+    static std::vector<uint8_t> to_bytes(int number)
     {
         std::vector<uint8_t> data;
         while (true)
@@ -30,7 +32,7 @@ public:
         }
     }
 
-    static int from_array(uint8_t*& array, int* bytes_read = nullptr)
+    static int from_bytes(uint8_t*& array, int* bytes_read = nullptr)
     {
         int num = 0;
         uint8_t byte = 0;

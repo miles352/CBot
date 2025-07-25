@@ -32,17 +32,17 @@ std::vector<uint8_t> HandshakeC2SPacket::encode()
 {
     std::vector<uint8_t> handshake;
 
-    std::vector<uint8_t> protocol_version_bytes = VarInt::from_int(this->data.protocol_version);
+    std::vector<uint8_t> protocol_version_bytes = VarInt::to_bytes(this->data.protocol_version);
     handshake.insert(handshake.end(), protocol_version_bytes.begin(), protocol_version_bytes.end());
 
-    std::vector<uint8_t> server_address_bytes = MCString::from_string(this->data.server_address);
+    std::vector<uint8_t> server_address_bytes = MCString::to_bytes(this->data.server_address);
     handshake.insert(handshake.end(), server_address_bytes.begin(), server_address_bytes.end());
 
     uint16_t server_port_short = htons(std::stoi(this->data.server_port));
     handshake.emplace_back(server_port_short >> 8);
     handshake.emplace_back(server_port_short & 0x00FF);
 
-    std::vector<uint8_t> next_state = VarInt::from_int(this->data.intent);
+    std::vector<uint8_t> next_state = VarInt::to_bytes(this->data.intent);
 
     handshake.insert(handshake.end(), next_state.begin(), next_state.end());
     

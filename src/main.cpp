@@ -13,6 +13,8 @@
 #include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
 #include "math/Physics.hpp"
 
+#include "libs/nbt.hpp"
+
 
 // const char* SERVER_IP = "connect.2b2t.org";
 const char* SERVER_PORT = "25565";
@@ -33,14 +35,16 @@ int main()
     bot->input.forwards = true;
 
     bot->event_bus->on<TickEvent>([](Bot& bot) {
-        // printf("Tick %d\n", bot.get_ticks());
-        // bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.get_ticks(), 90, false, false));
+        printf("Tick %d\n", bot.ticks);
+        bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.ticks, 90, true, false));
+        // bot.network_handler->write_packet(SwingArmC2SPacket());
+        // bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, true, false));
         if (bot.ticks % 60 == 0)
         {
-            bot.network_handler->write_packet(SwingArmC2SPacket());
+            // bot.network_handler->write_packet(SwingArmC2SPacket());
         }
 
-        bot.yaw = bot.ticks * 2;
+        // bot.yaw = bot.ticks * 2;
 
         // movement * 0.2F if using item
 

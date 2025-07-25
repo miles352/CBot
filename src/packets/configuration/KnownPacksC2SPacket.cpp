@@ -13,9 +13,9 @@ std::vector<uint8_t> KnownPacksC2SPacket::encode()
 {
     // TODO: automatically fill in version
 
-    std::vector<uint8_t> core_pack = DataPack::to_array("minecraft", "core", "1.21.7");
+    std::vector<uint8_t> core_pack = DataPack::to_array("minecraft", "core", "1.21.5");
 
-    std::vector<uint8_t> prefix = VarInt::from_int(1);
+    std::vector<uint8_t> prefix = VarInt::to_bytes(1);
     std::vector<uint8_t> bytes = prefix;
     bytes.insert(bytes.end(), core_pack.begin(), core_pack.end());
 

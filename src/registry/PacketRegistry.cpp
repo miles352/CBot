@@ -10,7 +10,9 @@
 #include "packets/login/EncryptionResponseC2SPacket.hpp"
 #include "packets/login/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/play/AcknowledgeConfigurationC2SPacket.hpp"
+#include "packets/play/ChunkDataS2CPacket.hpp"
 #include "packets/play/ConfirmTeleportationC2SPacket.hpp"
+#include "packets/play/DisconnectS2CPacket.hpp"
 #include "packets/play/KeepAliveC2SPacket.hpp"
 #include "packets/play/KeepAliveS2CPacket.hpp"
 #include "packets/play/LoginS2CPacket.hpp"
@@ -37,14 +39,16 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<KnownPacksS2CPacket>(ClientState::CONFIGURATION, event_bus);
     register_clientbound_packet<FinishConfigurationS2CPacket>(ClientState::CONFIGURATION, event_bus);
 
-    register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<SynchronizePlayerPositionS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<SynchronizePlayerPositionS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PingS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<LoginS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<PlayerAbilitiesS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<SetHeldItemS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<SetHealthS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<LoginS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<PlayerAbilitiesS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<SetHeldItemS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<SetHealthS2CPacket>(ClientState::PLAY, event_bus);
+    // register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<DisconnectS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)

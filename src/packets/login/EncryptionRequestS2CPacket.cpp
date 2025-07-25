@@ -13,9 +13,9 @@ EncryptionRequestS2CPacket::EncryptionRequestS2CPacket(std::vector<uint8_t> byte
 {
     this->size = bytes.size();
     uint8_t* bytes_ptr = bytes.data();
-    this->data.server_id = MCString::from_array(bytes_ptr);
-    this->data.public_key = PrefixedArray::from_array<uint8_t>(bytes_ptr);
-    this->data.verify_token = PrefixedArray::from_array<uint8_t>(bytes_ptr);
+    this->data.server_id = MCString::from_bytes(bytes_ptr);
+    this->data.public_key = PrefixedArray::from_bytes_fixed<uint8_t>(bytes_ptr);
+    this->data.verify_token = PrefixedArray::from_bytes_fixed<uint8_t>(bytes_ptr);
     this->data.should_authenticate = *bytes_ptr;
 
     event_bus.emit<EncryptionRequestS2CPacket>(this->data);

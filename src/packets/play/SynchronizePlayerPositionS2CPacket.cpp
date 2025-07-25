@@ -8,18 +8,18 @@
 SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
     uint8_t* data_ptr = data.data();
-    this->data.teleport_id = VarInt::from_array(data_ptr, nullptr);
+    this->data.teleport_id = VarInt::from_bytes(data_ptr, nullptr);
 
-    this->data.position.x = StandardTypes::from_array<double>(data_ptr);
-    this->data.position.y = StandardTypes::from_array<double>(data_ptr);
-    this->data.position.z = StandardTypes::from_array<double>(data_ptr);
+    this->data.position.x = StandardTypes::from_bytes<double>(data_ptr);
+    this->data.position.y = StandardTypes::from_bytes<double>(data_ptr);
+    this->data.position.z = StandardTypes::from_bytes<double>(data_ptr);
 
-    this->data.velocity.x = StandardTypes::from_array<double>(data_ptr);
-    this->data.velocity.y = StandardTypes::from_array<double>(data_ptr);
-    this->data.velocity.z = StandardTypes::from_array<double>(data_ptr);
+    this->data.velocity.x = StandardTypes::from_bytes<double>(data_ptr);
+    this->data.velocity.y = StandardTypes::from_bytes<double>(data_ptr);
+    this->data.velocity.z = StandardTypes::from_bytes<double>(data_ptr);
 
-    this->data.yaw = StandardTypes::from_array<float>(data_ptr);
-    this->data.pitch = StandardTypes::from_array<float>(data_ptr);
+    this->data.yaw = StandardTypes::from_bytes<float>(data_ptr);
+    this->data.pitch = StandardTypes::from_bytes<float>(data_ptr);
 
     this->data.teleport_flags = TeleportFlags::from_array(data_ptr);
 

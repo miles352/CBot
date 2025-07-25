@@ -1,5 +1,7 @@
 #include "PongC2SPacket.hpp"
 
+#include <cstdio>
+
 #include "conversions/StandardTypes.hpp"
 
 PongC2SPacket::PongC2SPacket(int id)
@@ -9,6 +11,7 @@ PongC2SPacket::PongC2SPacket(int id)
 
 std::vector<uint8_t> PongC2SPacket::encode()
 {
-    return StandardTypes::to_array<int>(this->data.id);
+    printf("Ponging! %d\n", this->data.id);
+    return StandardTypes::to_bytes<int>(this->data.id);
 }
 

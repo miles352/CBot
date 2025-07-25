@@ -18,7 +18,7 @@ LoginStartC2SPacket::LoginStartC2SPacket(const std::string& username, const std:
 
 std::vector<uint8_t> LoginStartC2SPacket::encode()
 {
-    std::vector<uint8_t> name = MCString::from_string(this->data.username);
+    std::vector<uint8_t> name = MCString::to_bytes(this->data.username);
     
     uint8_t uuid_bytes[16];
     UUID::to_big_endian_bytes(this->data.uuid, uuid_bytes);

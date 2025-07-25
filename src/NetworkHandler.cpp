@@ -57,7 +57,7 @@ NetworkHandler::~NetworkHandler()
 
 void NetworkHandler::write_raw(const void* data, int size)
 {
-
+    if (connection_closed) return;
     // TODO: Emit raw packet event
     if (this->use_encryption)
     {
@@ -100,6 +100,7 @@ RawPacket NetworkHandler::read_packet()
 
     if (packet_size == 0)
     {
+        this->connection_closed = true;
         return RawPacket(-1, {});
     }
 
@@ -155,7 +156,7 @@ RawPacket NetworkHandler::read_packet()
         }
         uint8_t* uncompressed_ptr = uncompressed.data();
         int packet_id_bytes;
-        packet_id = VarInt::from_array(uncompressed_ptr, &packet_id_bytes);
+        packet_id = VarInt::from_bytes(uncompressed_ptr, &packet_id_bytes);
         data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - packet_id_bytes);
     }
 

@@ -7,6 +7,7 @@
 
 #include "Bot.hpp"
 #include "EventBus.hpp"
+#include "conversions/MCString.hpp"
 
 class EncryptionRequestS2CPacket : public ClientboundPacket
 {

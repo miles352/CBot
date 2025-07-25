@@ -13,11 +13,11 @@ SetPlayerPositionRotationC2SPacket::SetPlayerPositionRotationC2SPacket(Vec3d pos
 
 std::vector<uint8_t> SetPlayerPositionRotationC2SPacket::encode()
 {
-    std::vector<uint8_t> x_bytes = StandardTypes::to_array<double>(this->data.position.x);
-    std::vector<uint8_t> y_bytes = StandardTypes::to_array<double>(this->data.position.y);
-    std::vector<uint8_t> z_bytes = StandardTypes::to_array<double>(this->data.position.z);
-    std::vector<uint8_t> yaw_bytes = StandardTypes::to_array<float>(this->data.yaw);
-    std::vector<uint8_t> pitch_bytes = StandardTypes::to_array<float>(this->data.pitch);
+    std::vector<uint8_t> x_bytes = StandardTypes::to_bytes<double>(this->data.position.x);
+    std::vector<uint8_t> y_bytes = StandardTypes::to_bytes<double>(this->data.position.y);
+    std::vector<uint8_t> z_bytes = StandardTypes::to_bytes<double>(this->data.position.z);
+    std::vector<uint8_t> yaw_bytes = StandardTypes::to_bytes<float>(this->data.yaw);
+    std::vector<uint8_t> pitch_bytes = StandardTypes::to_bytes<float>(this->data.pitch);
     x_bytes.insert(x_bytes.end(), y_bytes.begin(), y_bytes.end());
     x_bytes.insert(x_bytes.end(), z_bytes.begin(), z_bytes.end());
     x_bytes.insert(x_bytes.end(), yaw_bytes.begin(), yaw_bytes.end());

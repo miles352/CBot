@@ -32,7 +32,7 @@ class NetworkHandler
     int compression_threshold{};
 
     public:
-
+    bool connection_closed;
     ClientState client_state; // TODO: make private
     /** The constructor, which creates the socket connection using the specified server ip and port. */
     NetworkHandler(std::string server_ip, std::string server_port, EventBus& event_bus);
@@ -61,7 +61,7 @@ class NetworkHandler
     void write_packet(C2SPacket packet)
     {
         this->event_bus.once<C2SPacket>([this, &packet](Bot& bot, Event<C2SPacket>& event) {
-            std::vector<uint8_t> packet_id = VarInt::from_int(packet.get_id());
+            std::vector<uint8_t> packet_id = VarInt::to_bytes(packet.get_id());
             packet.data = event.data;
             std::vector<uint8_t> packet_data = packet.encode();
 
@@ -77,7 +77,7 @@ class NetworkHandler
                     std::vector<uint8_t> uncompressed_data = packet_id;
                     uncompressed_data.insert(uncompressed_data.end(), packet_data.begin(), packet_data.end());
 
-                    std::vector<uint8_t> data_length = VarInt::from_int(uncompressed_data.size());
+                    std::vector<uint8_t> data_length = VarInt::to_bytes(uncompressed_data.size());
                     bytes.insert(bytes.end(), data_length.begin(), data_length.end());
 
                     uLong max_len = compressBound(uncompressed_data.size());
@@ -89,7 +89,7 @@ class NetworkHandler
                 }
                 else
                 {
-                    std::vector<uint8_t> data_length = VarInt::from_int(0);
+                    std::vector<uint8_t> data_length = VarInt::to_bytes(0);
                     bytes.insert(bytes.end(), data_length.begin(), data_length.end());
                 }
             }
@@ -100,7 +100,7 @@ class NetworkHandler
                 bytes.insert(bytes.end(), packet_data.begin(), packet_data.end());
             }
 
-            std::vector<uint8_t> full_packet = VarInt::from_int(bytes.size());
+            std::vector<uint8_t> full_packet = VarInt::to_bytes(bytes.size());
             full_packet.insert(full_packet.end(), bytes.begin(), bytes.end());
 
             this->write_raw(full_packet.data(), full_packet.size());

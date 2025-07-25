@@ -19,7 +19,7 @@ public:
 
     static TeleportFlags from_array(std::uint8_t*& array)
     {
-        int bit_field = StandardTypes::from_array<int>(array);
+        int bit_field = StandardTypes::from_bytes<int>(array);
         TeleportFlags flags;
         flags.relative_x = bit_field & 0x0001;
         flags.relative_y = bit_field & 0x0002;

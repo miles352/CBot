@@ -1,5 +1,6 @@
 #pragma once
 #include "EventBus.hpp"
+#include "conversions/MCString.hpp"
 #include "math/Vec3.hpp"
 #include "packets/ClientboundPacket.hpp"
 #include "registry/Gamemode.hpp"

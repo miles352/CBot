@@ -34,7 +34,7 @@ void test_VarInt()
 
 void test_MCString()
 {
-    std::vector<uint8_t> mc_string = MCString::from_string("Hello World!");
+    std::vector<uint8_t> mc_string = MCString::to_bytes("Hello World!");
     uint8_t* ptr = mc_string.data();
     std::string normal_string = MCString::from_array(ptr);
     assert(normal_string == "Hello World!");
@@ -62,27 +62,27 @@ void test_SHA1_formatting()
 void test_standard_type_conversions()
 {
     int number = 154545545;
-    std::vector<uint8_t> vec = StandardTypes::to_array<int>(number);
+    std::vector<uint8_t> vec = StandardTypes::to_bytes<int>(number);
     uint8_t* vec_ptr = vec.data();
-    int converted = StandardTypes::from_array<int>(vec_ptr);
+    int converted = StandardTypes::from_bytes<int>(vec_ptr);
     assert(converted == number);
 
     float fraction = 3.14159265;
-    std::vector<uint8_t> vec2 = StandardTypes::to_array<float>(fraction);
+    std::vector<uint8_t> vec2 = StandardTypes::to_bytes<float>(fraction);
     uint8_t* vec2_ptr = vec2.data();
-    float converted2 = StandardTypes::from_array<float>(vec2_ptr);
+    float converted2 = StandardTypes::from_bytes<float>(vec2_ptr);
     assert(converted2 == fraction);
 
     uint8_t byte = 12;
-    std::vector<uint8_t> vec3 = StandardTypes::to_array<uint8_t>(byte);
+    std::vector<uint8_t> vec3 = StandardTypes::to_bytes<uint8_t>(byte);
     uint8_t* vec3_ptr = vec3.data();
-    uint8_t converted3 = StandardTypes::from_array<uint8_t>(vec3_ptr);
+    uint8_t converted3 = StandardTypes::from_bytes<uint8_t>(vec3_ptr);
     assert(converted3 == byte);
 
     int64_t big_num = 398726378263;
-    std::vector<uint8_t> vec4 = StandardTypes::to_array<int64_t>(big_num);
+    std::vector<uint8_t> vec4 = StandardTypes::to_bytes<int64_t>(big_num);
     uint8_t* vec4_ptr = vec4.data();
-    int64_t converted4 = StandardTypes::from_array<int64_t>(vec4_ptr);
+    int64_t converted4 = StandardTypes::from_bytes<int64_t>(vec4_ptr);
     assert(converted4 == big_num);
 }
 

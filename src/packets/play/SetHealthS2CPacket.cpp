@@ -7,9 +7,9 @@
 SetHealthS2CPacket::SetHealthS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
 {
     uint8_t* ptr = data.data();
-    this->data.health = StandardTypes::from_array<float>(ptr);
-    this->data.food = VarInt::from_array(ptr);
-    this->data.saturation = StandardTypes::from_array<float>(ptr);
+    this->data.health = StandardTypes::from_bytes<float>(ptr);
+    this->data.food = VarInt::from_bytes(ptr);
+    this->data.saturation = StandardTypes::from_bytes<float>(ptr);
 
     // printf("Health: %f, food: %d, saturation: %f\n", this->data.health, this->data.food, this->data.saturation);
 

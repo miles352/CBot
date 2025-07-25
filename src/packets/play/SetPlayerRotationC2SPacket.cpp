@@ -12,8 +12,8 @@ SetPlayerRotationC2SPacket::SetPlayerRotationC2SPacket(float yaw, float pitch, b
 
 std::vector<uint8_t> SetPlayerRotationC2SPacket::encode()
 {
-    std::vector<uint8_t> result = StandardTypes::to_array<float>(this->data.yaw);
-    std::vector<uint8_t> pitch = StandardTypes::to_array<float>(this->data.pitch);
+    std::vector<uint8_t> result = StandardTypes::to_bytes<float>(this->data.yaw);
+    std::vector<uint8_t> pitch = StandardTypes::to_bytes<float>(this->data.pitch);
     result.insert(result.end(), pitch.begin(), pitch.end());
     uint8_t bit_field = 0;
     constexpr uint8_t ON_GROUND_BIT = 0x01;
