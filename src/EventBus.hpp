@@ -109,7 +109,6 @@ class EventBus
 
     /** Runs a callback when an event is fired, using a reference as the type parameter. 
      * Callbacks that run after this (lower priority) will have the modified value.
-     * @param data
      * @param callback The callback function to run when the event is emitted.
      * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string leaves the callback unnamed.
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.

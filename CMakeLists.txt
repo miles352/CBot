@@ -11,6 +11,8 @@ add_executable(CBot
 src/main.cpp 
 src/MicrosoftAuth.cpp
 src/NetworkHandler.cpp
+src/Chunk.cpp
+src/World.cpp
 src/registry/PacketRegistry.cpp
 src/packets/handshaking/HandshakeC2SPacket.cpp
 src/packets/login/LoginStartC2SPacket.cpp

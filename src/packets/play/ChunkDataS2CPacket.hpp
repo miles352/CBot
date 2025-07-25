@@ -2,6 +2,7 @@
 
 #include "EventBus.hpp"
 #include "conversions/ChunkData.hpp"
+#include "conversions/ChunkPos.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class ChunkDataS2CPacket : public ClientboundPacket
@@ -15,8 +16,7 @@ public:
 
     using Data = struct
     {
-        int x;
-        int z;
+        ChunkPos chunk_pos;
         ChunkData chunk_data;
         // LightData light_data;
     };

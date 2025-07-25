@@ -5,6 +5,8 @@
 #include "EventBus.hpp"
 #include "NetworkHandler.hpp"
 #include "math/Vec3.hpp"
+#include "World.hpp"
+#include "packets/play/ChunkDataS2CPacket.hpp"
 
 
 class Bot : public std::enable_shared_from_this<Bot>
@@ -18,6 +20,8 @@ public:
 
     std::unique_ptr<EventBus> event_bus;
     std::unique_ptr<NetworkHandler> network_handler;
+
+    World world;
 
     /** The number of ticks that have passed since the bot was started */
     int ticks;
@@ -56,6 +60,7 @@ public:
     const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";
 
 private:
+    friend ChunkDataS2CPacket;
     void init();
 
     void tick_loop();
