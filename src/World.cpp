@@ -16,7 +16,7 @@ std::optional<int> World::get_block(BlockPos block_pos)
         return std::nullopt;
     }
 
-    Chunk chunk = it->second;
+    Chunk& chunk = it->second;
 
     // If outside of the world
     int lowest_y = 0; // TODO: Get from biome registry
@@ -27,7 +27,7 @@ std::optional<int> World::get_block(BlockPos block_pos)
         return 13981; // void air index
     }
 
-    ChunkSection section = chunk.chunk_data.data[(block_pos.y - lowest_y) / 16];
+    ChunkSection& section = chunk.chunk_data.data[(block_pos.y - lowest_y) / 16];
     switch (section.block_states.format)
     {
         case PalettedContainer::SINGLE:
