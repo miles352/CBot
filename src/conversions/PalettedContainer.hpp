@@ -34,7 +34,7 @@ public:
      * Each entry has <code>bits_per_entry</code> bits in it, and there are multiply entries per number.
      * Each entry is an index in the palette vector to get the type of block or biome.
      */
-    std::vector<int64_t> data;
+    std::vector<uint64_t> data;
     PaletteFormat format;
 
     static constexpr PaletteFormat get_format(const int bits_per_entry)
@@ -75,7 +75,7 @@ public:
                 container.palette = PrefixedArray::from_bytes_variable<VarInt>(bytes);
                 for (int i = 0; i < data_length; i++)
                 {
-                    container.data.emplace_back(StandardTypes::from_bytes<int64_t>(bytes));
+                    container.data.emplace_back(StandardTypes::from_bytes<uint64_t>(bytes));
                 }
                 break;
             }
@@ -83,7 +83,7 @@ public:
             {
                 for (int i = 0; i < data_length; i++)
                 {
-                    container.data.emplace_back(StandardTypes::from_bytes<int64_t>(bytes));
+                    container.data.emplace_back(StandardTypes::from_bytes<uint64_t>(bytes));
                 }
                 break;
             }

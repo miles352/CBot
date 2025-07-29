@@ -26,19 +26,19 @@ public:
     /** The number of ticks that have passed since the bot was started */
     int ticks;
     /** The amount of health the bot has. 0-20 */
-    float health;
+    float health{};
     /** The amount of food the bot has. 0-20 */
-    int food;
+    int food{};
     /** The amount of saturation the bot has. 0-5 */
-    float saturation;
+    float saturation{};
     /** The bots exact position */
-    Vec3d position;
+    Vec3d position{};
     /** The bots velocity */
-    Vec3d velocity;
+    Vec3d velocity{};
     /** The bots yaw */
-    float yaw;
+    float yaw{};
     /** The bots pitch */
-    float pitch;
+    float pitch{};
 
     struct Input
     {
@@ -49,18 +49,19 @@ public:
     };
 
     /** The input for the bot, used for movement. */
-    Input input;
+    Input input{};
     /** Clears the input by disabling each direction. */
     void clear_input();
 
     /** Disconnects the bot by closing the TCP connection like the vanilla client. */
     void disconnect();
 
+    BlockPos get_block_pos() const;
+
     // TODO: Set this when authenticating with microsoft
     const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";
 
 private:
-    friend ChunkDataS2CPacket;
     void init();
 
     void tick_loop();

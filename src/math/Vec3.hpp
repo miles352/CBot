@@ -71,6 +71,16 @@ public:
         return this->scale(1 / this->length());
     }
 
+    [[nodiscard]] Vec3<T> up(int amount = 1) const
+    {
+        return Vec3<T>(this->x, this->y + amount, this->z);
+    }
+
+    [[nodiscard]] Vec3<T> down(int amount = 1) const
+    {
+        return Vec3<T>(this->x, this->y - amount, this->z);
+    }
+
     [[nodiscard]] std::string to_string() const
     {
         return std::format("({}, {}, {})", this->x, this->y, this->z);

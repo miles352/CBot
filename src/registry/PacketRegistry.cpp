@@ -7,6 +7,7 @@
 #include "packets/configuration/KnownPacksS2CPacket.hpp"
 #include "packets/configuration/FinishConfigurationS2CPacket.hpp"
 #include "packets/configuration/KnownPacksC2SPacket.hpp"
+#include "packets/configuration/RegistryDataS2CPacket.hpp"
 #include "packets/login/EncryptionResponseC2SPacket.hpp"
 #include "packets/login/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/play/AcknowledgeConfigurationC2SPacket.hpp"
@@ -38,6 +39,7 @@ void register_clientbound_packets(EventBus& event_bus)
 
     register_clientbound_packet<KnownPacksS2CPacket>(ClientState::CONFIGURATION, event_bus);
     register_clientbound_packet<FinishConfigurationS2CPacket>(ClientState::CONFIGURATION, event_bus);
+    register_clientbound_packet<RegistryDataS2CPacket>(ClientState::CONFIGURATION, event_bus);
 
     register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);

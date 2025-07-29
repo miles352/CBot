@@ -101,7 +101,7 @@ void Bot::tick_loop()
 
         if (this->network_handler->client_state == ClientState::PLAY)
         {
-            // this->tick();
+            this->tick();
             this->event_bus->emit<TickEvent>();
         }
 
@@ -169,4 +169,8 @@ void Bot::tick()
 
 }
 
+BlockPos Bot::get_block_pos() const
+{
+    return BlockPos(this->position);
+}
 

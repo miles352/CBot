@@ -31,17 +31,24 @@ int main()
        printf("Position: %s\n", event.data.position.to_string().c_str());
     });
 
-    bot->input.forwards = true;
+    // bot->input.forwards = true;
 
     bot->event_bus->on<TickEvent>([](Bot& bot) {
         printf("Tick %d\n", bot.ticks);
-        bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.ticks, 90, true, false));
+        // bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.ticks, 90, true, false));
         // bot.network_handler->write_packet(SwingArmC2SPacket());
         // bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, true, false));
         if (bot.ticks % 60 == 0)
         {
             bot.network_handler->write_packet(SwingArmC2SPacket());
         }
+        BlockPos pos = bot.get_block_pos().down(72);
+        std::optional<int> block = bot.world.get_block(pos);
+        if (block.has_value())
+        {
+            printf("Block at %s is: %d\n", pos.to_string().c_str(), block.value());
+        }
+
 
         // bot.yaw = bot.ticks * 2;
 
