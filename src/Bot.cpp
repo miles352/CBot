@@ -16,14 +16,19 @@
 #include "packets/login/LoginStartC2SPacket.hpp"
 #include "packets/play/SetPlayerPositionRotationC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
+#include "registry/BlockRegistry.hpp"
 
+#include <print>
+
+#include "registry/BlockRegistryGenerated.hpp"
 
 
 std::shared_ptr<Bot> Bot::create(const std::string &server_ip, const std::string &server_port)
 {
     std::shared_ptr<Bot> bot = std::make_shared<Bot>(server_ip, server_port);
     bot->init();
-
+    const auto& block_states = get_block_states();
+    generate_block_states(block_states);
     return bot;
 }
 

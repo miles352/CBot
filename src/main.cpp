@@ -12,8 +12,12 @@
 #include "packets/play/SwingArmC2SPacket.hpp"
 #include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
 #include "math/Physics.hpp"
+#include "Block.hpp"
+#include "registry/BlockRegistry.hpp"
 
 #include <print>
+
+#include "registry/BlockRegistryGenerated.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -42,13 +46,12 @@ int main()
         {
             bot.network_handler->write_packet(SwingArmC2SPacket());
         }
-        BlockPos pos = bot.get_block_pos().down(72);
-        std::optional<int> block = bot.world.get_block(pos);
+        BlockPos pos(3750529, 128, -98);
+        std::optional<Block> block = bot.world.get_block(pos);
         if (block.has_value())
         {
-            printf("Block at %s is: %d\n", pos.to_string().c_str(), block.value());
+            std::println("Block at {} is: {} and {}", pos.to_string(), *block.value().name, static_cast<int>(block.value().get_block_state<ComparatorMode>().value()));
         }
-
 
         // bot.yaw = bot.ticks * 2;
 

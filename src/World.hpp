@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 
+#include "Block.hpp"
 #include "conversions/ChunkPos.hpp"
 #include "Chunk.hpp"
 #include "math/Vec3.hpp"
@@ -11,7 +12,7 @@ class World
 public:
     World();
 
-    std::optional<int> get_block(BlockPos block_pos);
+    std::optional<Block> get_block(BlockPos block_pos);
 
     std::unordered_map<ChunkPos, Chunk> loaded_chunks;
 private:
