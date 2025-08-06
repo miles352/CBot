@@ -124,13 +124,16 @@ enums = {
     "vault_state ['inactive', 'active', 'unlocking', 'ejecting']": "VaultState"
 }
 
-blocks = dict()
+block_states = dict()
+
+blocks = []
+
 
 with open("blocks.json", "r") as file:
     data = json.load(file)
     for block_name in data:
         if "properties" not in data[block_name]:
-            blocks[data[block_name]["states"][0]["id"]] = f"{{\"{block_name}\", {{}} }}"
+            block_states[data[block_name]["states"][0]["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {{}} }}"
         else:
             state = data[block_name]["states"][-1]
             formatted_state = "{"
@@ -139,8 +142,13 @@ with open("blocks.json", "r") as file:
                 enum_name = enums[property + " " + str(properties_list)]
                 formatted_state += f"{{ std::type_index(typeid({enum_name})), {properties_list.index(state["properties"][property])} }}, "
             formatted_state += "}"
-            blocks[state["id"]] = f"{{\"{block_name}\", {formatted_state} }}"
+            block_states[state["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {formatted_state} }}"
+        blocks.append(f"const Block {block_name[10:].upper()}(\"{block_name[10:]}\", Block::BlockSetting());\n")
 
+# namespace Blocks
+# {
+#     const Block AIR("minecraft:air", Block::BlockSetting());
+# }
 
 with open("BlockRegistryGenerated.hpp", "w") as output:
     output.write("#pragma once\n\n#include <vector>\n#include <string>\n#include <typeindex>\n\n")
@@ -153,9 +161,16 @@ with open("BlockRegistryGenerated.hpp", "w") as output:
                 output.write(f"    {state.upper()},\n")
         output.write("};\n\n")
 
-    output.write("inline const std::vector<std::pair<std::string, std::vector<std::pair<std::type_index, int>>>>& get_block_states() \n{\n")
-    output.write("    static const std::vector<std::pair<std::string, std::vector<std::pair<std::type_index, int>>>> block_states = {\n")
-    sorted = dict(sorted(blocks.items()))
+    output.write("namespace Blocks\n{\n")
+
+    for block in blocks:
+        output.write(f"    {block}")
+
+    output.write("}")
+
+    output.write("inline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& get_block_states() \n{\n")
+    output.write("    static const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>> block_states = {\n")
+    sorted = dict(sorted(block_states.items()))
     for i in sorted:
         output.write("        " + sorted[i] + ",\n")
     output.write("    };\n    return block_states;\n};\n")

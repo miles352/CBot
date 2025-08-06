@@ -2,6 +2,7 @@
 #include <unordered_map>
 
 #include "Block.hpp"
+#include "BlockState.hpp"
 #include "conversions/ChunkPos.hpp"
 #include "Chunk.hpp"
 #include "math/Vec3.hpp"
@@ -12,7 +13,7 @@ class World
 public:
     World();
 
-    std::optional<Block> get_block(BlockPos block_pos);
+    std::optional<BlockState> get_block_state(BlockPos block_pos);
 
     std::unordered_map<ChunkPos, Chunk> loaded_chunks;
 private:

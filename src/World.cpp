@@ -2,13 +2,14 @@
 
 #include "Block.hpp"
 #include "registry/BlockRegistry.hpp"
+#include "registry/BlockRegistryGenerated.hpp"
 
 World::World()
 {
 
 }
 
-std::optional<Block> World::get_block(BlockPos block_pos)
+std::optional<BlockState> World::get_block_state(BlockPos block_pos)
 {
     ChunkPos chunk_pos(block_pos);
 
@@ -26,8 +27,7 @@ std::optional<Block> World::get_block(BlockPos block_pos)
     int highest_y = 256;
     if (block_pos.y < lowest_y || block_pos.y > highest_y)
     {
-        // printf("Block outside of chunk sections\n");
-        // return 13981; // void air index
+        return BlockState(&Blocks::VOID_AIR, {});
     }
 
     ChunkSection& section = chunk.chunk_data.data[(block_pos.y - lowest_y) / 16];
@@ -36,17 +36,17 @@ std::optional<Block> World::get_block(BlockPos block_pos)
         case PalettedContainer::SINGLE:
         {
             // printf("Single\n");
-            return block_registry[section.block_states.palette[0]];
+            return BlockRegistry::block_registry[section.block_states.palette[0]];
         }
         case PalettedContainer::INDIRECT:
         {
             // printf("Indirect\n");
-            return block_registry[section.block_states.palette[this->get_block_id(block_pos, chunk, section)]];
+            return BlockRegistry::block_registry[section.block_states.palette[this->get_block_id(block_pos, chunk, section)]];
         }
         case PalettedContainer::DIRECT:
         {
             // printf("Direct\n");
-            return block_registry[this->get_block_id(block_pos, chunk, section)];
+            return BlockRegistry::block_registry[this->get_block_id(block_pos, chunk, section)];
         }
     }
 }

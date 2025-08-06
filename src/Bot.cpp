@@ -28,7 +28,7 @@ std::shared_ptr<Bot> Bot::create(const std::string &server_ip, const std::string
     std::shared_ptr<Bot> bot = std::make_shared<Bot>(server_ip, server_port);
     bot->init();
     const auto& block_states = get_block_states();
-    generate_block_states(block_states);
+    BlockRegistry::generate_block_states(block_states);
     return bot;
 }
 
@@ -55,7 +55,7 @@ void Bot::start()
 
     network_handler->set_client_state(ClientState::LOGIN);
 
-    network_handler->write_packet(LoginStartC2SPacket("0x658", UUID));
+    network_handler->write_packet(LoginStartC2SPacket("0X658", UUID));
 
     std::thread packet_thread(&Bot::packet_read_loop, this);
     std::thread tick_thread(&Bot::tick_loop, this);

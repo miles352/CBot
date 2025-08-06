@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.28)
 project(CBot)
 
 set(CMAKE_CXX_STANDARD 23)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-O0 -g")
 
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -50,6 +48,8 @@ src/events/DisconnectEvent.cpp
 src/EventBus.cpp
 src/Bot.cpp
 src/registry/BlockRegistry.cpp
+src/Block.cpp
+src/BlockState.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

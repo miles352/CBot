@@ -3,8 +3,14 @@
 #include "Block.hpp"
 #include <vector>
 
-void get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index);
+class BlockState;
 
-inline std::vector<Block> block_registry;
+class BlockRegistry
+{
+public:
+    static void get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index);
 
-void generate_block_states(const std::vector<std::pair<std::string, std::vector<std::pair<std::type_index, int>>>>& input);
+    static std::vector<BlockState> block_registry;
+
+    static void generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input);
+};
