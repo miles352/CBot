@@ -41,9 +41,19 @@ public:
         return Vec3<T>(y * other.z - z * other.y, -(x * other.z - z * other.x), x * other.y - y * other.x);
     }
 
-    [[nodiscard]] Vec3<T> cross(T x, T y, T z) const
+    [[nodiscard]] Vec3<T> cross(const T x, const T y, const T z) const
     {
         return Vec3<T>(this->y * z - this->z * y, -(this->x * z - this->z * x), this->x * y - this->y * x);
+    }
+
+    [[nodiscard]] Vec3<T> multiply(const Vec3<T>& other) const
+    {
+        return Vec3<T>(this->x * other.x, this->y * other.y, this->z * other.z);
+    }
+
+    [[nodiscard]] Vec3<T> multiply(const T x, const T y, const T z) const
+    {
+        return Vec3<T>(this->x * x, this->y * y, this->z * z);
     }
 
     [[nodiscard]] Vec3<T> add(const Vec3<T>& other) const

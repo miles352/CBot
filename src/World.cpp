@@ -16,7 +16,6 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     auto it = this->loaded_chunks.find(chunk_pos);
     if (it == this->loaded_chunks.end())
     {
-        // printf("Block is in unloaded chunk.\n");
         return std::nullopt;
     }
 
@@ -35,17 +34,15 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     {
         case PalettedContainer::SINGLE:
         {
-            // printf("Single\n");
             return BlockRegistry::block_registry[section.block_states.palette[0]];
         }
         case PalettedContainer::INDIRECT:
         {
-            // printf("Indirect\n");
-            return BlockRegistry::block_registry[section.block_states.palette[this->get_block_id(block_pos, chunk, section)]];
+            int index = this->get_block_id(block_pos, chunk, section);
+            return BlockRegistry::block_registry[section.block_states.palette[index]];
         }
         case PalettedContainer::DIRECT:
         {
-            // printf("Direct\n");
             return BlockRegistry::block_registry[this->get_block_id(block_pos, chunk, section)];
         }
     }
@@ -64,5 +61,17 @@ int World::get_block_id(BlockPos block_pos, Chunk& chunk, ChunkSection& section)
     uint64_t bitmask = (static_cast<uint64_t>(1) << bpe) - 1;
     int entry_in_long = entries_for_coord % entries_per_long;
     return static_cast<int>((packed_entries >> (entry_in_long * bpe)) & bitmask);
+}
+
+std::optional<BlockState> World::update_block(BlockPos block_pos, int new_id)
+{
+    // if chunk is not loaded, return nullopt
+    ChunkPos chunk_pos(block_pos);
+    if (!this->loaded_chunks.contains(chunk_pos))
+    {
+        return std::nullopt;
+    }
+
+    // TODO: Change chunk parsing to use indirect to make it easier to update shit
 }
 

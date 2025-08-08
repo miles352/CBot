@@ -35,7 +35,7 @@ LoginS2CPacket::LoginS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
     if ((this->data.has_death_location = StandardTypes::from_bytes<bool>(ptr)))
     {
         this->data.death_dimension = MCString::from_bytes(ptr);
-        this->data.death_location = Position::from_array(ptr);
+        this->data.death_location = Position::from_bytes(ptr);
     }
     else
     {

@@ -11,6 +11,7 @@
 #include "packets/login/EncryptionResponseC2SPacket.hpp"
 #include "packets/login/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/play/AcknowledgeConfigurationC2SPacket.hpp"
+#include "packets/play/BlockUpdateS2CPacket.hpp"
 #include "packets/play/ChunkDataS2CPacket.hpp"
 #include "packets/play/ConfirmTeleportationC2SPacket.hpp"
 #include "packets/play/DisconnectS2CPacket.hpp"
@@ -51,6 +52,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<SetHealthS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<DisconnectS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<BlockUpdateS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)

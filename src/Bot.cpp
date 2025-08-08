@@ -55,7 +55,7 @@ void Bot::start()
 
     network_handler->set_client_state(ClientState::LOGIN);
 
-    network_handler->write_packet(LoginStartC2SPacket("0X658", UUID));
+    network_handler->write_packet(LoginStartC2SPacket("0x658", UUID));
 
     std::thread packet_thread(&Bot::packet_read_loop, this);
     std::thread tick_thread(&Bot::tick_loop, this);

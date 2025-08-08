@@ -6,7 +6,7 @@
 class Position
 {
 public:
-    static Vec3i from_array(uint8_t*& array)
+    static Vec3i from_bytes(uint8_t*& array)
     {
         int64_t encoded_position = StandardTypes::from_bytes<int64_t>(array);
         Vec3i result;

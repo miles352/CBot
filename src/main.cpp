@@ -46,13 +46,30 @@ int main()
         {
             bot.network_handler->write_packet(SwingArmC2SPacket());
         }
-        BlockPos pos(3750529, 128, -98);
-        std::optional<BlockState> block_state = bot.world.get_block_state(pos);
+
+        BlockPos start(3743222, 128, -6053);
+
+        std::optional<BlockState> block_state = bot.world.get_block_state(start);
         if (block_state.has_value())
         {
-            // std::println("Blockname: {}", Blocks::COMPARATOR.name);
-            std::println("Block at {} is: {}", pos.to_string(), static_cast<int>(block_state.value().get_state<ComparatorMode>().value()));
+            printf("Block is %s with state %d\n", block_state->get_block().name.c_str(), static_cast<int>(*block_state->get_state<Rotation>()));
         }
+
+        // for (int x = 0; x < 15; x++)
+        // {
+        //     for (int z = 0; z < 15; z++)
+        //     {
+        //         BlockPos cur = start.add(x, 0, z);
+        //         std::optional<BlockState> block_state = bot.world.get_block_state(cur);
+        //         if (block_state.has_value())
+        //         {
+        //             printf("Block at %s is: %s\n", cur.to_string().c_str(), block_state.value().get_block().name.c_str());
+        //         }
+        //     }
+        // }
+
+
+
 
         // bot.yaw = bot.ticks * 2;
 

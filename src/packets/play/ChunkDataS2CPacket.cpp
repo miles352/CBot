@@ -10,8 +10,6 @@ ChunkDataS2CPacket::ChunkDataS2CPacket(std::vector<std::uint8_t> data, EventBus 
     // this->data.light_data = LightData::from_bytes(ptr);
 
     event_bus.emit<ChunkDataS2CPacket>(this->data);
-
-    printf("Finished reading chunk\n");
 }
 
 void ChunkDataS2CPacket::default_handler(Bot &bot, Event<ChunkDataS2CPacket> &event)

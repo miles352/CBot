@@ -43,6 +43,7 @@ src/packets/play/SetHealthS2CPacket.cpp
 src/packets/play/SetPlayerPositionRotationC2SPacket.cpp
 src/packets/play/ChunkDataS2CPacket.cpp
 src/packets/play/DisconnectS2CPacket.cpp
+src/packets/play/BlockUpdateS2CPacket.cpp
 src/events/TickEvent.cpp
 src/events/DisconnectEvent.cpp
 src/EventBus.cpp
