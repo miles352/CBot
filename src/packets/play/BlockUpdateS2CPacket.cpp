@@ -1,8 +1,11 @@
 #include "BlockUpdateS2CPacket.hpp"
 
+#include <chrono>
+
 #include "Bot.hpp"
 #include "conversions/Position.hpp"
 #include "conversions/VarInt.hpp"
+#include "events/BlockUpdateEvent.hpp"
 
 BlockUpdateS2CPacket::BlockUpdateS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
@@ -15,10 +18,9 @@ BlockUpdateS2CPacket::BlockUpdateS2CPacket(std::vector<uint8_t> data, EventBus& 
 
 void BlockUpdateS2CPacket::default_handler(Bot& bot, Event<BlockUpdateS2CPacket>& event)
 {
-    std::optional<BlockState> old_state = bot.world.update_block(event.data.location, event.data.new_block_id);
-    if (old_state.has_value())
+    std::optional<std::pair<BlockState, BlockState>> states = bot.world.update_block(event.data.location, event.data.new_block_id);
+    if (states.has_value())
     {
-        std::optional<BlockState> new_state = bot.world.get_block_state(event.data.location);
-        // TODO: Send block update event with old and new block state
+        bot.event_bus->emit<BlockUpdateEvent>(BlockUpdateEvent::Data(event.data.location, states.value().first, states.value().second));
     }
 }

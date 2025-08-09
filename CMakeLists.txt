@@ -46,6 +46,7 @@ src/packets/play/DisconnectS2CPacket.cpp
 src/packets/play/BlockUpdateS2CPacket.cpp
 src/events/TickEvent.cpp
 src/events/DisconnectEvent.cpp
+src/events/BlockUpdateEvent.cpp
 src/EventBus.cpp
 src/Bot.cpp
 src/registry/BlockRegistry.cpp

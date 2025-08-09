@@ -17,6 +17,7 @@
 
 #include <print>
 
+#include "events/BlockUpdateEvent.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
 
@@ -37,15 +38,21 @@ int main()
 
     // bot->input.forwards = true;
 
+    bot->event_bus->on<BlockUpdateEvent>([](Bot& bot, Event<BlockUpdateEvent> event) {
+        bot.network_handler->write_packet(SwingArmC2SPacket());
+        printf("Block %s was replaced with block %s\n", event.data.old_state.get_block().name.c_str(), event.data.new_state.get_block().name.c_str());
+        printf("Block at position is %s\n\n", bot.world.get_block_state(event.data.position).value().get_block().name.c_str());
+    });
+
     bot->event_bus->on<TickEvent>([](Bot& bot) {
-        std::println("Tick {}", bot.ticks);
+        // std::println("Tick {}", bot.ticks);
         // bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.ticks, 90, true, false));
         // bot.network_handler->write_packet(SwingArmC2SPacket());
         // bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, true, false));
-        if (bot.ticks % 60 == 0)
-        {
-            bot.network_handler->write_packet(SwingArmC2SPacket());
-        }
+        // if (bot.ticks % 60 == 0)
+        // {
+        //     bot.network_handler->write_packet(SwingArmC2SPacket());
+        // }
 
         BlockPos start(3743222, 128, -6053);
 
