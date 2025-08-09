@@ -1,17 +1,16 @@
 #pragma once
-#include "Conversion.hpp"
 #include "Heightmap.hpp"
 #include "ChunkSection.hpp"
 #include "BlockEntity.hpp"
 
-class ChunkData : public Conversion<ChunkData>
+class ChunkData
 {
 public:
     std::vector<Heightmap> heightmaps;
     std::vector<ChunkSection> data;
     std::vector<BlockEntity> block_entities;
 
-    std::vector<uint8_t> to_bytes() override
+    std::vector<uint8_t> to_bytes()
     {
         // unused
     }

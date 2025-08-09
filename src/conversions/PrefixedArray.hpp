@@ -36,7 +36,6 @@ namespace PrefixedArray
 
         for (int i = 0; i < arr_length; i++)
         {
-            // T t;
             res.emplace_back(T::from_bytes(array));
         }
         return res;
@@ -50,7 +49,6 @@ namespace PrefixedArray
 
         for (int i = 0; i < arr_length; i++)
         {
-            // T t;
             res.emplace_back(T::from_bytes(array));
         }
         return res;

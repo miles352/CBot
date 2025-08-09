@@ -4,8 +4,6 @@
 
 #include <string>
 
-#include "Conversion.hpp"
-
 class MCString
 {
 public:

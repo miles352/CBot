@@ -1,9 +1,8 @@
 #pragma once
-#include "Conversion.hpp"
 #include "PrefixedArray.hpp"
 #include "VarInt.hpp"
 
-class Heightmap : public Conversion<Heightmap>
+class Heightmap
 {
 public:
     enum Type
@@ -24,7 +23,7 @@ public:
         return hm;
     }
 
-    std::vector<uint8_t> to_bytes() override
+    std::vector<uint8_t> to_bytes()
     {
 
     }

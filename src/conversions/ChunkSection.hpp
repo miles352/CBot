@@ -1,17 +1,16 @@
 #pragma once
 #include <netinet/in.h>
 
-#include "Conversion.hpp"
 #include "PalettedContainer.hpp"
 
-class ChunkSection : public Conversion<ChunkSection>
+class ChunkSection
 {
 public:
     int16_t non_air_blocks = 0;
     PalettedContainer block_states;
     PalettedContainer biomes;
 
-    std::vector<uint8_t> to_bytes() override
+    std::vector<uint8_t> to_bytes()
     {
         // unused
     }

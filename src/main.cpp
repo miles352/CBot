@@ -11,14 +11,6 @@
 #include "packets/play/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/SwingArmC2SPacket.hpp"
 #include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
-#include "math/Physics.hpp"
-#include "Block.hpp"
-#include "registry/BlockRegistry.hpp"
-
-#include <print>
-
-#include "events/BlockUpdateEvent.hpp"
-#include "registry/BlockRegistryGenerated.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -38,45 +30,12 @@ int main()
 
     // bot->input.forwards = true;
 
-    bot->event_bus->on<BlockUpdateEvent>([](Bot& bot, Event<BlockUpdateEvent> event) {
-        bot.network_handler->write_packet(SwingArmC2SPacket());
-        printf("Block %s was replaced with block %s\n", event.data.old_state.get_block().name.c_str(), event.data.new_state.get_block().name.c_str());
-        printf("Block at position is %s\n\n", bot.world.get_block_state(event.data.position).value().get_block().name.c_str());
-    });
-
     bot->event_bus->on<TickEvent>([](Bot& bot) {
-        // std::println("Tick {}", bot.ticks);
-        // bot.network_handler->write_packet(SetPlayerRotationC2SPacket(bot.ticks, 90, true, false));
-        // bot.network_handler->write_packet(SwingArmC2SPacket());
-        // bot.network_handler->write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, true, false));
-        // if (bot.ticks % 60 == 0)
-        // {
-        //     bot.network_handler->write_packet(SwingArmC2SPacket());
-        // }
 
-        BlockPos start(3743222, 128, -6053);
-
-        std::optional<BlockState> block_state = bot.world.get_block_state(start);
-        if (block_state.has_value())
+        if (bot.ticks % 60 == 0)
         {
-            printf("Block is %s with state %d\n", block_state->get_block().name.c_str(), static_cast<int>(*block_state->get_state<Rotation>()));
+            bot.network_handler->write_packet(SwingArmC2SPacket());
         }
-
-        // for (int x = 0; x < 15; x++)
-        // {
-        //     for (int z = 0; z < 15; z++)
-        //     {
-        //         BlockPos cur = start.add(x, 0, z);
-        //         std::optional<BlockState> block_state = bot.world.get_block_state(cur);
-        //         if (block_state.has_value())
-        //         {
-        //             printf("Block at %s is: %s\n", cur.to_string().c_str(), block_state.value().get_block().name.c_str());
-        //         }
-        //     }
-        // }
-
-
-
 
         // bot.yaw = bot.ticks * 2;
 
@@ -91,8 +50,6 @@ int main()
 
         // PlayerEntity.java
         // adjustMovementForSneaking
-
-
     });
 
     bot->event_bus->on<SetHealthS2CPacket>([](Bot& bot, Event<SetHealthS2CPacket>& event) {

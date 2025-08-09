@@ -1,10 +1,9 @@
 #pragma once
-#include "Conversion.hpp"
 
-class BlockEntity : public Conversion<BlockEntity>
+class BlockEntity
 {
 public:
-    std::vector<uint8_t> to_bytes() override
+    std::vector<uint8_t> to_bytes()
     {
 
     }
