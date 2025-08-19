@@ -19,14 +19,14 @@ public:
         return result;
     }
 
-    static std::string from_bytes(uint8_t*& array)
+    static std::string from_bytes(uint8_t*& bytes)
     {
-        std::string res = "";
-        int length = VarInt::from_bytes(array, nullptr);
+        std::string res;
+        int length = VarInt::from_bytes(bytes, nullptr);
         for (int i = 0; i < length; i++)
         {
-            res.push_back(*array);
-            array++;
+            res.push_back(static_cast<char>(*bytes));
+            bytes++;
         }
         return res;
     }

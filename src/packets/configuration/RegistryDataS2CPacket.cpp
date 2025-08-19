@@ -8,7 +8,8 @@ RegistryDataS2CPacket::RegistryDataS2CPacket(std::vector<uint8_t> data, EventBus
     uint8_t* bytes = data.data();
     this->data.registry_id = MCString::from_bytes(bytes);
     printf("Registry Id: %s\n", this->data.registry_id.c_str());
-    // this->data.entries = PrefixedArray::from_bytes_variable_typed<RegistryEntry>(bytes);
+
+    this->data.entries = PrefixedArray::from_bytes_variable_typed<RegistryEntry>(bytes);
 
     event_bus.emit<RegistryDataS2CPacket>(this->data);
 }

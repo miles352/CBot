@@ -52,6 +52,7 @@ src/Bot.cpp
 src/registry/BlockRegistry.cpp
 src/Block.cpp
 src/BlockState.cpp
+src/conversions/NBT.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

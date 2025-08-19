@@ -25,8 +25,8 @@ namespace PrefixedArray
         return res;
     }
 
-    /** Converts an array of variably sized elements of type T, prefixed with a VarInt that gives the size of the array
-     * T must be a class with a <code>type</code> type defined and a <code>from_array</code> method defined.
+    /** Converts an array of variably sized elements of type T, prefixed with a VarInt that gives the size of the array.
+     * T must be a class with a <code>from_array</code> method defined.
      */
     template<typename T>
     static std::vector<T> from_bytes_variable_typed(uint8_t*& array)
