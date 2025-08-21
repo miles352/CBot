@@ -7,7 +7,6 @@ RegistryDataS2CPacket::RegistryDataS2CPacket(std::vector<uint8_t> data, EventBus
 {
     uint8_t* bytes = data.data();
     this->data.registry_id = MCString::from_bytes(bytes);
-    printf("Registry Id: %s\n", this->data.registry_id.c_str());
 
     this->data.entries = PrefixedArray::from_bytes_variable_typed<RegistryEntry>(bytes);
 
@@ -16,5 +15,8 @@ RegistryDataS2CPacket::RegistryDataS2CPacket(std::vector<uint8_t> data, EventBus
 
 void RegistryDataS2CPacket::default_handler(Bot& bot, Event<RegistryDataS2CPacket>& event)
 {
-
+    if (event.data.registry_id == "minecraft:dimension_type")
+    {
+        bot.world._dimension_types = event.data.entries;
+    }
 }

@@ -5,7 +5,8 @@
 #include "BlockState.hpp"
 #include "conversions/ChunkPos.hpp"
 #include "Chunk.hpp"
-#include "math/Vec3.hpp"
+#include "conversions/NBT.hpp"
+#include "conversions/RegistryEntry.hpp"
 
 /** A class containing all the chunks in render distance, and methods to get block states, entities, etc */
 class World
@@ -23,10 +24,12 @@ public:
     */
     std::optional<std::pair<BlockState, BlockState>> update_block(BlockPos block_pos, uint16_t new_id);
 
-    std::unordered_map<ChunkPos, Chunk> loaded_chunks;
+    std::unordered_map<ChunkPos, Chunk> _loaded_chunks;
 
-    int lowest_y;
-    int highest_y;
+    std::vector<RegistryEntry> _dimension_types;
+    uint8_t _current_dimension_index = 0;
+
+    // TODO: Add block iterator with lambda when efficiency is needed
 private:
     uint16_t get_block_id(BlockPos block_pos, const Chunk& chunk, const ChunkSection& section) const;
     void set_block_id(BlockPos block_pos, const Chunk& chunk, ChunkSection& section, uint16_t new_id) const;

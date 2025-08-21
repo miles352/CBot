@@ -14,5 +14,5 @@ ChunkDataS2CPacket::ChunkDataS2CPacket(std::vector<std::uint8_t> data, EventBus 
 
 void ChunkDataS2CPacket::default_handler(Bot &bot, Event<ChunkDataS2CPacket> &event)
 {
-    bot.world.loaded_chunks.emplace(event.data.chunk_pos, Chunk(event.data.chunk_pos, event.data.chunk_data));
+    bot.world._loaded_chunks.emplace(event.data.chunk_pos, Chunk(event.data.chunk_pos, event.data.chunk_data));
 }

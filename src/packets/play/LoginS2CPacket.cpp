@@ -4,6 +4,7 @@
 #include "conversions/Position.hpp"
 #include "conversions/PrefixedArray.hpp"
 #include "conversions/StandardTypes.hpp"
+#include "Bot.hpp"
 
 LoginS2CPacket::LoginS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
 {
@@ -46,10 +47,10 @@ LoginS2CPacket::LoginS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
     this->data.sea_level = VarInt::from_bytes(ptr);
     this->data.enforce_secure_chat = StandardTypes::from_bytes<bool>(ptr);
 
-    // if (this->data.has_death_location)
-    // {
-    //     printf("death identifier: %s, death position: %s\n", this->data.death_dimension.value().c_str(), this->data.death_location.value().to_string().c_str());
-    // }
-
     event_bus.emit<LoginS2CPacket>(this->data);
+}
+
+void LoginS2CPacket::default_handler(Bot& bot, Event<LoginS2CPacket>& event)
+{
+    bot.world._current_dimension_index = event.data.dimension_type;
 }

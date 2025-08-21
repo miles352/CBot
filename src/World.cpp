@@ -6,17 +6,15 @@
 
 World::World()
 {
-    // TODO: Get from biome registry
-    this->lowest_y = 0;
-    this->highest_y = 256;
+
 }
 
 std::optional<BlockState> World::get_block_state(BlockPos block_pos)
 {
     ChunkPos chunk_pos(block_pos);
 
-    auto it = this->loaded_chunks.find(chunk_pos);
-    if (it == this->loaded_chunks.end())
+    auto it = this->_loaded_chunks.find(chunk_pos);
+    if (it == this->_loaded_chunks.end())
     {
         return std::nullopt;
     }
@@ -24,7 +22,8 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     Chunk& chunk = it->second;
 
     // If outside of the world
-    if (block_pos.y < this->lowest_y || block_pos.y > this->highest_y)
+    if (block_pos.y < this->_dimension_types[_current_dimension_index].data.read_int("min_y").value()
+        || block_pos.y >= this->_dimension_types[_current_dimension_index].data.read_int("height").value())
     {
         return BlockState(&Blocks::VOID_AIR, {});
     }
@@ -49,12 +48,12 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
 
 ChunkSection& World::get_section_at_pos(Chunk& chunk, BlockPos block_pos) const
 {
-    return chunk.chunk_data.data[(block_pos.y - this->lowest_y) / 16];
+    return chunk.chunk_data.data[(block_pos.y - this->_dimension_types.at(_current_dimension_index).data.read_int("min_y").value()) / 16];
 }
 
 uint16_t World::get_block_id(const BlockPos block_pos, const Chunk& chunk, const ChunkSection& section) const
 {
-    int entries_for_coord = ((block_pos.y - this->lowest_y) & 15) * 256 +
+    int entries_for_coord = ((block_pos.y - this->_dimension_types.at(_current_dimension_index).data.read_int("min_y").value()) & 15) * 256 +
                             (block_pos.z - chunk.pos.z * 16) * 16 +
                             (block_pos.x - chunk.pos.x * 16);
     uint8_t bpe = section.block_states.bits_per_entry;
@@ -68,7 +67,7 @@ uint16_t World::get_block_id(const BlockPos block_pos, const Chunk& chunk, const
 
 void World::set_block_id(const BlockPos block_pos, const Chunk& chunk, ChunkSection& section, uint16_t new_id) const
 {
-    int entries_for_coord = ((block_pos.y - this->lowest_y) & 15) * 256 +
+    int entries_for_coord = ((block_pos.y - this->_dimension_types.at(_current_dimension_index).data.read_int("min_y").value()) & 15) * 256 +
                             (block_pos.z - chunk.pos.z * 16) * 16 +
                             (block_pos.x - chunk.pos.x * 16);
     uint8_t bpe = section.block_states.bits_per_entry;
@@ -89,8 +88,8 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
     ChunkPos chunk_pos(block_pos);
 
     // if chunk is not loaded, return nullopt
-    auto chunk_it = this->loaded_chunks.find(chunk_pos);
-    if (chunk_it == this->loaded_chunks.end())
+    auto chunk_it = this->_loaded_chunks.find(chunk_pos);
+    if (chunk_it == this->_loaded_chunks.end())
     {
         return std::nullopt;
     }
