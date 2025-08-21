@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
+#include <optional>
 #include <variant>
 
 #include "NBT.hpp"
@@ -94,13 +95,31 @@ namespace NBT
         std::vector<Tag> data;
     };
 
+
     struct TagCompound
     {
         static TagCompound from_bytes(uint8_t*& bytes);
-        // TODO: Create getter methods by name
-    private:
+
+        std::optional<int8_t> read_byte(const std::string& tag_name) const;
+        std::optional<int16_t> read_short(const std::string& tag_name) const;
+        std::optional<int32_t> read_int(const std::string& tag_name) const;
+        std::optional<int64_t> read_long(const std::string& tag_name) const;
+        std::optional<float> read_float(const std::string& tag_name) const;
+        std::optional<double> read_double(const std::string& tag_name) const;
+        std::optional<std::vector<int8_t>> read_byte_array(const std::string& tag_name) const;
+        std::optional<std::string> read_string(const std::string& tag_name) const;
+        std::optional<std::vector<Tag>> read_list(const std::string& tag_name) const;
+        std::optional<TagCompound> read_compound(const std::string& tag_name) const;
+        std::optional<std::vector<int32_t>> read_int_array(const std::string& tag_name) const;
+        std::optional<std::vector<int64_t>> read_long_array(const std::string& tag_name) const;
+
         std::unordered_map<std::string, Tag> data;
+
+    private:
+        template <typename T1, typename T2>
+        std::optional<T2> get(const std::string& tag_name) const;
     };
+
 
     struct TagIntArray
     {

@@ -35,7 +35,6 @@ namespace NBT
         return readers[type](bytes);
     }
 
-
     TagByte TagByte::from_bytes(uint8_t*& bytes)
     {
         TagByte tag;
@@ -169,6 +168,88 @@ namespace NBT
             type_id = StandardTypes::from_bytes<uint8_t>(bytes);
         }
         return compound;
+    }
+
+    template<typename T1, typename T2>
+    std::optional<T2> TagCompound::get(const std::string& tag_name) const
+    {
+        auto it = this->data.find(tag_name);
+        if (it != this->data.end())
+        {
+            if (auto ret = std::get_if<T1>(&it->second))
+            {
+                return static_cast<T1>(*ret).get();
+            }
+        }
+        return std::nullopt;
+    }
+
+    std::optional<int8_t> TagCompound::read_byte(const std::string& tag_name) const
+    {
+        return this->get<TagByte, int8_t>(tag_name);
+    }
+
+    std::optional<int16_t> TagCompound::read_short(const std::string& tag_name) const
+    {
+        return this->get<TagShort, int16_t>(tag_name);
+    }
+
+    std::optional<int32_t> TagCompound::read_int(const std::string& tag_name) const
+    {
+        return this->get<TagInt, int32_t>(tag_name);
+    }
+
+    std::optional<int64_t> TagCompound::read_long(const std::string& tag_name) const
+    {
+        return this->get<TagLong, int64_t>(tag_name);
+    }
+
+    std::optional<float> TagCompound::read_float(const std::string& tag_name) const
+    {
+        return this->get<TagFloat, float>(tag_name);
+    }
+
+    std::optional<double> TagCompound::read_double(const std::string& tag_name) const
+    {
+        return this->get<TagDouble, double>(tag_name);
+    }
+
+    std::optional<std::vector<int8_t>> TagCompound::read_byte_array(const std::string& tag_name) const
+    {
+        return this->get<TagByteArray, std::vector<int8_t>>(tag_name);
+    }
+
+    std::optional<std::string> TagCompound::read_string(const std::string& tag_name) const
+    {
+        return this->get<TagString, std::string>(tag_name);
+    }
+
+    std::optional<std::vector<Tag>> TagCompound::read_list(const std::string& tag_name) const
+    {
+        return this->get<TagList, std::vector<Tag>>(tag_name);
+    }
+
+    std::optional<TagCompound> TagCompound::read_compound(const std::string& tag_name) const
+    {
+        auto it = this->data.find(tag_name);
+        if (it != this->data.end())
+        {
+            if (auto tag = std::get_if<TagCompound>(&it->second))
+            {
+                return *tag;
+            }
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::vector<int32_t>> TagCompound::read_int_array(const std::string& tag_name) const
+    {
+        return this->get<TagIntArray, std::vector<int32_t>>(tag_name);
+    }
+
+    std::optional<std::vector<int64_t>> TagCompound::read_long_array(const std::string& tag_name) const
+    {
+        return this->get<TagLongArray, std::vector<int64_t>>(tag_name);
     }
 
     TagIntArray TagIntArray::from_bytes(uint8_t*& bytes)
