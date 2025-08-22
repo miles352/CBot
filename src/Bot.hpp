@@ -4,24 +4,26 @@
 
 #include "EventBus.hpp"
 #include "NetworkHandler.hpp"
+#include "Pathfinder.hpp"
 #include "math/Vec3.hpp"
 #include "World.hpp"
 #include "packets/play/ChunkDataS2CPacket.hpp"
 
 
-class Bot : public std::enable_shared_from_this<Bot>
+class Bot
 {
 public:
     /** Do not call this directly, call <code>Bot::create</code> instead */
     Bot(const std::string& server_ip, const std::string& server_port);
-    static std::shared_ptr<Bot> create(const std::string& server_ip, const std::string& server_port);
+    // static std::shared_ptr<Bot> create(const std::string& server_ip, const std::string& server_port);
 
     void start();
 
-    std::unique_ptr<EventBus> event_bus;
-    std::unique_ptr<NetworkHandler> network_handler;
+    EventBus event_bus;
+    NetworkHandler network_handler;
 
     World world;
+    // Pathfinder pathfinder;
 
     /** The number of ticks that have passed since the bot was started */
     int ticks;

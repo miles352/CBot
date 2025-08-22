@@ -21,6 +21,6 @@ void BlockUpdateS2CPacket::default_handler(Bot& bot, Event<BlockUpdateS2CPacket>
     std::optional<std::pair<BlockState, BlockState>> states = bot.world.update_block(event.data.location, event.data.new_block_id);
     if (states.has_value())
     {
-        bot.event_bus->emit<BlockUpdateEvent>(BlockUpdateEvent::Data(event.data.location, states.value().first, states.value().second));
+        bot.event_bus.emit<BlockUpdateEvent>(BlockUpdateEvent::Data(event.data.location, states.value().first, states.value().second));
     }
 }

@@ -12,5 +12,5 @@ std::vector<uint8_t> AcknowledgeConfigurationC2SPacket::encode()
 
 void AcknowledgeConfigurationC2SPacket::default_handler(Bot& bot)
 {
-    bot.network_handler->set_client_state(ClientState::CONFIGURATION);
+    bot.network_handler.set_client_state(ClientState::CONFIGURATION);
 }

@@ -41,6 +41,6 @@ void SynchronizePlayerPositionS2CPacket::default_handler(Bot& bot, const Event<S
 
     // Idk what the rotate velocity thingy is for: event.data.teleport_flags.rotate_velocity_rotation
 
-    bot.network_handler->write_packet(ConfirmTeleportationC2SPacket(event.data.teleport_id));
+    bot.network_handler.write_packet(ConfirmTeleportationC2SPacket(event.data.teleport_id));
 }
 

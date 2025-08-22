@@ -59,18 +59,17 @@ class EventBus
     /** A map of event names to the event listeners.*/
     std::unordered_map<std::type_index, EventListenerTypes> event_listeners;
 
-    std::weak_ptr<Bot> bot{};
+    Bot& bot;
 
-    public:
-    explicit EventBus(std::shared_ptr<Bot> bot) : bot(bot) {};
-    EventBus();
+public:
+    explicit EventBus(Bot& bot) : bot(bot) {};
 
     /** A method to add a callback when this event is fired.
      * @param callback The callback function to run when the event is emitted.
      * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string leaves the callback unnamed.
      * @param priority A number that represents the order callbacks for the same event will be called. Higher numbers are called first, and 0 is the default.
      */
-    template <typename EventType, typename Callable>
+    template<typename EventType, typename Callable>
     requires std::invocable<Callable, Bot&> || std::invocable<Callable, Bot&, Event<EventType>&>
     void on(Callable&& callback, const std::string& listener_name = "", int priority = 0)
     {
@@ -264,12 +263,9 @@ class EventBus
 
             for (const std::function<bool(Bot&, std::any&)>& callback : vec.second)
             {
-                if (auto p = this->bot.lock())
+                if (callback(this->bot, data_copy)) // true if cancelled
                 {
-                    if (callback(*p, data_copy)) // true if cancelled
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
         }

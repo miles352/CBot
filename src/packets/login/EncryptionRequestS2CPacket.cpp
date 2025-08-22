@@ -61,8 +61,8 @@ void EncryptionRequestS2CPacket::default_handler(Bot& bot, Event<EncryptionReque
     RSA_public_encrypt(16, shared_secret, encrypted_secret.data(), rsa, RSA_PKCS1_PADDING);
     RSA_public_encrypt(data.verify_token.size(), data.verify_token.data(), encrypted_token.data(), rsa, RSA_PKCS1_PADDING);
 
-    bot.network_handler->write_packet(EncryptionResponseC2SPacket(encrypted_secret, encrypted_token));
+    bot.network_handler.write_packet(EncryptionResponseC2SPacket(encrypted_secret, encrypted_token));
 
-    bot.network_handler->enable_encryption(shared_secret);
+    bot.network_handler.enable_encryption(shared_secret);
     printf("Enabled encryption\n");
 }

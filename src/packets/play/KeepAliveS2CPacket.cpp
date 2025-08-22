@@ -14,5 +14,5 @@ KeepAliveS2CPacket::KeepAliveS2CPacket(std::vector<uint8_t> data, EventBus &even
 
 void KeepAliveS2CPacket::default_handler(Bot &bot, Event<KeepAliveS2CPacket> &event)
 {
-    bot.network_handler->write_packet(KeepAliveC2SPacket(event.data.keep_alive_id));
+    bot.network_handler.write_packet(KeepAliveC2SPacket(event.data.keep_alive_id));
 }

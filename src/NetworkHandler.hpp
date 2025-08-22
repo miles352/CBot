@@ -4,7 +4,6 @@
 #include <optional>
 #include <zlib.h>
 
-#include "packets/ClientboundPacket.hpp"
 #include "packets/ServerboundPacket.hpp"
 #include "registry/PacketRegistry.hpp"
 
@@ -35,7 +34,7 @@ class NetworkHandler
     bool connection_closed;
     ClientState client_state; // TODO: make private
     /** The constructor, which creates the socket connection using the specified server ip and port. */
-    NetworkHandler(std::string server_ip, std::string server_port, EventBus& event_bus);
+    NetworkHandler(const std::string& server_ip, const std::string& server_port, EventBus& event_bus);
 
     /* The deconstructor closes the socket connection. */
     ~NetworkHandler();
@@ -125,6 +124,5 @@ class NetworkHandler
     int read_varint(int *bytes_read) const;
 
 private:
-
     EventBus& event_bus;
 };

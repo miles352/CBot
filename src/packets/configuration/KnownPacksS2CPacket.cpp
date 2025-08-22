@@ -10,5 +10,5 @@ KnownPacksS2CPacket::KnownPacksS2CPacket(std::vector<uint8_t> data, EventBus& ev
 
 void KnownPacksS2CPacket::default_handler(Bot& bot, Event<KnownPacksS2CPacket>& event)
 {
-    bot.network_handler->write_packet(KnownPacksC2SPacket{});
+    bot.network_handler.write_packet(KnownPacksC2SPacket{});
 }

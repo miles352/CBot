@@ -1,5 +1,6 @@
 #include "NetworkHandler.hpp"
 #include "conversions/VarInt.hpp"
+#include "Bot.hpp"
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -9,7 +10,7 @@
 
 #include <stdexcept>
 
-NetworkHandler::NetworkHandler(std::string server_ip, std::string server_port, EventBus& event_bus): event_bus(event_bus)
+NetworkHandler::NetworkHandler(const std::string& server_ip, const std::string& server_port, EventBus& event_bus) : connection_closed(false), event_bus(event_bus)
 {
     this->use_encryption = false;
     this->use_compression = false;

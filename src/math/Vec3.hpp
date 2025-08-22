@@ -21,6 +21,11 @@ public:
         return x * x + y * y + z * z;
     }
 
+    [[nodiscard]] double distance_to_squared(const Vec3<T>& other)
+    {
+        return std::pow(other.x - this->x, 2.0) + std::pow(other.y - this->y, 2.0) + std::pow(other.z - this->z, 2.0);
+    }
+
     [[nodiscard]] Vec3<T> scale(T scale) const
     {
         return Vec3<T>(x * scale, y * scale, z * scale);

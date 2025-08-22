@@ -22,19 +22,31 @@ const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
 
 int main()
 {
-    std::shared_ptr<Bot> bot = Bot::create(SERVER_IP, SERVER_PORT);
+    Bot bot = Bot(SERVER_IP, SERVER_PORT);
 
-    bot->event_bus->on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
+    // Acts as a spawn event
+    bot.event_bus.once<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
+        bot.yaw = 0;
+        printf("Spawned\n");
+    });
+
+    bot.event_bus.on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
        printf("Position: %s\n", event.data.position.to_string().c_str());
     });
 
-    // bot->input.forwards = true;
+    bot.input.forwards = true;
 
-    bot->event_bus->on<TickEvent>([](Bot& bot) {
+    bool started = false;
 
+    bot.event_bus.on<TickEvent>([&started](Bot& bot) {
         if (bot.ticks % 60 == 0)
         {
-            bot.network_handler->write_packet(SwingArmC2SPacket());
+            bot.network_handler.write_packet(SwingArmC2SPacket());
+        }
+
+        if (bot.ticks % 3 == 0)
+        {
+            printf("Coordinates: %s, Yaw: %.1f, pitch: %.1f\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch);
         }
 
         // bot.yaw = bot.ticks * 2;
@@ -52,7 +64,7 @@ int main()
         // adjustMovementForSneaking
     });
 
-    bot->event_bus->on<SetHealthS2CPacket>([](Bot& bot, Event<SetHealthS2CPacket>& event) {
+    bot.event_bus.on<SetHealthS2CPacket>([](Bot& bot, Event<SetHealthS2CPacket>& event) {
         if (event.data.health < 15)
         {
             bot.disconnect();
@@ -60,5 +72,5 @@ int main()
         printf("Health: %f, Food: %d\n", event.data.health, event.data.food);
     });
 
-    bot->start();
+    bot.start();
 }
