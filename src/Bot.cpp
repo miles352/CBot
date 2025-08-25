@@ -20,7 +20,7 @@
 #include "registry/BlockRegistryGenerated.hpp"
 
 Bot::Bot(const std::string& server_ip, const std::string& server_port):
-    event_bus(*this), network_handler(server_ip, server_port, event_bus), ticks(0), disconnected(false), server_ip(server_ip), server_port(server_port)
+    event_bus(*this), network_handler(server_ip, server_port, event_bus), pathfinder(*this), ticks(0), disconnected(false), server_ip(server_ip), server_port(server_port)
 {
     this->init();
     const auto& block_states = get_block_states();
@@ -37,6 +37,8 @@ void Bot::init()
 
 void Bot::start()
 {
+    // TODO: actually start the network handler here. Right now its already started when its initialized in the constructor.
+    // Bot instance should be able to sit for x seconds before connecting if it wants to.
     this->network_handler.write_packet(HandshakeC2SPacket(770, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
 
     this->network_handler.set_client_state(ClientState::LOGIN);
@@ -165,3 +167,16 @@ BlockPos Bot::get_block_pos() const
     return BlockPos(this->position);
 }
 
+void Bot::look_at(BlockPos pos)
+{
+    Vec3d vec = Vec3d(pos.x + 0.5, pos.y, pos.z + 0.5);
+    Vec3d delta = vec - this->position;
+    float yaw = static_cast<float>(std::atan2(-delta.x, delta.z) * 180.0 / M_PI);
+
+    if (yaw < 0) {
+        yaw += 360.0f;
+    }
+
+    // printf("Yaw %f\n", yaw);
+    this->yaw = yaw;
+}

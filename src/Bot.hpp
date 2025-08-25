@@ -13,9 +13,7 @@
 class Bot
 {
 public:
-    /** Do not call this directly, call <code>Bot::create</code> instead */
     Bot(const std::string& server_ip, const std::string& server_port);
-    // static std::shared_ptr<Bot> create(const std::string& server_ip, const std::string& server_port);
 
     void start();
 
@@ -23,7 +21,7 @@ public:
     NetworkHandler network_handler;
 
     World world;
-    // Pathfinder pathfinder;
+    Pathfinder pathfinder;
 
     /** The number of ticks that have passed since the bot was started */
     int ticks;
@@ -59,6 +57,9 @@ public:
     void disconnect();
 
     BlockPos get_block_pos() const;
+
+    /** Changes the bots yaw and pitch to look at the center of the block position passed to this method. */
+    void look_at(BlockPos pos);
 
     // TODO: Set this when authenticating with microsoft
     const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";

@@ -10,11 +10,6 @@ public:
     PalettedContainer block_states;
     PalettedContainer biomes;
 
-    std::vector<uint8_t> to_bytes()
-    {
-        // unused
-    }
-
     static ChunkSection from_bytes(uint8_t*& bytes)
     {
         ChunkSection chunk_section;

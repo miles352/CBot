@@ -22,9 +22,4 @@ public:
         hm.data = PrefixedArray::from_bytes_fixed<int64_t>(bytes);
         return hm;
     }
-
-    std::vector<uint8_t> to_bytes()
-    {
-
-    }
 };

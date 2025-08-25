@@ -10,11 +10,6 @@ public:
     std::vector<ChunkSection> data;
     std::vector<BlockEntity> block_entities;
 
-    std::vector<uint8_t> to_bytes()
-    {
-        // unused
-    }
-
     static ChunkData from_bytes(uint8_t*& bytes)
     {
         ChunkData chunk_data;

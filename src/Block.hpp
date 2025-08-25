@@ -39,6 +39,12 @@ public:
     float get_slipperiness() const;
     float get_velocity_multiplier() const;
     float get_jump_velocity_multiplier() const;
+
+    bool operator==(const Block& other) const
+    {
+        return this->name == other.name;
+    }
+
 private:
     BlockSetting settings;
 };
