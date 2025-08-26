@@ -135,7 +135,6 @@ void Bot::tick_loop()
 
         this->ticks++;
     }
-
 }
 
 void Bot::disconnect()
@@ -154,12 +153,28 @@ void Bot::tick()
     Vec3d movement_input = Vec3d(this->input.left - this->input.right, 0, this->input.forwards - this->input.backwards);
     Vec3d movement_with_speed = (movement_input.length_squared() > 1.0 ? movement_input.normalize() : movement_input).scale(Physics::PLAYER_WALK_SPEED);
     Vec3d direction = AngleHelper::unit_direction_vec(this->yaw);
-    Vec3d velocity = Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
+    this->velocity = Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
                             0,
                             movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
 
-    this->network_handler.write_packet(SetPlayerPositionRotationC2SPacket(this->position + velocity, this->yaw, this->pitch, true, false));
+    if (velocity.length_squared() != 0.0)
+    {
+        // TODO: Pass entity collisions here if we need to care about that
+        this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
+    }
 
+
+    this->network_handler.write_packet(SetPlayerPositionRotationC2SPacket(this->position + this->velocity, this->yaw, this->pitch, true, false));
+}
+
+Box Bot::get_bounding_box() const
+{
+    // Player is {0.6, 1.8, 0.6} blocks.
+    // 1.5 tall when sneaking, and {0.6, 0.6, 0.6} when swimming or crawling
+    static constexpr double PLAYER_WIDTH = 0.6;
+    static constexpr double PLAYER_HEIGHT = 1.8;
+    static constexpr double HALF_WIDTH = PLAYER_WIDTH / 2.0;
+    return Box({ this->position.x - HALF_WIDTH, this->position.y, this->position.z - HALF_WIDTH }, { this->position.x + HALF_WIDTH, this->position.y + PLAYER_HEIGHT, this->position.z + HALF_WIDTH });
 }
 
 BlockPos Bot::get_block_pos() const
@@ -177,6 +192,5 @@ void Bot::look_at(BlockPos pos)
         yaw += 360.0f;
     }
 
-    // printf("Yaw %f\n", yaw);
     this->yaw = yaw;
 }

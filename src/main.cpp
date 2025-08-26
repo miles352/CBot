@@ -28,9 +28,8 @@ void follow_path(Bot& bot, std::vector<BlockPos> path)
 
     bot.event_bus.on<TickEvent>([path = std::move(path), index](Bot& bot) {
         bot.look_at(path[*index]);
-        // printf("Bot looking towards: %s at yaw %f\n", path[*index].to_string().c_str(), bot.yaw);
         BlockPos pos = path[*index];
-        if (bot.position.distance_to_squared(Vec3d(pos.x + 0.5, bot.position.y, pos.z + 0.5)) < 0.1)
+        if (bot.position.distance_to_squared(pos.to_center_pos()) < 0.1)
         {
             (*index)++;
             printf("Increased index!\n");
@@ -38,7 +37,7 @@ void follow_path(Bot& bot, std::vector<BlockPos> path)
             if (*index >= path.size())
             {
                 bot.input.forwards = false;
-                printf("Done pathing!");
+                printf("Done pathing!\n");
                 bot.event_bus.remove_listener<TickEvent>("path");
             }
         }
@@ -51,36 +50,37 @@ int main()
 
     // Acts as a spawn event
     bot.event_bus.once<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
-        // bot.yaw = 0;
         printf("Spawned\n");
     });
 
     bot.event_bus.on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
-       // printf("Teleport Position: %s\n", event.data.position.to_string().c_str());
+       printf("Teleport Position: %s\n", event.data.position.to_string().c_str());
     });
-
-    // bot.input.forwards = true;
 
     bool started = false;
 
     bot.event_bus.on<TickEvent>([&started](Bot& bot) {
+        // bot.yaw = 70;
         if (bot.ticks % 60 == 0)
         {
             bot.network_handler.write_packet(SwingArmC2SPacket());
         }
 
-        if (bot.ticks % 3 == 0)
-        {
-            // printf("Coordinates: %s, Yaw: %.1f, pitch: %.1f\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch);
-        }
+        // if (bot.ticks % 5 == 0)
+        // {
+            // printf("Coordinates: %s, Yaw: %.1f, pitch: %.1f Velocity: %s\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch, bot.velocity.to_string().c_str());
+        // }
 
-        if (bot.ticks > 60 && !started)
+        if (bot.ticks > 100 && !started)
         {
             BlockPos goal{-950, 128, 3186};
             std::vector<BlockPos> path = bot.pathfinder.path_to(goal);
 
             // printf("done\n");
             follow_path(bot, path);
+
+            // bot.yaw = 110.0f;
+            // bot.input.forwards = true;
 
             started = true;
         }
@@ -98,10 +98,15 @@ int main()
 
         // PlayerEntity.java
         // adjustMovementForSneaking
+
+        // collisions: Entity#adjustMovementForCollisions
+
+
+
     });
 
     bot.event_bus.on<SetHealthS2CPacket>([](Bot& bot, Event<SetHealthS2CPacket>& event) {
-        if (event.data.health < 15)
+        if (event.data.health < 19.0f)
         {
             bot.disconnect();
         }
