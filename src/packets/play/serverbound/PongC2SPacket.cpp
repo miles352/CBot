@@ -1,4 +1,4 @@
-#include "PongC2SPacket.hpp"
+#include "packets/play/serverbound/PongC2SPacket.hpp"
 
 #include <cstdio>
 

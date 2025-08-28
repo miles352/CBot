@@ -1,7 +1,7 @@
-#include "SynchronizePlayerPositionS2CPacket.hpp"
+#include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
 
 #include "Bot.hpp"
-#include "ConfirmTeleportationC2SPacket.hpp"
+#include "../serverbound/ConfirmTeleportationC2SPacket.hpp"
 #include "conversions/StandardTypes.hpp"
 #include "conversions/VarInt.hpp"
 

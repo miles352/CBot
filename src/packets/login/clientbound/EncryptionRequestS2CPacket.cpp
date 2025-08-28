@@ -1,9 +1,9 @@
-#include "packets/login/EncryptionRequestS2CPacket.hpp"
+#include "EncryptionRequestS2CPacket.hpp"
 
 #include <openssl/rand.h>
 
 #include "config.hpp"
-#include "EncryptionResponseC2SPacket.hpp"
+#include "../serverbound/EncryptionResponseC2SPacket.hpp"
 #include "MicrosoftAuth.hpp"
 #include "conversions/MCString.hpp"
 #include "conversions/PrefixedArray.hpp"

@@ -1,7 +1,7 @@
-#include "packets/login/LoginSuccessS2CPacket.hpp"
+#include "packets/login/clientbound/LoginSuccessS2CPacket.hpp"
 
 #include "Bot.hpp"
-#include "LoginAcknowledgedC2SPacket.hpp"
+#include "../serverbound/LoginAcknowledgedC2SPacket.hpp"
 
 LoginSuccessS2CPacket::LoginSuccessS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {

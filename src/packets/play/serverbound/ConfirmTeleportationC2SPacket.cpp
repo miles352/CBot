@@ -1,4 +1,4 @@
-#include "ConfirmTeleportationC2SPacket.hpp"
+#include "packets/play/serverbound/ConfirmTeleportationC2SPacket.hpp"
 
 #include "conversions/VarInt.hpp"
 

@@ -8,7 +8,7 @@
 #include "math/Vec3.hpp"
 #include "World.hpp"
 #include "math/Box.hpp"
-#include "packets/play/ChunkDataS2CPacket.hpp"
+#include "packets/play/clientbound/ChunkDataS2CPacket.hpp"
 
 
 class Bot

@@ -1,4 +1,4 @@
-#include "SetPlayerPositionRotationC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 
 #include "conversions/StandardTypes.hpp"
 

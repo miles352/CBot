@@ -1,4 +1,5 @@
-#include "AcknowledgeConfigurationC2SPacket.hpp"
+#include "packets/play/serverbound/AcknowledgeConfigurationC2SPacket.hpp"
+
 
 AcknowledgeConfigurationC2SPacket::AcknowledgeConfigurationC2SPacket()
 {

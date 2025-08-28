@@ -1,4 +1,4 @@
-#include "RegistryDataS2CPacket.hpp"
+#include "packets/configuration/clientbound/RegistryDataS2CPacket.hpp"
 
 #include "conversions/MCString.hpp"
 #include "conversions/PrefixedArray.hpp"

@@ -1,4 +1,4 @@
-#include "SetHeldItemS2CPacket.hpp"
+#include "packets/play/clientbound/SetHeldItemS2CPacket.hpp"
 
 #include "conversions/VarInt.hpp"
 

@@ -1,7 +1,7 @@
 #include "KeepAliveS2CPacket.hpp"
 
 #include "Bot.hpp"
-#include "KeepAliveC2SPacket.hpp"
+#include "../serverbound/KeepAliveC2SPacket.hpp"
 #include "conversions/StandardTypes.hpp"
 
 KeepAliveS2CPacket::KeepAliveS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)

@@ -1,4 +1,4 @@
-#include "packets/configuration/AcknowledgeFinishConfigurationC2SPacket.hpp"
+#include "AcknowledgeFinishConfigurationC2SPacket.hpp"
 
 AcknowledgeFinishConfigurationC2SPacket::AcknowledgeFinishConfigurationC2SPacket()
 {

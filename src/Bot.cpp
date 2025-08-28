@@ -8,15 +8,15 @@
 #include "events/DisconnectEvent.hpp"
 #include "math/AngleHelper.hpp"
 #include "math/Physics.hpp"
-#include "packets/configuration/FinishConfigurationS2CPacket.hpp"
-#include "packets/configuration/KnownPacksS2CPacket.hpp"
+#include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
+#include "packets/configuration/clientbound/KnownPacksS2CPacket.hpp"
 #include "packets/handshaking/HandshakeC2SPacket.hpp"
-#include "packets/login/LoginStartC2SPacket.hpp"
-#include "packets/play/SetPlayerPositionRotationC2SPacket.hpp"
+#include "packets/login/serverbound/LoginStartC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
 #include "registry/BlockRegistry.hpp"
 
-#include "packets/play/DisconnectS2CPacket.hpp"
+#include "packets/play/clientbound/DisconnectS2CPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
 Bot::Bot(const std::string& server_ip, const std::string& server_port):

@@ -1,4 +1,4 @@
-#include "SwingArmC2SPacket.hpp"
+#include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 
 #include "conversions/VarInt.hpp"
 

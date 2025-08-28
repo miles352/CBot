@@ -1,4 +1,4 @@
-#include "SetHealthS2CPacket.hpp"
+#include "packets/play/clientbound/SetHealthS2CPacket.hpp"
 
 #include "Bot.hpp"
 #include "conversions/StandardTypes.hpp"

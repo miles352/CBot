@@ -1,4 +1,4 @@
-#include "packets/login/EncryptionResponseC2SPacket.hpp"
+#include "packets/login/serverbound/EncryptionResponseC2SPacket.hpp"
 #include "conversions/PrefixedArray.hpp"
 
 EncryptionResponseC2SPacket::EncryptionResponseC2SPacket(std::vector<uint8_t> shared_secret, std::vector<uint8_t> verify_token)

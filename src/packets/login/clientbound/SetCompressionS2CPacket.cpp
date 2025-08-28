@@ -1,4 +1,4 @@
-#include "packets/login/SetCompressionS2CPacket.hpp"
+#include "packets/login/clientbound/SetCompressionS2CPacket.hpp"
 #include "conversions/VarInt.hpp"
 
 SetCompressionS2CPacket::SetCompressionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)

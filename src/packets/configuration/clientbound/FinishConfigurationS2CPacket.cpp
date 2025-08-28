@@ -1,6 +1,6 @@
-#include "packets/configuration/FinishConfigurationS2CPacket.hpp"
+#include "FinishConfigurationS2CPacket.hpp"
 
-#include "AcknowledgeFinishConfigurationC2SPacket.hpp"
+#include "../serverbound/AcknowledgeFinishConfigurationC2SPacket.hpp"
 
 
 FinishConfigurationS2CPacket::FinishConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)

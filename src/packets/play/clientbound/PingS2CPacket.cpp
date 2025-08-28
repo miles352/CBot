@@ -1,6 +1,6 @@
-#include "PingS2CPacket.hpp"
+#include "packets/play/clientbound/PingS2CPacket.hpp"
 
-#include "PongC2SPacket.hpp"
+#include "../serverbound/PongC2SPacket.hpp"
 #include "conversions/StandardTypes.hpp"
 
 PingS2CPacket::PingS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)

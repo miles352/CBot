@@ -1,4 +1,4 @@
-#include "packets/configuration/KnownPacksC2SPacket.hpp"
+#include "packets/configuration/serverbound/KnownPacksC2SPacket.hpp"
 
 #include "conversions/DataPack.hpp"
 #include "conversions/MCString.hpp"

@@ -3,14 +3,14 @@
 #include "Bot.hpp"
 #include "events/DisconnectEvent.hpp"
 #include "events/TickEvent.hpp"
-#include "packets/configuration/KnownPacksC2SPacket.hpp"
-#include "packets/login/LoginStartC2SPacket.hpp"
-#include "packets/login/LoginSuccessS2CPacket.hpp"
-#include "packets/play/SetHealthS2CPacket.hpp"
-#include "packets/play/SetPlayerPositionRotationC2SPacket.hpp"
-#include "packets/play/SetPlayerRotationC2SPacket.hpp"
-#include "packets/play/SwingArmC2SPacket.hpp"
-#include "packets/play/SynchronizePlayerPositionS2CPacket.hpp"
+#include "packets/configuration/serverbound/KnownPacksC2SPacket.hpp"
+#include "packets/login/serverbound/LoginStartC2SPacket.hpp"
+#include "packets/login/clientbound/LoginSuccessS2CPacket.hpp"
+#include "packets/play/clientbound/SetHealthS2CPacket.hpp"
+#include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
+#include "packets/play/serverbound/SwingArmC2SPacket.hpp"
+#include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -20,29 +20,29 @@ const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 // 197db9ea-56e4-4cce-a4d5-3e0da590476a
 const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
 
-void follow_path(Bot& bot, std::vector<BlockPos> path)
-{
-    bot.input.forwards = true;
-
-    std::shared_ptr<int> index = std::make_shared<int>(0);
-
-    bot.event_bus.on<TickEvent>([path = std::move(path), index](Bot& bot) {
-        bot.look_at(path[*index]);
-        BlockPos pos = path[*index];
-        if (bot.position.distance_to_squared(pos.to_center_pos()) < 0.1)
-        {
-            (*index)++;
-            printf("Increased index!\n");
-            printf("Coordinates: %s\n", bot.position.to_string().c_str());
-            if (*index >= path.size())
-            {
-                bot.input.forwards = false;
-                printf("Done pathing!\n");
-                bot.event_bus.remove_listener<TickEvent>("path");
-            }
-        }
-    }, "path");
-}
+// void follow_path(Bot& bot, std::vector<BlockPos> path)
+// {
+//     bot.input.forwards = true;
+//
+//     std::shared_ptr<int> index = std::make_shared<int>(0);
+//
+//     bot.event_bus.on<TickEvent>([path = std::move(path), index](Bot& bot) {
+//         bot.look_at(path[*index]);
+//         BlockPos pos = path[*index];
+//         if (bot.position.distance_to_squared(pos.to_center_pos()) < 0.1)
+//         {
+//             (*index)++;
+//             printf("Increased index!\n");
+//             printf("Coordinates: %s\n", bot.position.to_string().c_str());
+//             if (*index >= path.size())
+//             {
+//                 bot.input.forwards = false;
+//                 printf("Done pathing!\n");
+//                 bot.event_bus.remove_listener<TickEvent>("path");
+//             }
+//         }
+//     }, "path");
+// }
 
 int main()
 {
@@ -73,11 +73,7 @@ int main()
 
         if (bot.ticks > 100 && !started)
         {
-            BlockPos goal{-950, 128, 3186};
-            std::vector<BlockPos> path = bot.pathfinder.path_to(goal);
 
-            // printf("done\n");
-            follow_path(bot, path);
 
             // bot.yaw = 110.0f;
             // bot.input.forwards = true;

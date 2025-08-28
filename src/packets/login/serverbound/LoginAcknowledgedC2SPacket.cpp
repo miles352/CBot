@@ -1,4 +1,4 @@
-#include "packets/login/LoginAcknowledgedC2SPacket.hpp"
+#include "packets/login/serverbound/LoginAcknowledgedC2SPacket.hpp"
 
 LoginAcknowledgedC2SPacket::LoginAcknowledgedC2SPacket()
 {
