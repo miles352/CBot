@@ -1,8 +1,8 @@
 #include "NBT.hpp"
 
 #include <functional>
-#include <memory>
 #include <cstdint>
+#include <format>
 
 #include "StandardTypes.hpp"
 
@@ -42,6 +42,11 @@ namespace NBT
         return tag;
     }
 
+    std::string TagByte::to_string() const
+    {
+        return std::format("TAG_BYTE {}", this->value);
+    }
+
     int8_t TagByte::get() const
     {
         return this->value;
@@ -52,6 +57,11 @@ namespace NBT
         TagShort tag;
         tag.value = StandardTypes::from_bytes<int16_t>(bytes);
         return tag;
+    }
+
+    std::string TagShort::to_string() const
+    {
+        return std::format("TAG_SHORT {}", this->value);
     }
 
     int16_t TagShort::get() const
@@ -66,6 +76,11 @@ namespace NBT
         return tag;
     }
 
+    std::string TagInt::to_string() const
+    {
+        return std::format("TAG_INT {}", this->value);
+    }
+
     int32_t TagInt::get() const
     {
         return this->value;
@@ -76,6 +91,11 @@ namespace NBT
         TagLong tag;
         tag.value = StandardTypes::from_bytes<int64_t>(bytes);
         return tag;
+    }
+
+    std::string TagLong::to_string() const
+    {
+        return std::format("TAG_LONG {}", this->value);
     }
 
     int64_t TagLong::get() const
@@ -90,6 +110,11 @@ namespace NBT
         return tag;
     }
 
+    std::string TagFloat::to_string() const
+    {
+        return std::format("TAG_FLOAT {}", this->value);
+    }
+
     float TagFloat::get() const
     {
         return this->value;
@@ -100,6 +125,11 @@ namespace NBT
         TagDouble tag;
         tag.value = StandardTypes::from_bytes<double>(bytes);
         return tag;
+    }
+
+    std::string TagDouble::to_string() const
+    {
+        return std::format("TAG_DOUBLE {}", this->value);
     }
 
     double TagDouble::get() const
@@ -118,6 +148,17 @@ namespace NBT
         return tag;
     }
 
+    std::string TagByteArray::to_string() const
+    {
+        std::string out = "TAG_BYTE_ARRAY [";
+        for (const int8_t byte : this->data)
+        {
+            out += std::to_string(byte) + " ";
+        }
+        out += "]\n";
+        return out;
+    }
+
     const std::vector<int8_t>& TagByteArray::get() const
     {
         return this->data;
@@ -128,6 +169,11 @@ namespace NBT
         TagString tag;
         tag.value = read_nbt_string(bytes);
         return tag;
+    }
+
+    std::string TagString::to_string() const
+    {
+        return "TAG_STRING " + this->get();
     }
 
     const std::string& TagString::get() const
@@ -149,6 +195,19 @@ namespace NBT
         return tag;
     }
 
+    std::string TagList::to_string() const
+    {
+        std::string out = "TAG_LIST [";
+        for (const Tag& tag : this->data)
+        {
+            std::visit([&out](auto& other_tag) {
+                out += other_tag.to_string();
+            }, tag);
+        }
+        out += "]\n";
+        return out;
+    }
+
     const std::vector<Tag>& TagList::get() const
     {
         return this->data;
@@ -168,6 +227,21 @@ namespace NBT
             type_id = StandardTypes::from_bytes<uint8_t>(bytes);
         }
         return compound;
+    }
+
+    std::string TagCompound::to_string() const
+    {
+        std::string output = "TAG_COMPOUND\n";
+        for (const auto& it : this->data)
+        {
+            output += it.first + " ";
+            std::visit([&output](auto& variant) {
+                output += variant.to_string();
+            }, it.second);
+            output += "\n";
+        }
+        output += "END\n";
+        return output;
     }
 
     template<typename T1, typename T2>
@@ -264,6 +338,17 @@ namespace NBT
         return tag;
     }
 
+    std::string TagIntArray::to_string() const
+    {
+        std::string out = "TAG_INT_ARRAY [";
+        for (const int32_t i : this->data)
+        {
+            out += std::to_string(i) + " ";
+        }
+        out += "]\n";
+        return out;
+    }
+
     const std::vector<int32_t>& TagIntArray::get() const
     {
         return this->data;
@@ -279,6 +364,17 @@ namespace NBT
             tag.data.emplace_back(std::get<TagLong>(read_tag(TAG_LONG, bytes)).get());
         }
         return tag;
+    }
+
+    std::string TagLongArray::to_string() const
+    {
+        std::string out = "TAG_LONG_ARRAY [";
+        for (const int64_t l : this->data)
+        {
+            out += std::to_string(l) + " ";
+        }
+        out += "]\n";
+        return out;
     }
 
     const std::vector<int64_t>& TagLongArray::get() const

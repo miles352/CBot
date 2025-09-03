@@ -8,6 +8,7 @@
 #include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
 #include "packets/configuration/serverbound/KnownPacksC2SPacket.hpp"
 #include "packets/configuration/clientbound/RegistryDataS2CPacket.hpp"
+#include "packets/configuration/clientbound/UpdateTagsS2CPacket.hpp"
 #include "packets/login/serverbound/EncryptionResponseC2SPacket.hpp"
 #include "packets/login/serverbound/LoginAcknowledgedC2SPacket.hpp"
 #include "packets/play/serverbound/AcknowledgeConfigurationC2SPacket.hpp"
@@ -20,6 +21,7 @@
 #include "packets/play/clientbound/LoginS2CPacket.hpp"
 #include "packets/play/clientbound/PingS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerAbilitiesS2CPacket.hpp"
+#include "packets/play/clientbound/SetContainerContentS2CPacket.hpp"
 #include "packets/play/serverbound/PongC2SPacket.hpp"
 #include "packets/play/clientbound/SetHealthS2CPacket.hpp"
 #include "packets/play/clientbound/SetHeldItemS2CPacket.hpp"
@@ -41,6 +43,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<KnownPacksS2CPacket>(ClientState::CONFIGURATION, event_bus);
     register_clientbound_packet<FinishConfigurationS2CPacket>(ClientState::CONFIGURATION, event_bus);
     register_clientbound_packet<RegistryDataS2CPacket>(ClientState::CONFIGURATION, event_bus);
+    register_clientbound_packet<UpdateTagsS2CPacket>(ClientState::CONFIGURATION, event_bus);
 
     register_clientbound_packet<StartConfigurationS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<KeepAliveS2CPacket>(ClientState::PLAY, event_bus);
@@ -53,6 +56,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<DisconnectS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<BlockUpdateS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SetContainerContentS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)

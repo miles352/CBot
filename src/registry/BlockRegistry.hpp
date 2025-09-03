@@ -2,6 +2,7 @@
 
 #include "Block.hpp"
 #include <vector>
+#include <typeindex>
 
 class BlockState;
 

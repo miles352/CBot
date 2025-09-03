@@ -1,14 +1,10 @@
 #pragma once
 
-#include <print>
 #include <unordered_map>
 #include <vector>
 
-#include "PrefixedArray.hpp"
 #include "StandardTypes.hpp"
 #include "VarInt.hpp"
-#include "registry/BlockRegistry.hpp"
-#include "BlockState.hpp"
 
 class PalettedContainer
 {

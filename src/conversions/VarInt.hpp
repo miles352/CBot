@@ -32,17 +32,15 @@ public:
         }
     }
 
-    static int from_bytes(uint8_t*& array, int* bytes_read = nullptr)
+    static int from_bytes(uint8_t*& array)
     {
         int num = 0;
         uint8_t byte = 0;
         int pos = 0;
-        int amount_read = 0;
         while (true)
         {
             byte = *array;
             array++;
-            amount_read++;
             num |= (byte & SEGMENT_BITMASK) << pos; // only add the segment
             if ((byte & CONTINUE_BIT) == 0) break;
         
@@ -50,7 +48,6 @@ public:
             
             if (pos >= 32) throw std::runtime_error("VarInt is too big!");
         }
-        if (bytes_read != nullptr) *bytes_read = amount_read;
         return num;
     }
 

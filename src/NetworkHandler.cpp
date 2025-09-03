@@ -157,8 +157,9 @@ RawPacket NetworkHandler::read_packet()
         }
         uint8_t* uncompressed_ptr = uncompressed.data();
         int packet_id_bytes;
-        packet_id = VarInt::from_bytes(uncompressed_ptr, &packet_id_bytes);
-        data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - packet_id_bytes);
+        uint8_t* start = uncompressed_ptr;
+        packet_id = VarInt::from_bytes(uncompressed_ptr);
+        data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - (uncompressed_ptr - start));
     }
 
     // printf("Cannot find packet matching id: 0x%02x\n", packet_id);

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <optional>
 #include <string>
-#include <typeindex>
-#include <unordered_map>
 
 /** A class that represents a block in the world. Only one instance of this class should exist for each unique block. */
 class Block
@@ -28,7 +25,6 @@ public:
         BlockSetting& set_jump_velocity_multiplier(float jump_velocity_multiplier);
     };
 
-    // Block(const std::string* name, const std::unordered_map<std::type_index, int>& states) : name(name), states(states) {};
     Block(std::string name, const BlockSetting &settings);
 
     const std::string name;

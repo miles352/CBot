@@ -26,6 +26,7 @@ src/packets/configuration/clientbound/KnownPacksS2CPacket.cpp
 src/packets/configuration/clientbound/FinishConfigurationS2CPacket.cpp
 src/packets/configuration/serverbound/AcknowledgeFinishConfigurationC2SPacket.cpp
 src/packets/configuration/clientbound/RegistryDataS2CPacket.cpp
+src/packets/configuration/clientbound/UpdateTagsS2CPacket.cpp
 src/packets/play/clientbound/StartConfigurationS2CPacket.cpp
 src/packets/play/serverbound/AcknowledgeConfigurationC2SPacket.cpp
 src/packets/play/clientbound/KeepAliveS2CPacket.cpp
@@ -44,6 +45,7 @@ src/packets/play/serverbound/SetPlayerPositionRotationC2SPacket.cpp
 src/packets/play/clientbound/ChunkDataS2CPacket.cpp
 src/packets/play/clientbound/DisconnectS2CPacket.cpp
 src/packets/play/clientbound/BlockUpdateS2CPacket.cpp
+src/packets/play/clientbound/SetContainerContentS2CPacket.cpp
 src/events/TickEvent.cpp
 src/events/DisconnectEvent.cpp
 src/events/BlockUpdateEvent.cpp
@@ -53,8 +55,10 @@ src/registry/BlockRegistry.cpp
 src/Block.cpp
 src/BlockState.cpp
 src/conversions/NBT.cpp
+src/conversions/StructuredComponents.cpp
 src/Pathfinder.cpp
 src/math/Box.cpp
+src/ItemStack.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

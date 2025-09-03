@@ -11,7 +11,7 @@ namespace PrefixedArray
     template<typename T>
     static std::vector<T> from_bytes_fixed(uint8_t*& array)
     {
-        int arr_length = VarInt::from_bytes(array, nullptr);
+        int arr_length = VarInt::from_bytes(array);
         int type_size = sizeof(T);
         std::vector<T> res;
         
@@ -31,7 +31,7 @@ namespace PrefixedArray
     template<typename T>
     static std::vector<T> from_bytes_variable_typed(uint8_t*& array)
     {
-        int arr_length = VarInt::from_bytes(array, nullptr);
+        int arr_length = VarInt::from_bytes(array);
         std::vector<T> res;
 
         for (int i = 0; i < arr_length; i++)
@@ -41,10 +41,14 @@ namespace PrefixedArray
         return res;
     }
 
+    /** Similar to from_bytes_variable_typed, but this should be used when the conversion type does not
+     * store the converted type as a member variable, for example MCString.
+     * T must be a class with a <code>from_array</code> method and a <code>T::type</code> type defined.
+     */
     template<typename T>
     static std::vector<typename T::type> from_bytes_variable(uint8_t*& array)
     {
-        int arr_length = VarInt::from_bytes(array, nullptr);
+        int arr_length = VarInt::from_bytes(array);
         std::vector<typename T::type> res;
 
         for (int i = 0; i < arr_length; i++)

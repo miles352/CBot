@@ -8,6 +8,7 @@
 #include <variant>
 
 #include "NBT.hpp"
+
 namespace NBT
 {
     typedef std::variant<struct TagByte,
@@ -27,6 +28,8 @@ namespace NBT
     {
         static TagByte from_bytes(uint8_t*& bytes);
         int8_t get() const;
+
+        std::string to_string() const;
     private:
         int8_t value{};
     };
@@ -35,6 +38,8 @@ namespace NBT
     {
         static TagShort from_bytes(uint8_t*& bytes);
         int16_t get() const;
+
+        std::string to_string() const;
     private:
         int16_t value{};
     };
@@ -43,6 +48,8 @@ namespace NBT
     {
         static TagInt from_bytes(uint8_t*& bytes);
         int32_t get() const;
+
+        std::string to_string() const;
     private:
         int32_t value{};
     };
@@ -51,6 +58,8 @@ namespace NBT
     {
         static TagLong from_bytes(uint8_t*& bytes);
         int64_t get() const;
+
+        std::string to_string() const;
     private:
         int64_t value{};
     };
@@ -59,6 +68,8 @@ namespace NBT
     {
         static TagFloat from_bytes(uint8_t*& bytes);
         float get() const;
+
+        std::string to_string() const;
     private:
         float value{};
     };
@@ -67,6 +78,8 @@ namespace NBT
     {
         static TagDouble from_bytes(uint8_t*& bytes);
         double get() const;
+
+        std::string to_string() const;
     private:
         double value{};
     };
@@ -75,6 +88,8 @@ namespace NBT
     {
         static TagByteArray from_bytes(uint8_t*& bytes);
         const std::vector<int8_t>& get() const;
+
+        std::string to_string() const;
     private:
         std::vector<int8_t> data;
     };
@@ -83,6 +98,8 @@ namespace NBT
     {
         static TagString from_bytes(uint8_t*& bytes);
         const std::string& get() const;
+
+        std::string to_string() const;
     private:
         std::string value;
     };
@@ -91,6 +108,8 @@ namespace NBT
     {
         static TagList from_bytes(uint8_t*& bytes);
         const std::vector<Tag>& get() const;
+
+        std::string to_string() const;
     private:
         std::vector<Tag> data;
     };
@@ -113,6 +132,8 @@ namespace NBT
         std::optional<std::vector<int32_t>> read_int_array(const std::string& tag_name) const;
         std::optional<std::vector<int64_t>> read_long_array(const std::string& tag_name) const;
 
+        std::string to_string() const;
+
         std::unordered_map<std::string, Tag> data;
 
     private:
@@ -125,6 +146,8 @@ namespace NBT
     {
         static TagIntArray from_bytes(uint8_t*& bytes);
         const std::vector<int32_t>& get() const;
+
+        std::string to_string() const;
     private:
         std::vector<int32_t> data;
     };
@@ -133,6 +156,8 @@ namespace NBT
     {
         static TagLongArray from_bytes(uint8_t*& bytes);
         const std::vector<int64_t>& get() const;
+
+        std::string to_string() const;
     private:
         std::vector<int64_t> data;
     };

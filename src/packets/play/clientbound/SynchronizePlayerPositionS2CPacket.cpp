@@ -8,7 +8,7 @@
 SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
     uint8_t* data_ptr = data.data();
-    this->data.teleport_id = VarInt::from_bytes(data_ptr, nullptr);
+    this->data.teleport_id = VarInt::from_bytes(data_ptr);
 
     this->data.position.x = StandardTypes::from_bytes<double>(data_ptr);
     this->data.position.y = StandardTypes::from_bytes<double>(data_ptr);
