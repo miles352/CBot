@@ -11,6 +11,7 @@
 #include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
+#include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -86,6 +87,8 @@ int main()
                 std::string item_name = ItemRegistry[held_slot.item_data.value().item_id]->get_name();
                 printf("Currently holding slot %d with item: %s\n", slot_index, item_name.c_str());
             }
+
+            bot.network_handler.write_packet(SetHeldItemC2SPacket(8));
 
             started = true;
         }

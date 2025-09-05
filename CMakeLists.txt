@@ -46,6 +46,7 @@ src/packets/play/clientbound/ChunkDataS2CPacket.cpp
 src/packets/play/clientbound/DisconnectS2CPacket.cpp
 src/packets/play/clientbound/BlockUpdateS2CPacket.cpp
 src/packets/play/clientbound/SetContainerContentS2CPacket.cpp
+src/packets/play/serverbound/SetHeldItemC2SPacket.cpp
 src/events/TickEvent.cpp
 src/events/DisconnectEvent.cpp
 src/events/BlockUpdateEvent.cpp

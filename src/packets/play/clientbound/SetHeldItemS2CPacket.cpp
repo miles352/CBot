@@ -15,4 +15,3 @@ void SetHeldItemS2CPacket::default_handler(Bot& bot, Event<SetHeldItemS2CPacket>
 {
     bot.inventory.hotbar_slot = event.data.slot;
 }
-
