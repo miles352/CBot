@@ -59,6 +59,7 @@ src/conversions/StructuredComponents.cpp
 src/Pathfinder.cpp
 src/math/Box.cpp
 src/ItemStack.cpp
+src/Inventory.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

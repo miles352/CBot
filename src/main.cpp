@@ -75,8 +75,17 @@ int main()
         {
 
 
-            // bot.yaw = 110.0f;
-            // bot.input.forwards = true;
+            int slot_index = bot.inventory.hotbar_slot;
+            Slot held_slot = bot.inventory.player_slots[36 + slot_index];
+            if (!held_slot.item_data.has_value())
+            {
+                printf("Currently holding slot %d with item: Air\n", slot_index);
+            }
+            else
+            {
+                std::string item_name = ItemRegistry[held_slot.item_data.value().item_id]->get_name();
+                printf("Currently holding slot %d with item: %s\n", slot_index, item_name.c_str());
+            }
 
             started = true;
         }

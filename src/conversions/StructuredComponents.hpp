@@ -7,9 +7,7 @@
 #include "MCString.hpp"
 #include "NBT.hpp"
 #include "PrefixedArray.hpp"
-#include "TextComponent.hpp"
 #include "Trim.hpp"
-#include "conversions/VarInt.hpp"
 
 enum class Enchantment
 {
@@ -39,7 +37,7 @@ struct StructuredComponents
         CONTAINER = 66,
     };
 
-    typedef std::variant<EnchantmentComponent, int, NBT::TagCompound, std::string, NBT::TagString, Trim, std::vector<struct Slot>> ComponentTypes;
+    typedef std::variant<EnchantmentComponent, int, NBT::TagCompound, NBT::TagString, Trim, std::vector<struct Slot>> ComponentTypes;
 
     std::unordered_map<ComponentId, ComponentTypes> values;
 

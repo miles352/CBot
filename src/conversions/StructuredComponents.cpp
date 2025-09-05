@@ -2,6 +2,7 @@
 
 #include "VarInt.hpp"
 #include "Slot.hpp"
+#include "TextComponent.hpp"
 
 EnchantmentComponent EnchantmentComponent::from_bytes(uint8_t*& bytes)
 {
@@ -18,9 +19,9 @@ EnchantmentComponent EnchantmentComponent::from_bytes(uint8_t*& bytes)
 
 void StructuredComponents::add(uint8_t*& bytes)
 {
-    int x = VarInt::from_bytes(bytes);
-    ComponentId component_id = static_cast<ComponentId>(x);
-    printf("Component Id: %d\n", component_id);
+    int type = VarInt::from_bytes(bytes);
+    ComponentId component_id = static_cast<ComponentId>(type);
+    // printf("Component Id: %d\n", component_id);
     this->values[component_id] = readers[component_id](bytes);
 }
 

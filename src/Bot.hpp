@@ -5,10 +5,10 @@
 #include "EventBus.hpp"
 #include "NetworkHandler.hpp"
 #include "Pathfinder.hpp"
+#include "Inventory.hpp"
 #include "math/Vec3.hpp"
 #include "World.hpp"
 #include "math/Box.hpp"
-#include "packets/play/clientbound/ChunkDataS2CPacket.hpp"
 
 
 class Bot
@@ -23,6 +23,7 @@ public:
 
     World world;
     Pathfinder pathfinder;
+    Inventory inventory;
 
     /** The number of ticks that have passed since the bot was started */
     int ticks;
