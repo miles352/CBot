@@ -21,4 +21,12 @@ public:
 
         return result;
     }
+
+    static std::vector<uint8_t> to_bytes(Vec3i position)
+    {
+        int64_t encoded_position = ((static_cast<int64_t>(position.x) & 0x3FFFFFF) << 38)
+        | ((static_cast<int64_t>(position.z) & 0x3FFFFFF) << 12)
+        | (static_cast<int64_t>(position.y) & 0xFFF);
+        return StandardTypes::to_bytes<int64_t>(encoded_position);
+    }
 };

@@ -9,34 +9,37 @@
 
 #include <openssl/sha.h>
 
+#include "conversions/Position.hpp"
+#include "math/BlockPos.hpp"
 #include "math/Vec3.hpp"
 
 void test_VarInt()
 {
-    assert(VarInt::from_int(0) == std::vector<uint8_t>{0x00});
-    assert(VarInt::from_int(1) == std::vector<uint8_t>{0x01});
-    assert(VarInt::from_int(2) == std::vector<uint8_t>{0x02});
-    assert(VarInt::from_int(127) == std::vector<uint8_t>{0x7f});
-    assert(VarInt::from_int(128) == (std::vector<uint8_t>{0x80, 0x01}));
-    assert(VarInt::from_int(255) == (std::vector<uint8_t>{0xff, 0x01}));
-    assert(VarInt::from_int(25565) == (std::vector<uint8_t>{0xdd, 0xc7, 0x01}));
-    assert(VarInt::from_int(2097151) == (std::vector<uint8_t>{0xff, 0xff, 0x7f}));
-    assert(VarInt::from_int(2147483647) == (std::vector<uint8_t>{0xff, 0xff, 0xff, 0xff, 0x07}));
-    assert(VarInt::from_int(-1) == (std::vector<uint8_t>{0xff, 0xff, 0xff, 0xff, 0x0f}));
-    assert(VarInt::from_int(-2147483648) == (std::vector<uint8_t>{0x80, 0x80, 0x80, 0x80, 0x08}));
+    assert(VarInt::to_bytes(0) == std::vector<uint8_t>{0x00});
+    assert(VarInt::to_bytes(1) == std::vector<uint8_t>{0x01});
+    assert(VarInt::to_bytes(2) == std::vector<uint8_t>{0x02});
+    assert(VarInt::to_bytes(127) == std::vector<uint8_t>{0x7f});
+    assert(VarInt::to_bytes(128) == (std::vector<uint8_t>{0x80, 0x01}));
+    assert(VarInt::to_bytes(255) == (std::vector<uint8_t>{0xff, 0x01}));
+    assert(VarInt::to_bytes(25565) == (std::vector<uint8_t>{0xdd, 0xc7, 0x01}));
+    assert(VarInt::to_bytes(2097151) == (std::vector<uint8_t>{0xff, 0xff, 0x7f}));
+    assert(VarInt::to_bytes(2147483647) == (std::vector<uint8_t>{0xff, 0xff, 0xff, 0xff, 0x07}));
+    assert(VarInt::to_bytes(-1) == (std::vector<uint8_t>{0xff, 0xff, 0xff, 0xff, 0x0f}));
+    assert(VarInt::to_bytes(-2147483648) == (std::vector<uint8_t>{0x80, 0x80, 0x80, 0x80, 0x08}));
 
     uint8_t* x = new uint8_t[]{0x80, 0x80, 0x80, 0x80, 0x08};
-    assert(VarInt::from_array(x, nullptr) == -2147483648);
+    assert(VarInt::from_bytes(x) == -2147483648);
 
     uint8_t* y = new uint8_t[]{162, 0x00};
-    assert(VarInt::from_array(y, nullptr) == 34);
+    assert(VarInt::from_bytes(y) == 34);
+
 }
 
 void test_MCString()
 {
     std::vector<uint8_t> mc_string = MCString::to_bytes("Hello World!");
     uint8_t* ptr = mc_string.data();
-    std::string normal_string = MCString::from_array(ptr);
+    std::string normal_string = MCString::from_bytes(ptr);
     assert(normal_string == "Hello World!");
 }
 
@@ -97,9 +100,17 @@ void test_vec3()
     assert(Vec3i(1, 0, 0).cross(Vec3i(0, 2, 0)) == Vec3i(0, 0, 2));
     assert(Vec3i(1, 0, 0).normalize() == Vec3i(1, 0, 0));
     assert(Vec3d(1.0, 0, 0).normalize() == Vec3d(1, 0, 0));
-    std::cout << vec.to_string() << std::endl;
 }
 
+void test_position()
+{
+    BlockPos position{2083782, 191, 198719872};
+
+    std::vector<uint8_t> position_bytes = Position::to_bytes(position);
+    uint8_t* ptr = position_bytes.data();
+    BlockPos converted_back = Position::from_bytes(ptr);
+    assert(converted_back == position);
+}
 
 int main() {
     test_VarInt();
