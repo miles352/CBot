@@ -30,6 +30,7 @@
 #include "packets/play/clientbound/StartConfigurationS2CPacket.hpp"
 #include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
+#include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
 
 
@@ -76,6 +77,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<SwingArmC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<SetPlayerPositionRotationC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<SetHeldItemC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<PlayerActionC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>

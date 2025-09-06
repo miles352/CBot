@@ -15,8 +15,10 @@
 #include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
 #include "registry/BlockRegistry.hpp"
+#include "registry/BlockFace.hpp"
 
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
+#include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
 Bot::Bot(const std::string& server_ip, const std::string& server_port):
@@ -194,3 +196,35 @@ void Bot::look_at(BlockPos pos)
 
     this->yaw = yaw;
 }
+
+void test(Bot& bot)
+{
+
+}
+
+void Bot::mine_block(BlockPos pos)
+{
+
+
+    this->network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, pos, BlockFace::TOP, 0});
+    printf("Started mining!\n");
+
+    // 30 ticks for a sign // TODO: Calculated amount needed from hardness / effects / enchantments
+    std::shared_ptr<int> tick_delay = std::make_shared<int>(30);
+
+
+    this->event_bus.on<TickEvent>([tick_delay, pos](Bot& bot) {
+        (*tick_delay)--;
+        printf("%d\n", *tick_delay);
+        if (*tick_delay <= 0)
+        {
+            bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, pos, BlockFace::TOP, 0});
+            printf("Mined block!\n");
+            bot.event_bus.remove_listener<TickEvent>("mine_block");
+        }
+    }, "mine_block");
+
+
+
+}
+

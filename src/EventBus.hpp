@@ -81,7 +81,7 @@ public:
         // If the callback can be called with just the bot param.
         if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](Bot& bot, std::any&) -> bool {
+            callback_any = [cb](Bot& bot, std::any&) mutable -> bool {
                 cb(bot);
                 return false;
             };
@@ -89,7 +89,7 @@ public:
         // If the callback has params, make sure it matches the EventType::Data type
         else if constexpr (std::is_invocable_v<Callable, Bot&, Event<EventType>&>)
         {
-            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+            callback_any = [cb](Bot& bot, std::any& data) mutable -> bool {
                 Event event = Event<EventType>(std::any_cast<typename EventType::Data>(data), false);
                 cb(bot, event);
                 return event.cancelled;
@@ -124,7 +124,7 @@ public:
         // If the callback can be called with just the bot param.
         if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](Bot& bot, std::any&) -> bool {
+            callback_any = [cb](Bot& bot, std::any&) mutable -> bool {
                 cb(bot);
                 return false;
             };
@@ -132,7 +132,7 @@ public:
         // If the callback has params, make sure it matches the EventType::Data type
         else if constexpr (std::is_invocable_v<Callable, Bot&, EventRef<EventType>&>)
         {
-            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+            callback_any = [cb](Bot& bot, std::any& data) mutable -> bool {
                 EventRef event = EventRef<EventType>(std::any_cast<typename EventType::Data&>(data), false);
                 cb(bot, event);
                 return event.cancelled;
@@ -165,7 +165,7 @@ public:
         // If the callback can be called with just the bot param.
         if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](Bot& bot, std::any&) -> bool {
+            callback_any = [cb](Bot& bot, std::any&) mutable -> bool {
                 cb(bot);
                 return false;
             };
@@ -173,7 +173,7 @@ public:
         // If the callback has params, make sure it matches the EventType::Data type
         else if constexpr (std::is_invocable_v<Callable, Bot&, Event<EventType>&>)
         {
-            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+            callback_any = [cb](Bot& bot, std::any& data) mutable -> bool {
                 Event event = Event<EventType>(std::any_cast<typename EventType::Data>(data), false);
                 cb(bot, event);
                 return event.cancelled;
@@ -200,7 +200,7 @@ public:
         // If the callback can be called with just the bot param.
         if constexpr (std::is_invocable_v<Callable, Bot&>)
         {
-            callback_any = [cb](Bot& bot, std::any&) -> bool {
+            callback_any = [cb](Bot& bot, std::any&) mutable -> bool {
                 cb(bot);
                 return false;
             };
@@ -208,7 +208,7 @@ public:
         // If the callback has params, make sure it matches the EventType::Data type
         else if constexpr (std::is_invocable_v<Callable, Bot&, EventRef<EventType>&>)
         {
-            callback_any = [cb](Bot& bot, std::any& data) -> bool {
+            callback_any = [cb](Bot& bot, std::any& data) mutable -> bool {
                 EventRef event = EventRef<EventType>(std::any_cast<typename EventType::Data&>(data), false);
                 cb(bot, event);
                 return event.cancelled;
@@ -228,6 +228,12 @@ public:
         std::map<int, std::vector<std::function<bool(Bot&, std::any&)>>, std::greater<>> callbacks;
 
         // Collect all the callbacks into one map and sort them by priority
+
+        /** These loops make a copy of the listener, meaning any variables stored in a lambda will not persist between
+         * calls. The list cannot take ownership of the lambda because it must stay stored for the next time it is
+         * emitted. The lambdas could instead be wrapped in shared_ptr's but for now I will leave persisting variable
+         * state up to the creater of the lambda
+         */
 
         for (auto it = listeners.named.begin(); it != listeners.named.end(); )
         {
@@ -261,7 +267,7 @@ public:
         for (auto& vec : callbacks)
         {
 
-            for (const std::function<bool(Bot&, std::any&)>& callback : vec.second)
+            for (std::function<bool(Bot&, std::any&)>& callback : vec.second)
             {
                 if (callback(this->bot, data_copy)) // true if cancelled
                 {

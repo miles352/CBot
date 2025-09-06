@@ -63,6 +63,8 @@ public:
     /** Changes the bots yaw and pitch to look at the center of the block position passed to this method. */
     void look_at(BlockPos pos);
 
+    void mine_block(BlockPos pos);
+
     Box get_bounding_box() const;
 
     // TODO: Set this when authenticating with microsoft

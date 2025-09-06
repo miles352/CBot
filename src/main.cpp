@@ -11,6 +11,7 @@
 #include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
+#include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
 
 
@@ -88,7 +89,9 @@ int main()
                 printf("Currently holding slot %d with item: %s\n", slot_index, item_name.c_str());
             }
 
-            bot.network_handler.write_packet(SetHeldItemC2SPacket(8));
+            // 9647, 128, -17556
+            bot.mine_block({9647, 128, -17556});
+            // bot.network_handler.write_packet<PlayerActionC2SPacket>({PlayerActionC2SPacket::ActionStatus::STARTED_DIGGING, BlockPos{9647, 128, -17556}, Face::TOP, 0});
 
             started = true;
         }
