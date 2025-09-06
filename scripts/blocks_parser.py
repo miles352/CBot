@@ -128,22 +128,37 @@ block_states = dict()
 
 blocks = []
 
+# Properties file is object with entries in this format, generated from a clientside java mod:
+# "minecraft:air": {"hardness": "0.0", "resistance": "0.0","slipperiness": "0.6","velocity_multiplier": "1.0","jump_velocity_multiplier": "1.0","tool_required": "false","collision": "false"},
 
-with open("blocks.json", "r") as file:
-    data = json.load(file)
-    for block_name in data:
-        if "properties" not in data[block_name]:
-            block_states[data[block_name]["states"][0]["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {{}} }}"
-        else:
-            state = data[block_name]["states"][-1]
-            formatted_state = "{"
-            for property in state["properties"]:
-                properties_list = data[block_name]["properties"][property]
-                enum_name = enums[property + " " + str(properties_list)]
-                formatted_state += f"{{ std::type_index(typeid({enum_name})), {properties_list.index(state["properties"][property])} }}, "
-            formatted_state += "}"
-            block_states[state["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {formatted_state} }}"
-        blocks.append(f"const Block {block_name[10:].upper()}(\"{block_name[10:]}\", Block::BlockSetting());\n")
+        # BlockSetting& set_resistance(float resistance);
+        # BlockSetting& set_hardness(float hardness);
+        # BlockSetting& requires_tool(bool required);
+        # BlockSetting& set_slipperiness(float slipperiness);
+        # BlockSetting& set_velocity_multiplier(float velocity_multiplier);
+        # BlockSetting& set_jump_velocity_multiplier(float jump_velocity_multiplier);
+        # BlockSetting& set_collidable(bool collidable);
+
+with open("block_properties.json", "r") as properties:
+    props = json.load(properties)
+    with open("blocks.json", "r") as file:
+        data = json.load(file)
+        for block_name in data:
+            if "properties" not in data[block_name]:
+                block_states[data[block_name]["states"][0]["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {{}} }}"
+            else:
+                state = data[block_name]["states"][-1]
+                formatted_state = "{"
+                for prop in state["properties"]:
+                    properties_list = data[block_name]["properties"][prop]
+                    enum_name = enums[prop + " " + str(properties_list)]
+                    formatted_state += f"{{ std::type_index(typeid({enum_name})), {properties_list.index(state["properties"][prop])} }}, "
+                formatted_state += "}"
+                block_states[state["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {formatted_state} }}"
+            block_properties = props[block_name]
+            block_settings = f"Block::BlockSetting().set_resistance({block_properties["resistance"]}).set_hardness({block_properties["hardness"]}).requires_tool({block_properties["tool_required"]}).set_slipperiness({block_properties["slipperiness"]}).set_velocity_multiplier({block_properties["velocity_multiplier"]}).set_jump_velocity_multiplier({block_properties["jump_velocity_multiplier"]}).set_collidable({block_properties["collision"]})"
+            blocks.append(f"const Block {block_name[10:].upper()}(\"{block_name[10:]}\", {block_settings});\n")
+
 
 # namespace Blocks
 # {

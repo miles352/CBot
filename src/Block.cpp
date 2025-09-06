@@ -12,6 +12,7 @@ Block::BlockSetting::BlockSetting()
     this->slipperiness = 0.6F;
     this->velocity_multiplier = 1.0F;
     this->jump_velocity_multiplier = 1.0F;
+    this->collidable = true;
 }
 
 Block::BlockSetting& Block::BlockSetting::requires_tool(const bool required)
@@ -50,6 +51,12 @@ Block::BlockSetting& Block::BlockSetting::set_velocity_multiplier(float velocity
     return *this;
 }
 
+Block::BlockSetting& Block::BlockSetting::set_collidable(bool collidable)
+{
+    this->collidable = collidable;
+    return *this;
+}
+
 float Block::get_hardness() const
 {
     return this->settings.hardness;
@@ -78,4 +85,9 @@ bool Block::get_tool_required() const
 float Block::get_velocity_multiplier() const
 {
     return this->settings.velocity_multiplier;
+}
+
+bool Block::get_collidable() const
+{
+    return this->settings.collidable;
 }

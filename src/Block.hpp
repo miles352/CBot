@@ -17,12 +17,14 @@ public:
         float slipperiness;
         float velocity_multiplier;
         float jump_velocity_multiplier;
+        bool collidable;
         BlockSetting& set_resistance(float resistance);
         BlockSetting& set_hardness(float hardness);
         BlockSetting& requires_tool(bool required);
         BlockSetting& set_slipperiness(float slipperiness);
         BlockSetting& set_velocity_multiplier(float velocity_multiplier);
         BlockSetting& set_jump_velocity_multiplier(float jump_velocity_multiplier);
+        BlockSetting& set_collidable(bool collidable);
     };
 
     Block(std::string name, const BlockSetting &settings);
@@ -35,6 +37,7 @@ public:
     float get_slipperiness() const;
     float get_velocity_multiplier() const;
     float get_jump_velocity_multiplier() const;
+    bool get_collidable() const;
 
     bool operator==(const Block& other) const
     {
