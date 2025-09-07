@@ -32,6 +32,7 @@
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
 
 
 std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
@@ -72,10 +73,11 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<AcknowledgeConfigurationC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<ConfirmTeleportationC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<KeepAliveC2SPacket>(ClientState::PLAY, event_bus);
-    register_serverbound_packet<SetPlayerRotationC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<PongC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<SwingArmC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<SetPlayerPositionRotationC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<SetPlayerRotationC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<SetPlayerPositionC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<SetHeldItemC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<PlayerActionC2SPacket>(ClientState::PLAY, event_bus);
 }

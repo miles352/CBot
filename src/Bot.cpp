@@ -4,6 +4,7 @@
 #include <thread>
 
 #include "config.hpp"
+#include "events/BlockUpdateEvent.hpp"
 #include "events/TickEvent.hpp"
 #include "events/DisconnectEvent.hpp"
 #include "math/AngleHelper.hpp"
@@ -19,6 +20,7 @@
 
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
 Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_bus(*this),
@@ -169,8 +171,9 @@ void Bot::tick()
         this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
     }
 
+    // printf("Velocity: %s\n", velocity.to_string().c_str());
 
-    this->network_handler.write_packet(SetPlayerPositionRotationC2SPacket(this->position + this->velocity, this->yaw, this->pitch, true, false));
+    this->network_handler.write_packet(SetPlayerPositionC2SPacket(this->position + this->velocity, true, false));
 }
 
 Box Bot::get_bounding_box() const
@@ -210,15 +213,13 @@ void Bot::mine_block(BlockPos pos)
         return;
     }
 
-    int block_break_ticks = Bot::calculate_block_break_ticks(block_state.value().get_block(), this->inventory.get_held_slot());
-
-    printf("Block break ticks: %d\n", block_break_ticks);
-
     this->network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, pos, BlockFace::TOP, 0});
     this->currently_mining = true;
-    printf("Started mining!\n");
+    // printf("Started mining!\n");
 
-    // 30 ticks for a sign // TODO: Calculated amount needed from hardness / effects / enchantments
+    int block_break_ticks = Bot::calculate_block_break_ticks(block_state.value().get_block(), this->inventory.get_held_slot());
+    // printf("Block break ticks: %d\n", block_break_ticks);
+
     std::shared_ptr<int> tick_delay = std::make_shared<int>(block_break_ticks);
 
 
@@ -227,9 +228,16 @@ void Bot::mine_block(BlockPos pos)
         if (*tick_delay <= 0)
         {
             bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, pos, BlockFace::TOP, 0});
-            printf("Mined block!\n");
-            bot.currently_mining = false;
             bot.event_bus.remove_listener<TickEvent>("mine_block");
+        }
+    }, "mine_block");
+
+    this->event_bus.on<BlockUpdateEvent>([old_block = block_state.value().get_block(), pos](Bot& bot, Event<BlockUpdateEvent>& event) {
+        if (event.data.position == pos && event.data.new_state.get_block() != old_block)
+        {
+            // printf("Mined block!\n\n");
+            bot.currently_mining = false;
+            bot.event_bus.remove_listener<BlockUpdateEvent>("mine_block");
         }
     }, "mine_block");
 

@@ -13,6 +13,7 @@
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
+#include "registry/BlockRegistryGenerated.hpp"
 
 
 // const char* SERVER_IP = "connect.2b2t.org";
@@ -21,6 +22,8 @@ const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
 // 197db9ea-56e4-4cce-a4d5-3e0da590476a
 const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
+// x658 = df53a8c3e235-47c58466311dc35d23b0
+// 0x658 = 197db9ea56e44ccea4d53e0da590476a
 
 // void follow_path(Bot& bot, std::vector<BlockPos> path)
 // {
@@ -60,9 +63,8 @@ int main()
     });
 
     bool started = false;
-    bool started2 = false;
 
-    bot.event_bus.on<TickEvent>([&started, &started2](Bot& bot) {
+    bot.event_bus.on<TickEvent>([&started](Bot& bot) {
         // bot.yaw = 70;
         if (bot.ticks % 60 == 0)
         {
@@ -74,25 +76,42 @@ int main()
             // printf("Coordinates: %s, Yaw: %.1f, pitch: %.1f Velocity: %s\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch, bot.velocity.to_string().c_str());
         // }
 
-        if (started && !bot.currently_mining && !started2)
-        {
-            bot.mine_block({9647, 128, -17557});
-            started2 = true;
-        }
-
         if (bot.ticks > 100 && !started)
         {
-
-
-            InventorySlot held_slot = bot.inventory.get_held_slot();
-            printf("Held item: %s\n", held_slot.item->get_name().c_str());
+            //
+            // InventorySlot held_slot = bot.inventory.get_held_slot();
+            // printf("Held item: %s\n", held_slot.item->get_name().c_str());
 
 
             // 9647, 128, -17556
-            bot.mine_block({9647, 128, -17556});
+            // bot.mine_block({9647, 128, -17556});
             // bot.mine_block({9647, 128, -17555});
 
             started = true;
+        }
+
+        if (bot.ticks > 100 && !bot.currently_mining)
+        {
+            for (int x = -3; x <= 3; x++)
+            {
+                for (int z = -3; z <= 3; z++)
+                {
+                    for (int y = 0; y <= 3; y++)
+                    {
+                        BlockPos position(bot.get_block_pos().add(x, y, z));
+                        std::optional<BlockState> block_state = bot.world.get_block_state(position);
+                        if (block_state.has_value())
+                        {
+                            if (block_state.value().get_block() != Blocks::AIR)
+                            {
+                                printf("Mining at %s\n", position.to_string().c_str());
+                                bot.mine_block(position);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
