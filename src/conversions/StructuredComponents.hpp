@@ -11,7 +11,7 @@
 
 enum class Enchantment
 {
-
+    EFFICIENCY = 8
 };
 
 struct EnchantmentComponent

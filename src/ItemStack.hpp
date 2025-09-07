@@ -21,5 +21,10 @@ public:
     ItemStack(std::string name, int max_stack_size, Rarity rarity) :
     name(std::move(name)), max_stack_size(max_stack_size), rarity(rarity) {};
 
-    std::string get_name() const;
+    const std::string& get_name() const;
+
+    bool operator==(const ItemStack& item_stack) const
+    {
+        return this->name == item_stack.name;
+    }
 };

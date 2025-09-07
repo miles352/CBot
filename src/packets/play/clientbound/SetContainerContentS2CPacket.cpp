@@ -22,9 +22,9 @@ void SetContainerContentS2CPacket::default_handler(Bot& bot, Event<SetContainerC
         std::vector<Slot>& data = event.data.slot_data;
         for (int i = 0; i < data.size(); i++)
         {
-            bot.inventory.player_slots[i] = data[i];
+            bot.inventory.player_slots[i] = InventorySlot(data[i]);
         }
     }
-    bot.inventory.carried_slot = event.data.carried_item;
+    bot.inventory.carried_slot = InventorySlot(event.data.carried_item);
 }
 

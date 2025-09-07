@@ -62,6 +62,7 @@ src/Pathfinder.cpp
 src/math/Box.cpp
 src/ItemStack.cpp
 src/Inventory.cpp
+src/InventorySlot.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

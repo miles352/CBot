@@ -21,8 +21,12 @@
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
-Bot::Bot(const std::string& server_ip, const std::string& server_port):
-    event_bus(*this), network_handler(server_ip, server_port, event_bus), pathfinder(*this), ticks(0), disconnected(false), server_ip(server_ip), server_port(server_port)
+Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_bus(*this),
+                                                                         network_handler(
+                                                                         server_ip, server_port, event_bus),
+                                                                         pathfinder(*this), ticks(0),
+                                                                         currently_mining(false), disconnected(false),
+                                                                         server_ip(server_ip), server_port(server_port)
 {
     this->init();
     const auto& block_states = get_block_states();
@@ -197,29 +201,34 @@ void Bot::look_at(BlockPos pos)
     this->yaw = yaw;
 }
 
-void test(Bot& bot)
-{
-
-}
-
 void Bot::mine_block(BlockPos pos)
 {
+    if (this->currently_mining) return;
+    std::optional<BlockState> block_state = this->world.get_block_state(pos);
+    if (!block_state.has_value())
+    {
+        return;
+    }
 
+    int block_break_ticks = Bot::calculate_block_break_ticks(block_state.value().get_block(), this->inventory.get_held_slot());
+
+    printf("Block break ticks: %d\n", block_break_ticks);
 
     this->network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, pos, BlockFace::TOP, 0});
+    this->currently_mining = true;
     printf("Started mining!\n");
 
     // 30 ticks for a sign // TODO: Calculated amount needed from hardness / effects / enchantments
-    std::shared_ptr<int> tick_delay = std::make_shared<int>(30);
+    std::shared_ptr<int> tick_delay = std::make_shared<int>(block_break_ticks);
 
 
     this->event_bus.on<TickEvent>([tick_delay, pos](Bot& bot) {
         (*tick_delay)--;
-        printf("%d\n", *tick_delay);
         if (*tick_delay <= 0)
         {
             bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, pos, BlockFace::TOP, 0});
             printf("Mined block!\n");
+            bot.currently_mining = false;
             bot.event_bus.remove_listener<TickEvent>("mine_block");
         }
     }, "mine_block");
@@ -227,4 +236,43 @@ void Bot::mine_block(BlockPos pos)
 
 
 }
+
+int Bot::calculate_block_break_ticks(const Block& block, const InventorySlot& item_stack)
+{
+    // int speed_multiplier = 8; // for diamond pickaxe
+    int speed_multiplier = 9; // for netherite
+    if (*item_stack.item == Items::AIR)
+    {
+        speed_multiplier = 1;
+    }
+    if (speed_multiplier > 1)
+    {
+        auto it = item_stack.components.values.find(StructuredComponents::ComponentId::ENCHANTMENTS);
+        if (it != item_stack.components.values.end())
+        {
+            EnchantmentComponent enchantment_component = std::get<EnchantmentComponent>(it->second);
+            auto it2 = enchantment_component.enchantments.find(Enchantment::EFFICIENCY);
+            if (it2 != enchantment_component.enchantments.end())
+            {
+                speed_multiplier += (it2->second * it2->second) + 1;
+            }
+        }
+    }
+
+    // TODO: Add haste/conduit
+
+    // TODO: Add mining fatigue
+
+    float hardness = block.get_hardness();
+    float damage = (float)speed_multiplier / hardness;
+    damage /= 30.; // assumes tool is correct
+
+    if (damage >= 1)
+    {
+        return 0;
+    }
+
+    return std::ceil(1 / damage);
+}
+
 

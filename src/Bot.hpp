@@ -41,6 +41,8 @@ public:
     float yaw{};
     /** The bots pitch */
     float pitch{};
+    /** True if the bot is currently mining. This gets set when calling Bot::mine_block. */
+    bool currently_mining;
 
     struct Input
     {
@@ -78,6 +80,9 @@ private:
     void packet_read_loop();
 
     void tick();
+
+    /** Calculates the time needed to break a block. Assumes you are using a diamond pickaxe and breaking blocks that drop items when using a pickaxe. Otherwise, uses hand breaking time.*/
+    static int calculate_block_break_ticks(const Block& block, const InventorySlot& item_stack);
 
     std::mutex loop_mutex;
     bool disconnected;

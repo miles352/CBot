@@ -60,8 +60,9 @@ int main()
     });
 
     bool started = false;
+    bool started2 = false;
 
-    bot.event_bus.on<TickEvent>([&started](Bot& bot) {
+    bot.event_bus.on<TickEvent>([&started, &started2](Bot& bot) {
         // bot.yaw = 70;
         if (bot.ticks % 60 == 0)
         {
@@ -73,28 +74,27 @@ int main()
             // printf("Coordinates: %s, Yaw: %.1f, pitch: %.1f Velocity: %s\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch, bot.velocity.to_string().c_str());
         // }
 
+        if (started && !bot.currently_mining && !started2)
+        {
+            bot.mine_block({9647, 128, -17557});
+            started2 = true;
+        }
+
         if (bot.ticks > 100 && !started)
         {
 
 
-            int slot_index = bot.inventory.hotbar_slot;
-            Slot held_slot = bot.inventory.player_slots[36 + slot_index];
-            if (!held_slot.item_data.has_value())
-            {
-                printf("Currently holding slot %d with item: Air\n", slot_index);
-            }
-            else
-            {
-                std::string item_name = ItemRegistry[held_slot.item_data.value().item_id]->get_name();
-                printf("Currently holding slot %d with item: %s\n", slot_index, item_name.c_str());
-            }
+            InventorySlot held_slot = bot.inventory.get_held_slot();
+            printf("Held item: %s\n", held_slot.item->get_name().c_str());
+
 
             // 9647, 128, -17556
             bot.mine_block({9647, 128, -17556});
-            // bot.network_handler.write_packet<PlayerActionC2SPacket>({PlayerActionC2SPacket::ActionStatus::STARTED_DIGGING, BlockPos{9647, 128, -17556}, Face::TOP, 0});
+            // bot.mine_block({9647, 128, -17555});
 
             started = true;
         }
+
 
         // bot.yaw = bot.ticks * 2;
 
