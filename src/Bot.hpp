@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <queue>
 
 #include "EventBus.hpp"
@@ -43,6 +44,12 @@ public:
     float pitch{};
     /** True if the bot is currently mining. This gets set when calling Bot::mine_block. */
     bool currently_mining;
+    /** The delay in ticks before starting breaking a block. */
+    int current_block_break_delay;
+    /** The tick delay between mining blocks. If the block is insta-minable, then the delay is ignored. */
+    int BLOCK_BREAK_DELAY = 6;
+
+    int temp_sequence = 1;
 
     struct Input
     {
@@ -70,7 +77,7 @@ public:
     Box get_bounding_box() const;
 
     // TODO: Set this when authenticating with microsoft
-    const std::string UUID = "197db9ea56e44ccea4d53e0da590476a";
+    const std::string UUID = "df53a8c3e23547c58466311dc35d23b0";
 
 private:
     void init();
@@ -91,4 +98,6 @@ private:
 
     std::string server_ip;
     std::string server_port;
+
+    std::chrono::time_point<std::chrono::system_clock> last_tick_time;
 };

@@ -19,6 +19,7 @@
 #include "registry/BlockFace.hpp"
 
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
+#include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
@@ -33,6 +34,8 @@ Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_b
     this->init();
     const auto& block_states = get_block_states();
     BlockRegistry::generate_block_states(block_states);
+
+    this->last_tick_time = std::chrono::system_clock::now();
 
     // Do authentication
 }
@@ -51,7 +54,7 @@ void Bot::start()
 
     this->network_handler.set_client_state(ClientState::LOGIN);
 
-    this->network_handler.write_packet(LoginStartC2SPacket("0x658", UUID));
+    this->network_handler.write_packet(LoginStartC2SPacket("x658", UUID));
 
     std::thread packet_thread(&Bot::packet_read_loop, this);
     std::thread tick_thread(&Bot::tick_loop, this);
@@ -95,17 +98,8 @@ void Bot::tick_loop()
 {
     while (true)
     {
-        std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
-
         std::unique_lock<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;
-
-        if (this->network_handler.client_state == ClientState::PLAY)
-        {
-            this->tick();
-            this->event_bus.emit<TickEvent>();
-        }
-
 
         for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
         {
@@ -137,11 +131,18 @@ void Bot::tick_loop()
             }
         }
 
+
+        auto current_time = std::chrono::system_clock::now();
+        if (this->network_handler.client_state == ClientState::PLAY && std::chrono::duration_cast<std::chrono::milliseconds>(current_time - this->last_tick_time).count() > 50)
+        {
+            this->last_tick_time = current_time;
+            this->event_bus.emit<TickEvent>();
+            this->tick();
+            this->network_handler.write_packet(ClientTickEndC2SPacket());
+            this->ticks++;
+        }
+
         lock.unlock();
-
-        std::this_thread::sleep_until(current_time + std::chrono::milliseconds(50));
-
-        this->ticks++;
     }
 }
 
@@ -173,7 +174,16 @@ void Bot::tick()
 
     // printf("Velocity: %s\n", velocity.to_string().c_str());
 
-    this->network_handler.write_packet(SetPlayerPositionC2SPacket(this->position + this->velocity, true, false));
+
+    if (this->velocity.length_squared() > 0.003 * 0.003)
+    {
+        this->network_handler.write_packet(SetPlayerPositionRotationC2SPacket(this->position + this->velocity, this->yaw, this->pitch, true, false));
+    }
+
+    if (this->ticks % 20 == 0)
+    {
+        this->network_handler.write_packet(SetPlayerPositionC2SPacket(this->position + this->velocity, true, false));
+    }
 }
 
 Box Bot::get_bounding_box() const
@@ -213,36 +223,58 @@ void Bot::mine_block(BlockPos pos)
         return;
     }
 
-    this->network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, pos, BlockFace::TOP, 0});
-    this->currently_mining = true;
+    this->network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, pos, BlockFace::TOP, this->temp_sequence});
+    this->temp_sequence++;
+
     // printf("Started mining!\n");
 
     int block_break_ticks = Bot::calculate_block_break_ticks(block_state.value().get_block(), this->inventory.get_held_slot());
-    // printf("Block break ticks: %d\n", block_break_ticks);
+    printf("Block break ticks: %d\n", block_break_ticks);
+
+    if (block_break_ticks <= 0) // Do not send finished digging if it is insta-minable
+    {
+        this->world.update_block(pos, 0); // Assume the block was successfully broken and set the block to air.
+        return;
+    }
+
+    this->currently_mining = true;
+    this->current_block_break_delay = this->BLOCK_BREAK_DELAY;
+    printf("Set delay to: %d\n", this->current_block_break_delay);
 
     std::shared_ptr<int> tick_delay = std::make_shared<int>(block_break_ticks);
 
 
     this->event_bus.on<TickEvent>([tick_delay, pos](Bot& bot) {
         (*tick_delay)--;
+        // if (*tick_delay < 0)
+        // {
+        //     bot.current_block_break_delay--;
+        //     if (bot.current_block_break_delay <= 0)
+        //     {
+        //         bot.currently_mining = false;
+        //     }
+        // }
         if (*tick_delay <= 0)
         {
             bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, pos, BlockFace::TOP, 0});
+            printf("Send finished digging\n");
             bot.event_bus.remove_listener<TickEvent>("mine_block");
+            bot.world.update_block(pos, 0); // Assume the block was successfully broken and set the block to air.
+            if (bot.current_block_break_delay <= 0) bot.currently_mining = false;
+            else
+            {
+                bot.event_bus.on<TickEvent>([](Bot& bot) {
+                    bot.current_block_break_delay--;
+                    if (bot.current_block_break_delay <= 0)
+                    {
+                        bot.event_bus.remove_listener<TickEvent>("mine_block_delay");
+                        bot.currently_mining = false;
+                        printf("finished delay\n");
+                    }
+                }, "mine_block_delay", 999);
+            }
         }
-    }, "mine_block");
-
-    this->event_bus.on<BlockUpdateEvent>([old_block = block_state.value().get_block(), pos](Bot& bot, Event<BlockUpdateEvent>& event) {
-        if (event.data.position == pos && event.data.new_state.get_block() != old_block)
-        {
-            // printf("Mined block!\n\n");
-            bot.currently_mining = false;
-            bot.event_bus.remove_listener<BlockUpdateEvent>("mine_block");
-        }
-    }, "mine_block");
-
-
-
+    }, "mine_block", -5);
 }
 
 int Bot::calculate_block_break_ticks(const Block& block, const InventorySlot& item_stack)

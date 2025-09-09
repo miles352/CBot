@@ -41,10 +41,6 @@ public:
                 printf("Num components to remove!! %d\n", item_data.num_components_to_remove);
             }
            // printf("Item id: %d, add: %d, remove: %d\n", item_data.item_id, item_data.num_components_to_add, item_data.num_components_to_remove);
-           //  if (item_data.item_id < ItemRegistry.size())
-           //  {
-           //      printf("Item name: %s\n", ItemRegistry[item_data.item_id]->get_name().c_str());
-           //  }
            for (int i = 0; i < item_data.num_components_to_add; i++)
            {
                 item_data.components_to_add.add(bytes);

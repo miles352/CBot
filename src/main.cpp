@@ -3,6 +3,7 @@
 #include "Bot.hpp"
 #include "events/DisconnectEvent.hpp"
 #include "events/TickEvent.hpp"
+#include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
 #include "packets/configuration/serverbound/KnownPacksC2SPacket.hpp"
 #include "packets/login/serverbound/LoginStartC2SPacket.hpp"
 #include "packets/login/clientbound/LoginSuccessS2CPacket.hpp"
@@ -15,14 +16,16 @@
 #include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
-
+const char* SERVER_IP = "127.0.0.1";
 // const char* SERVER_IP = "connect.2b2t.org";
-const char* SERVER_PORT = "25565";
-const char* SERVER_IP = "tcpshield.horizonanarchy.net";
+const char* SERVER_PORT = "25555";
+// const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
-// 197db9ea-56e4-4cce-a4d5-3e0da590476a
+// 3.129.70.181:25565
+
+// 197db9ea-56e4-4cce-a4d5-3e0da590476a2
 const char* PLAYER_UUID = "197db9ea56e44ccea4d53e0da590476a";
-// x658 = df53a8c3e235-47c58466311dc35d23b0
+// x658 = df53a8c3e23547c58466311dc35d23b0
 // 0x658 = 197db9ea56e44ccea4d53e0da590476a
 
 // void follow_path(Bot& bot, std::vector<BlockPos> path)
@@ -61,15 +64,29 @@ int main()
     bot.event_bus.on<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {
        printf("Teleport Position: %s\n", event.data.position.to_string().c_str());
     });
-
     bool started = false;
 
-    bot.event_bus.on<TickEvent>([&started](Bot& bot) {
+    int tick_delay = 1;
+
+
+    bot.event_bus.on<FinishConfigurationS2CPacket>([&started, &tick_delay](Bot& bot) {
+       bot.ticks = 0;
+        started = false;
+        tick_delay = 1;
+    });
+
+
+
+
+
+    bot.event_bus.on<TickEvent>([&started, &tick_delay](Bot& bot) {
         // bot.yaw = 70;
         if (bot.ticks % 60 == 0)
         {
             bot.network_handler.write_packet(SwingArmC2SPacket());
         }
+
+        printf("Tick: %d\n", bot.ticks);
 
         // if (bot.ticks % 5 == 0)
         // {
@@ -84,35 +101,47 @@ int main()
 
 
             // 9647, 128, -17556
-            // bot.mine_block({9647, 128, -17556});
-            // bot.mine_block({9647, 128, -17555});
-
-            started = true;
-        }
-
-        if (bot.ticks > 100 && !bot.currently_mining)
-        {
-            for (int x = -3; x <= 3; x++)
+            // bot.mine_block({-53, 126, -15});
+            if (tick_delay == 1)
             {
-                for (int z = -3; z <= 3; z++)
-                {
-                    for (int y = 0; y <= 3; y++)
-                    {
-                        BlockPos position(bot.get_block_pos().add(x, y, z));
-                        std::optional<BlockState> block_state = bot.world.get_block_state(position);
-                        if (block_state.has_value())
-                        {
-                            if (block_state.value().get_block() != Blocks::AIR)
-                            {
-                                printf("Mining at %s\n", position.to_string().c_str());
-                                bot.mine_block(position);
-                                return;
-                            }
-                        }
-                    }
-                }
+                bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, {100, 100, 100}, BlockFace::TOP, 1});
+                printf("Started\n");
             }
+            else if (tick_delay == 0)
+            {
+                bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, {100, 100, 100}, BlockFace::TOP, 2});
+                printf("Ended!\n");
+                started = true;
+            }
+
+            tick_delay--;
+
         }
+
+        // if (bot.ticks > 100 && !bot.currently_mining)
+        // {
+        //     for (int x = -3; x <= 3; x++)
+        //     {
+        //         for (int z = -3; z <= 3; z++)
+        //         {
+        //             for (int y = 0; y <= 3; y++)
+        //             {
+        //                 BlockPos position(bot.get_block_pos().add(x, y, z));
+        //                 std::optional<BlockState> block_state = bot.world.get_block_state(position);
+        //                 if (block_state.has_value())
+        //                 {
+        //                     if (block_state.value().get_block() != Blocks::AIR)
+        //                     {
+        //                         printf("Mining at %s\n", position.to_string().c_str());
+        //                         // bot.look_at(position);
+        //                         bot.mine_block(position);
+        //                         return;
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
 
         // bot.yaw = bot.ticks * 2;
@@ -133,7 +162,7 @@ int main()
 
 
 
-    });
+    }, "", 99);
 
     bot.event_bus.on<SetHealthS2CPacket>([](Bot& bot, Event<SetHealthS2CPacket>& event) {
         if (event.data.health < 19.0f)
