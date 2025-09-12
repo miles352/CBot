@@ -50,6 +50,7 @@ src/packets/play/serverbound/SetHeldItemC2SPacket.cpp
 src/packets/play/serverbound/PlayerActionC2SPacket.cpp
 src/packets/play/serverbound/SetPlayerPositionC2SPacket.cpp
 src/packets/play/serverbound/ClientTickEndC2SPacket.cpp
+src/packets/play/serverbound/PlayerInputC2SPacket.cpp
 src/events/TickEvent.cpp
 src/events/DisconnectEvent.cpp
 src/events/BlockUpdateEvent.cpp
