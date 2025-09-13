@@ -21,15 +21,22 @@
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
+#include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerMovementFlagsC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
+#include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
 Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_bus(*this),
-                                                                         network_handler(
-                                                                         server_ip, server_port, event_bus),
+                                                                         network_handler(server_ip, server_port, event_bus),
                                                                          pathfinder(*this), ticks(0),
-                                                                         currently_mining(false), disconnected(false),
-                                                                         server_ip(server_ip), server_port(server_port)
+                                                                         currently_mining(false), current_block_break_delay(0),
+                                                                         is_alive(true), jumping(false),
+                                                                         sneaking(false), sprinting(false), on_ground(true),
+                                                                         last_on_ground(true), horizontal_collision(false),
+                                                                         last_horizontal_collision(false),
+                                                                         ticks_since_last_position_packet_sent(0), disconnected(false),
+server_ip(server_ip), server_port(server_port)
 {
     this->init();
     const auto& block_states = get_block_states();
@@ -152,38 +159,174 @@ void Bot::disconnect()
     this->disconnected = true;
 }
 
+Bot::Input Bot::get_input() const
+{
+    return this->input;
+}
+
+void Bot::set_input(Input input)
+{
+    if (input == this->input) return;
+
+    this->input = input;
+    this->network_handler.write_packet(PlayerInputC2SPacket(this->input.forwards, this->input.backwards,
+        this->input.left, this->input.right, this->jumping, this->sneaking, this->sprinting));
+}
+
 void Bot::clear_input()
 {
     this->input = Input();
+    this->network_handler.write_packet(PlayerInputC2SPacket(false, false, false, false, false, false, false));
 }
 
+float Bot::get_movement_speed(float slipperiness)
+{
+    if (this->on_ground)
+    {
+        return Physics::PLAYER_MOVE_SPEED * (Physics::PLAYER_WALK_SPEED / (slipperiness * slipperiness * slipperiness));
+    }
+    return Physics::PLAYER_MOVE_SPEED * 0.1F;
+}
+
+Vec3d Bot::movement_input_to_velocity(Vec3d movement_input, float speed, float yaw)
+{
+    double length_squared = movement_input.length_squared();
+    if (length_squared < 1.0e-7)
+    {
+        return Vec3d{};
+    }
+
+    Vec3d movement_with_speed = length_squared > 1.0 ? movement_input.normalize() : movement_input.scale(speed);
+    Vec3d direction = AngleHelper::unit_direction_vec(yaw);
+    return Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
+            movement_with_speed.y,
+            movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
+}
+
+// Entity#move
+void Bot::move()
+{
+    // TODO: Figure out how movementMuliplier gets used. In testing its not used. May be used for speed effects
+    // TODO: adjustMovementForSneaking
+    this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
+    // TODO: Set collision variables
+    // TODO: getVelocityMultiplier stuff
+    this->position = this->position.add(this->velocity);
+}
+
+// TODO: Keep going with movement input
+Vec3d Bot::apply_movement_input(Vec3d movement_input, float slipperiness)
+{
+    float speed = this->get_movement_speed(slipperiness);
+    Vec3d new_velocity = this->movement_input_to_velocity(movement_input, speed, this->yaw);
+    this->velocity = this->velocity.add(new_velocity);
+    // TODO: applyClimbingSpeed
+    this->move();
+    // if ((this.horizontalCollision || this.jumping) && (this.isClimbing() || this.wasInPowderSnow && PowderSnowBlock.canWalkOnPowderSnow(this))) {
+    //     vec3d = new Vec3d(vec3d.x, 0.2, vec3d.z);
+    // }
+
+    return this->velocity;
+}
+
+double Bot::get_effective_gravity()
+{
+    if (this->velocity.y <= 0.0 && false /** TODO: hasSlowFallingEffect */)
+    {
+        return 0.01;
+    }
+    return Physics::PLAYER_GRAVITY;
+}
+
+// travelMidAir  // TODO: implement travelInFluid and travelGliding
+void Bot::travel(Vec3d movement_input)
+{
+    // TODO: get effecting block slipperiness
+    float slipperiness = 1.0F;
+    float slipperiness_scaled = slipperiness * 0.91F;
+    Vec3d new_velocity = this->apply_movement_input(movement_input, slipperiness);
+    double y_velocity = new_velocity.y;
+    // TODO: add levitation code
+    if (!this->world._loaded_chunks.contains(ChunkPos(this->get_block_pos())))
+    {
+        int minimum_y = this->world._dimension_types[this->world._current_dimension_index].data.read_int("min_y").value();
+        if (this->position.y > minimum_y)
+        {
+            y_velocity = -0.1;
+        }
+        else
+        {
+            y_velocity = 0.0;
+        }
+    }
+    else
+    {
+        y_velocity -= this->get_effective_gravity();
+    }
+
+
+    float drag = 0.98F;
+    this->velocity = { this->velocity.x * slipperiness_scaled, y_velocity * drag, this->velocity.z * slipperiness_scaled };
+    this->velocity.y = 0;
+}
+
+// ClientPlayerEntity#tick
 void Bot::tick()
 {
-    Vec3d movement_input = Vec3d(this->input.left - this->input.right, 0, this->input.forwards - this->input.backwards);
-    Vec3d movement_with_speed = (movement_input.length_squared() > 1.0 ? movement_input.normalize() : movement_input).scale(Physics::PLAYER_WALK_SPEED);
-    Vec3d direction = AngleHelper::unit_direction_vec(this->yaw);
-    this->velocity = Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
-                            0,
-                            movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
 
-    if (velocity.length_squared() != 0.0)
+    // code from LivingEntity#tickMovement
+    if (this->velocity.horizontal_length_squared() < 0.003 * 0.003)
     {
-        // TODO: Pass entity collisions here if we need to care about that
-        this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
+        this->velocity.x = 0.0;
+        this->velocity.z = 0.0;
     }
 
-    // printf("Velocity: %s\n", velocity.to_string().c_str());
-
-
-    if (this->velocity.length_squared() > 0.003 * 0.003)
+    if (std::abs(this->velocity.y) < 0.003)
     {
-        this->network_handler.write_packet(SetPlayerPositionRotationC2SPacket(this->position + this->velocity, this->yaw, this->pitch, true, false));
+        this->velocity.y = 0.0;
     }
 
-    if (this->ticks % 20 == 0)
+    Vec3d movement_input = Vec3d((this->input.left - this->input.right) * 0.98, 0, (this->input.forwards - this->input.backwards) * 0.98);
+    this->travel(movement_input);
+
+    // ClientPlayerEntity#sendMovementPackets
+    Vec3d velocity = this->position - this->last_position; // This is equal to this->velocity right now, but it may change later (See Entity#move)
+    float yaw_change = this->yaw - this->last_yaw;
+    float pitch_change = this->pitch - this->last_pitch;
+    this->ticks_since_last_position_packet_sent++;
+    bool send_position_packet = velocity.length_squared() > 0.0002 * 0.0002 || this->ticks_since_last_position_packet_sent >= 20;
+    bool send_rotation_packet = yaw_change != 0.0F || pitch_change != 0.0F;
+    if (send_position_packet && send_rotation_packet)
     {
-        this->network_handler.write_packet(SetPlayerPositionC2SPacket(this->position + this->velocity, true, false));
+        this->network_handler.write_packet(SetPlayerPositionRotationC2SPacket(this->position, this->yaw, this->pitch, this->on_ground, this->horizontal_collision));
     }
+    else if (send_position_packet)
+    {
+        this->network_handler.write_packet(SetPlayerPositionC2SPacket(this->position, this->on_ground, this->horizontal_collision));
+    }
+    else if (send_rotation_packet)
+    {
+        this->network_handler.write_packet(SetPlayerRotationC2SPacket(this->yaw, this->pitch, this->on_ground, this->horizontal_collision));
+    }
+    else if (this->last_on_ground != this->on_ground || this->last_horizontal_collision != this->horizontal_collision)
+    {
+        this->network_handler.write_packet(SetPlayerMovementFlagsC2SPacket(this->on_ground, this->horizontal_collision));
+    }
+
+    if (send_position_packet)
+    {
+        this->last_position = this->position;
+        this->ticks_since_last_position_packet_sent = 0;
+    }
+
+    if (send_rotation_packet)
+    {
+        this->last_yaw = this->yaw;
+        this->last_pitch = this->pitch;
+    }
+
+    this->last_on_ground = this->on_ground;
+    this->last_horizontal_collision = this->horizontal_collision;
 }
 
 Box Bot::get_bounding_box() const

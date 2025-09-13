@@ -16,9 +16,19 @@ public:
         return std::sqrt(x * x + y * y + z * z);
     }
 
+    [[nodiscard]] constexpr double horizontal_length() const
+    {
+        return std::sqrt(x * x + z * z);
+    }
+
     [[nodiscard]] constexpr double length_squared() const
     {
         return x * x + y * y + z * z;
+    }
+
+    [[nodiscard]] constexpr double horizontal_length_squared() const
+    {
+        return x * x + z * z;
     }
 
     [[nodiscard]] constexpr double distance_to_squared(const Vec3<T>& other) const

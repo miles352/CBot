@@ -18,7 +18,7 @@
 
 const char* SERVER_IP = "127.0.0.1";
 // const char* SERVER_IP = "connect.2b2t.org";
-const char* SERVER_PORT = "25555";
+const char* SERVER_PORT = "25565";
 // const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
 // 3.129.70.181:25565
@@ -69,18 +69,18 @@ int main()
     int tick_delay = 1;
 
 
-    bot.event_bus.on<FinishConfigurationS2CPacket>([&started, &tick_delay](Bot& bot) {
-       bot.ticks = 0;
-        started = false;
-        tick_delay = 1;
-    });
+    // bot.event_bus.on<FinishConfigurationS2CPacket>([&started, &tick_delay](Bot& bot) {
+    //    bot.ticks = 0;
+    //     started = false;
+    //     tick_delay = 1;
+    // });
 
 
 
 
 
     bot.event_bus.on<TickEvent>([&started, &tick_delay](Bot& bot) {
-        // bot.yaw = 70;
+        bot.yaw = 180;
         if (bot.ticks % 60 == 0)
         {
             bot.network_handler.write_packet(SwingArmC2SPacket());
@@ -88,13 +88,24 @@ int main()
 
         printf("Tick: %d\n", bot.ticks);
 
-        // if (bot.ticks % 5 == 0)
-        // {
-            // printf("Coordinates: %s, Yaw: %.1f, pitch: %.1f Velocity: %s\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch, bot.velocity.to_string().c_str());
-        // }
+        if (bot.ticks % 5 == 0)
+        {
+            printf("Coordinates: %s, Yaw: %f, pitch: %f Velocity: %s\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch, bot.velocity.to_string().c_str());
+        }
+
+        if (bot.position.z < -28.0)
+        {
+            printf("Done walking!\n");
+            bot.clear_input();
+        }
 
         if (bot.ticks > 100 && !started)
         {
+
+            Bot::Input curr = bot.get_input();
+            curr.forwards = true;
+            bot.set_input(curr);
+            started = true;
             //
             // InventorySlot held_slot = bot.inventory.get_held_slot();
             // printf("Held item: %s\n", held_slot.item->get_name().c_str());
@@ -102,17 +113,17 @@ int main()
 
             // 9647, 128, -17556
             // bot.mine_block({-53, 126, -15});
-            if (tick_delay == 1)
-            {
-                bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, {100, 100, 100}, BlockFace::TOP, 1});
-                printf("Started\n");
-            }
-            else if (tick_delay == 0)
-            {
-                bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, {100, 100, 100}, BlockFace::TOP, 2});
-                printf("Ended!\n");
-                started = true;
-            }
+            // if (tick_delay == 1)
+            // {
+            //     bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, {1861653, 70, 1622672}, BlockFace::TOP, 1});
+            //     printf("Started\n");
+            // }
+            // else if (tick_delay == 0)
+            // {
+            //     bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, {1861653, 70, 1622672}, BlockFace::TOP, 2});
+            //     printf("Ended!\n");
+            //     started = true;
+            // }
 
             tick_delay--;
 

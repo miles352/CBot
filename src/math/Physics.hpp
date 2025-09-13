@@ -7,7 +7,10 @@ class Physics
 {
 public:
     /** The speed that a player walks, in blocks per tick. */
-    static constexpr double PLAYER_WALK_SPEED = 0.21600002F;
+    static constexpr float PLAYER_WALK_SPEED = 0.21600002F;
+    /** The base movement speed of the player */
+    static constexpr float PLAYER_MOVE_SPEED = 0.01F;
+    static constexpr double PLAYER_GRAVITY = 0.08;
 
     static Vec3d adjust_movement_for_collisions(Bot& bot, Vec3d velocity, Box bot_bounding_box, std::vector<Box> collisions)
     {

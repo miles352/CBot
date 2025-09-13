@@ -3,6 +3,7 @@
 
 class PlayerInputC2SPacket : public ServerboundPacket
 {
+public:
     PlayerInputC2SPacket(bool forward, bool backward, bool left, bool right, bool jump, bool sneak, bool sprint);
     static constexpr int id = 0x29;
     int get_id() const override { return this->id; }

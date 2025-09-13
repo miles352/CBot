@@ -34,20 +34,34 @@ public:
     int food{};
     /** The amount of saturation the bot has. 0-5 */
     float saturation{};
-    /** The bots exact position */
+    /** The bots exact position. */
     Vec3d position{};
-    /** The bots velocity */
+    /** The bots position on the previous tick. */
+    Vec3d last_position{};
+    /** The bots velocity. */
     Vec3d velocity{};
-    /** The bots yaw */
+    /** The bots yaw. */
     float yaw{};
-    /** The bots pitch */
+    /** The bots yaw on the previous tick */
+    float last_yaw{};
+    /** The bots pitch. */
     float pitch{};
+    /** The bots pitch on the previous tick. */
+    float last_pitch{};
     /** True if the bot is currently mining. This gets set when calling Bot::mine_block. */
     bool currently_mining;
     /** The delay in ticks before starting breaking a block. */
     int current_block_break_delay;
     /** The tick delay between mining blocks. If the block is insta-minable, then the delay is ignored. */
     int BLOCK_BREAK_DELAY = 6;
+    /** If the bot is alive or not. */
+    bool is_alive;
+
+    bool on_ground;
+    bool last_on_ground;
+
+    bool horizontal_collision;
+    bool last_horizontal_collision;
 
     int temp_sequence = 1;
 
@@ -57,10 +71,14 @@ public:
         bool backwards;
         bool left;
         bool right;
+
+        bool operator==(const Input& input) const = default;
     };
 
-    /** The input for the bot, used for movement. */
-    Input input{};
+    /** Returns the current input state of the bot. */
+    Input get_input() const;
+    /** Used to change the input state of the bot, which will cause it to move. PlayerInput packets will automatically be sent when the state changes. */
+    void set_input(Input input);
     /** Clears the input by disabling each direction. */
     void clear_input();
 
@@ -88,8 +106,24 @@ private:
 
     void tick();
 
+    /** The input for the bot, used for movement. */
+    Input input{};
+
+    bool jumping;
+    bool sneaking;
+    bool sprinting;
+
+    int ticks_since_last_position_packet_sent;
+
     /** Calculates the time needed to break a block. Assumes you are using a diamond pickaxe and breaking blocks that drop items when using a pickaxe. Otherwise, uses hand breaking time.*/
     static int calculate_block_break_ticks(const Block& block, const InventorySlot& item_stack);
+
+    float get_movement_speed(float slipperiness);
+    Vec3d movement_input_to_velocity(Vec3d movement_input, float speed, float yaw);
+    Vec3d apply_movement_input(Vec3d movement_input, float slipperiness);
+    void move();
+    double get_effective_gravity();
+    void travel(Vec3d movement_input);
 
     std::mutex loop_mutex;
     bool disconnected;
