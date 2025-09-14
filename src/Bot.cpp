@@ -196,8 +196,12 @@ Vec3d Bot::movement_input_to_velocity(Vec3d movement_input, float speed, float y
         return Vec3d{};
     }
 
-    Vec3d movement_with_speed = length_squared > 1.0 ? movement_input.normalize() : movement_input.scale(speed);
+    Vec3d normalized_movement = length_squared > 1.0 ? movement_input.normalize() : movement_input;
+    Vec3d movement_with_speed = normalized_movement.scale(speed);
     Vec3d direction = AngleHelper::unit_direction_vec(yaw);
+    // printf("Direction: %s\n", direction.to_string().c_str());
+    // F: 1.2246469E-16 G: -1.0
+    // 1.2246467991473532e-16
     return Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
             movement_with_speed.y,
             movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
@@ -208,7 +212,8 @@ void Bot::move()
 {
     // TODO: Figure out how movementMuliplier gets used. In testing its not used. May be used for speed effects
     // TODO: adjustMovementForSneaking
-    this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
+    // printf("Velocity before %s\n", this->velocity.to_string().c_str());
+    // this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
     // TODO: Set collision variables
     // TODO: getVelocityMultiplier stuff
     this->position = this->position.add(this->velocity);
@@ -219,6 +224,7 @@ Vec3d Bot::apply_movement_input(Vec3d movement_input, float slipperiness)
 {
     float speed = this->get_movement_speed(slipperiness);
     Vec3d new_velocity = this->movement_input_to_velocity(movement_input, speed, this->yaw);
+    // printf("Old velocity: %s. new velocity: %s\n", this->velocity.to_string().c_str(), this->velocity.add(new_velocity).to_string().c_str());
     this->velocity = this->velocity.add(new_velocity);
     // TODO: applyClimbingSpeed
     this->move();
@@ -238,11 +244,33 @@ double Bot::get_effective_gravity()
     return Physics::PLAYER_GRAVITY;
 }
 
+
+// 0.0 0.0 -0.098000002336766246
+// 0.09800000146031351
+// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.15150801142150172
+// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.1807233872123426
+// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.1966749842469575
+// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.20538455723950122
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.21013998464578165
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2127364483112011
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2141541176371824
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.21492816517907798
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2153507951860405
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2155815511966459
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2157075439930729
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.11777633270024879
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.064305885123634
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.03511101735573874
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.01917061770295092
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.010467158481599625
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.005715069194774713
+// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.00312042814279323
+
 // travelMidAir  // TODO: implement travelInFluid and travelGliding
 void Bot::travel(Vec3d movement_input)
 {
     // TODO: get effecting block slipperiness
-    float slipperiness = 1.0F;
+    float slipperiness = 0.6F;
     float slipperiness_scaled = slipperiness * 0.91F;
     Vec3d new_velocity = this->apply_movement_input(movement_input, slipperiness);
     double y_velocity = new_velocity.y;
@@ -266,7 +294,7 @@ void Bot::travel(Vec3d movement_input)
 
 
     float drag = 0.98F;
-    this->velocity = { this->velocity.x * slipperiness_scaled, y_velocity * drag, this->velocity.z * slipperiness_scaled };
+    this->velocity = { new_velocity.x * slipperiness_scaled, y_velocity * drag, new_velocity.z * slipperiness_scaled };
     this->velocity.y = 0;
 }
 

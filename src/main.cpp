@@ -1,6 +1,7 @@
 #include "conversions/MCString.hpp"
 
 #include "Bot.hpp"
+#include "conversions/Position.hpp"
 #include "events/DisconnectEvent.hpp"
 #include "events/TickEvent.hpp"
 #include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
@@ -18,7 +19,7 @@
 
 const char* SERVER_IP = "127.0.0.1";
 // const char* SERVER_IP = "connect.2b2t.org";
-const char* SERVER_PORT = "25565";
+const char* SERVER_PORT = "25555";
 // const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
 // 3.129.70.181:25565
@@ -86,7 +87,10 @@ int main()
             bot.network_handler.write_packet(SwingArmC2SPacket());
         }
 
-        printf("Tick: %d\n", bot.ticks);
+        if (bot.ticks < 95)
+        {
+            printf("Tick: %d\n", bot.ticks);
+        }
 
         if (bot.ticks % 5 == 0)
         {
@@ -115,12 +119,12 @@ int main()
             // bot.mine_block({-53, 126, -15});
             // if (tick_delay == 1)
             // {
-            //     bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, {1861653, 70, 1622672}, BlockFace::TOP, 1});
+            //     bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::STARTED_DIGGING, {}, BlockFace::TOP, 1});
             //     printf("Started\n");
             // }
             // else if (tick_delay == 0)
             // {
-            //     bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, {1861653, 70, 1622672}, BlockFace::TOP, 2});
+            //     bot.network_handler.write_packet<PlayerActionC2SPacket>({ActionStatus::FINISHED_DIGGING, {}, BlockFace::TOP, 2});
             //     printf("Ended!\n");
             //     started = true;
             // }
