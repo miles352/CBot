@@ -81,7 +81,7 @@ int main()
 
 
     bot.event_bus.on<TickEvent>([&started, &tick_delay](Bot& bot) {
-        bot.yaw = 180;
+
         if (bot.ticks % 60 == 0)
         {
             bot.network_handler.write_packet(SwingArmC2SPacket());
@@ -97,20 +97,19 @@ int main()
             printf("Coordinates: %s, Yaw: %f, pitch: %f Velocity: %s\n", bot.position.to_string().c_str(), bot.yaw, bot.pitch, bot.velocity.to_string().c_str());
         }
 
-        if (bot.position.z < -28.0)
-        {
-            printf("Done walking!\n");
-            bot.clear_input();
-        }
+        // if (bot.position.z < -28.0)
+        // {
+        //     printf("Done walking!\n");
+        //     bot.clear_input();
+        // }
 
-        if (bot.ticks > 100 && !started)
+        if (bot.ticks > 50 && !started)
         {
-
-            Bot::Input curr = bot.get_input();
-            curr.forwards = true;
-            bot.set_input(curr);
-            started = true;
-            //
+            // bot.yaw = 180.0;
+            // Bot::Input curr = bot.get_input();
+            // curr.forwards = true;
+            // bot.set_input(curr);
+            // started = true;
             // InventorySlot held_slot = bot.inventory.get_held_slot();
             // printf("Held item: %s\n", held_slot.item->get_name().c_str());
 

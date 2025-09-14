@@ -85,7 +85,7 @@ public:
 
                     if (state.has_value())
                     {
-                        if (state.value().get_block().get_collidable()) continue;
+                        if (!state.value().get_block().get_collidable()) continue;
                         Box block_box(pos);
                         if (block_box.intersects(moving_entity_bounding_box))
                         {

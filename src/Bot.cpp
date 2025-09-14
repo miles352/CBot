@@ -12,6 +12,7 @@
 #include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
 #include "packets/configuration/clientbound/KnownPacksS2CPacket.hpp"
 #include "packets/handshaking/HandshakeC2SPacket.hpp"
+#include "packets/login/clientbound/SetCompressionS2CPacket.hpp"
 #include "packets/login/serverbound/LoginStartC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 #include "registry/PacketRegistry.hpp"
@@ -19,6 +20,7 @@
 #include "registry/BlockFace.hpp"
 
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
+#include "packets/play/clientbound/KeepAliveS2CPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
@@ -81,7 +83,13 @@ void Bot::packet_read_loop()
         if (this->disconnected) return;
 
         // if packet is set compression we need to instantly handle it before reading next packets
-        if (raw_packet.id == 0x03 && this->network_handler.client_state == ClientState::LOGIN)
+        if (raw_packet.id == SetCompressionS2CPacket::id && this->network_handler.client_state == ClientState::LOGIN)
+        {
+            const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
+            const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
+            packet_ptr(raw_packet.data, this->event_bus);
+        }
+        else if (raw_packet.id == KeepAliveS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
         {
             const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
             const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
@@ -108,44 +116,48 @@ void Bot::tick_loop()
         std::unique_lock<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;
 
-        for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
-        {
-            RawPacket& raw_packet = this->packets_to_process.front();
 
-            if (raw_packet.id == -1) // socket closed for some reason
-            {
-                this->disconnected = true;
-                return;
-            }
-
-            const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
-
-            if (!clientbound_packet_registry.contains(key))
-            {
-                // printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
-                continue;
-            }
-
-            const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
-
-            // printf("Received packet id 0x%02x\n", raw_packet.id);
-
-            packet_ptr(raw_packet.data, this->event_bus);
-            if (raw_packet.id == DisconnectS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
-            {
-                this->disconnected = true;
-                return;
-            }
-        }
 
 
         auto current_time = std::chrono::system_clock::now();
-        if (this->network_handler.client_state == ClientState::PLAY && std::chrono::duration_cast<std::chrono::milliseconds>(current_time - this->last_tick_time).count() > 50)
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(current_time - this->last_tick_time).count() > 50)
         {
             this->last_tick_time = current_time;
-            this->event_bus.emit<TickEvent>();
-            this->tick();
-            this->network_handler.write_packet(ClientTickEndC2SPacket());
+            for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
+            {
+                RawPacket& raw_packet = this->packets_to_process.front();
+
+                if (raw_packet.id == -1) // socket closed for some reason
+                {
+                    this->disconnected = true;
+                    return;
+                }
+
+                const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
+
+                if (!clientbound_packet_registry.contains(key))
+                {
+                    // printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
+                    continue;
+                }
+
+                const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
+
+                // printf("Received packet id 0x%02x\n", raw_packet.id);
+
+                packet_ptr(raw_packet.data, this->event_bus);
+                if (raw_packet.id == DisconnectS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
+                {
+                    this->disconnected = true;
+                    return;
+                }
+            }
+            if (this->network_handler.client_state == ClientState::PLAY)
+            {
+                this->event_bus.emit<TickEvent>();
+                this->tick();
+                this->network_handler.write_packet(ClientTickEndC2SPacket());
+            }
             this->ticks++;
         }
 
@@ -212,8 +224,7 @@ void Bot::move()
 {
     // TODO: Figure out how movementMuliplier gets used. In testing its not used. May be used for speed effects
     // TODO: adjustMovementForSneaking
-    // printf("Velocity before %s\n", this->velocity.to_string().c_str());
-    // this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
+    this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
     // TODO: Set collision variables
     // TODO: getVelocityMultiplier stuff
     this->position = this->position.add(this->velocity);
@@ -295,7 +306,6 @@ void Bot::travel(Vec3d movement_input)
 
     float drag = 0.98F;
     this->velocity = { new_velocity.x * slipperiness_scaled, y_velocity * drag, new_velocity.z * slipperiness_scaled };
-    this->velocity.y = 0;
 }
 
 // ClientPlayerEntity#tick

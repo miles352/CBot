@@ -16,6 +16,7 @@
 #include "packets/play/clientbound/ChunkDataS2CPacket.hpp"
 #include "packets/play/serverbound/ConfirmTeleportationC2SPacket.hpp"
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
+#include "packets/play/clientbound/GameEventS2CPacket.hpp"
 #include "packets/play/serverbound/KeepAliveC2SPacket.hpp"
 #include "packets/play/clientbound/KeepAliveS2CPacket.hpp"
 #include "packets/play/clientbound/LoginS2CPacket.hpp"
@@ -33,6 +34,7 @@
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
+#include "packets/play/serverbound/PlayerLoadedC2SPacket.hpp"
 #include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerMovementFlagsC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
@@ -63,6 +65,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<DisconnectS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<BlockUpdateS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetContainerContentS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<GameEventS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
@@ -86,6 +89,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<PlayerActionC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<ClientTickEndC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<PlayerInputC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<PlayerLoadedC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>
