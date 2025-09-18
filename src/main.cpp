@@ -103,7 +103,7 @@ int main()
         //     bot.clear_input();
         // }
 
-        if (bot.ticks > 50 && !started)
+        if (bot.ticks > 100 && !started)
         {
             // bot.yaw = 180.0;
             // Bot::Input curr = bot.get_input();

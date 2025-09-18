@@ -4,6 +4,7 @@
 #include "../serverbound/ConfirmTeleportationC2SPacket.hpp"
 #include "conversions/StandardTypes.hpp"
 #include "conversions/VarInt.hpp"
+#include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 
 SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
@@ -41,6 +42,8 @@ void SynchronizePlayerPositionS2CPacket::default_handler(Bot& bot, const Event<S
 
     // Idk what the rotate velocity thingy is for: event.data.teleport_flags.rotate_velocity_rotation
 
-    bot.network_handler.write_packet(ConfirmTeleportationC2SPacket(event.data.teleport_id));
-}
+    // TODO: Set last position to current position + velocity (see setPosition in ClientPlayNetworkHandler.java)
 
+    bot.network_handler.write_packet(ConfirmTeleportationC2SPacket(event.data.teleport_id));
+    bot.network_handler.write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, false, false));
+}

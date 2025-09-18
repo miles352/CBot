@@ -24,7 +24,7 @@ Box Box::stretch(double x, double y, double z) const
     }
     else if (y < 0.0)
     {
-        stretched.min.x += y;
+        stretched.min.y += y;
     }
 
     if (z > 0.0)

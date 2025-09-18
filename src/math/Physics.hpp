@@ -14,8 +14,18 @@ public:
 
     static Vec3d adjust_movement_for_collisions(Bot& bot, Vec3d velocity, Box bot_bounding_box, std::vector<Box> collisions)
     {
+        // printf("Bounding box: %s %s\n", bot_bounding_box.min.to_string().c_str(), bot_bounding_box.max.to_string().c_str());
         std::vector<Box> total_collisions = find_collisions_for_movement(bot, collisions, bot_bounding_box.stretch(velocity));
-        if (total_collisions.empty()) return velocity;
+        if (total_collisions.empty())
+        {
+            // printf("NO collisiojs??\n");
+            return velocity;
+        }
+
+        // for (Box box : total_collisions)
+        // {
+        //     printf("Collision at %s to %s\n\n", box.min.to_string().c_str(), box.max.to_string().c_str());
+        // }
 
         Vec3d axis_order = {1, 0, 0};
         if (std::abs(velocity.x) < std::abs(velocity.z))
@@ -55,6 +65,7 @@ public:
 
         // TODO: Add world border collisions
 
+        // printf("Bounding box: %s %s\n", moving_entity_bounding_box.min.to_string().c_str(), moving_entity_bounding_box.max.to_string().c_str());
         std::vector<Box> block_collisions = get_block_collisions(bot.world, moving_entity_bounding_box);
         collisions.insert(collisions.end(), block_collisions.begin(), block_collisions.end());
 
@@ -85,6 +96,7 @@ public:
 
                     if (state.has_value())
                     {
+                        // printf("Block state: %s collidable: %d\n", state.value().get_block().name.c_str(), state.value().get_block().get_collidable());
                         if (!state.value().get_block().get_collidable()) continue;
                         Box block_box(pos);
                         if (block_box.intersects(moving_entity_bounding_box))

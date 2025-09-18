@@ -36,6 +36,7 @@ void SetPlayerPositionRotationC2SPacket::default_handler(Bot &bot, Event<SetPlay
     bot.position = event.data.position;
     bot.yaw = event.data.yaw;
     bot.pitch = event.data.pitch;
-    bot.on_ground = event.data.on_ground;
+    // TODO: Check what the vanilla behavior is when sending this packet
+    // bot.on_ground = event.data.on_ground;
     bot.horizontal_collision = event.data.pushing_against_wall;
 }

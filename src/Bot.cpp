@@ -224,7 +224,9 @@ void Bot::move()
 {
     // TODO: Figure out how movementMuliplier gets used. In testing its not used. May be used for speed effects
     // TODO: adjustMovementForSneaking
+    // printf("Velocity before: %s\n", this->velocity.to_string().c_str());
     this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
+    // printf("Velocity after: %s\n", this->velocity.to_string().c_str());
     // TODO: Set collision variables
     // TODO: getVelocityMultiplier stuff
     this->position = this->position.add(this->velocity);
@@ -254,28 +256,6 @@ double Bot::get_effective_gravity()
     }
     return Physics::PLAYER_GRAVITY;
 }
-
-
-// 0.0 0.0 -0.098000002336766246
-// 0.09800000146031351
-// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.15150801142150172
-// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.1807233872123426
-// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.1966749842469575
-// [23:43:54] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.20538455723950122
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.21013998464578165
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2127364483112011
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2141541176371824
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.21492816517907798
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2153507951860405
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2155815511966459
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.2157075439930729
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.11777633270024879
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.064305885123634
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.03511101735573874
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.01917061770295092
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.010467158481599625
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.005715069194774713
-// [23:43:55] [Render thread/INFO]: [System] [CHAT] [Meteor] Velocity: 0.0 0.0 -0.00312042814279323
 
 // travelMidAir  // TODO: implement travelInFluid and travelGliding
 void Bot::travel(Vec3d movement_input)
@@ -327,8 +307,10 @@ void Bot::tick()
     Vec3d movement_input = Vec3d((this->input.left - this->input.right) * 0.98, 0, (this->input.forwards - this->input.backwards) * 0.98);
     this->travel(movement_input);
 
+    // printf("%s\n", this->position.to_string().c_str());
+
     // ClientPlayerEntity#sendMovementPackets
-    Vec3d velocity = this->position - this->last_position; // This is equal to this->velocity right now, but it may change later (See Entity#move)
+    Vec3d velocity = this->position - this->last_position;
     float yaw_change = this->yaw - this->last_yaw;
     float pitch_change = this->pitch - this->last_pitch;
     this->ticks_since_last_position_packet_sent++;
