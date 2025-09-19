@@ -23,11 +23,3 @@ std::vector<uint8_t> SetPlayerRotationC2SPacket::encode()
     result.push_back(bit_field);
     return result;
 }
-
-void SetPlayerRotationC2SPacket::default_handler(Bot& bot, Event<SetPlayerRotationC2SPacket>& event)
-{
-    bot.yaw = event.data.yaw;
-    bot.pitch = event.data.pitch;
-    bot.on_ground = event.data.on_ground;
-    bot.horizontal_collision = event.data.pushing_against_wall;
-}

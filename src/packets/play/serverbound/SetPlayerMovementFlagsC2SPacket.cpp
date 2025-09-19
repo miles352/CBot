@@ -15,9 +15,3 @@ std::vector<uint8_t> SetPlayerMovementFlagsC2SPacket::encode()
     if (this->data.pushing_against_wall) bit_field |= PUSHING_WALL_BIT;
     return { bit_field };
 }
-
-void SetPlayerMovementFlagsC2SPacket::default_handler(Bot &bot, Event<SetPlayerMovementFlagsC2SPacket> &event)
-{
-    bot.on_ground = event.data.on_ground;
-    bot.horizontal_collision = event.data.pushing_against_wall;
-}

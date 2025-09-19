@@ -39,6 +39,9 @@ public:
     float get_jump_velocity_multiplier() const;
     bool get_collidable() const;
 
+    /** @returns True if the block is any of the 3 types of air. */
+    bool is_air() const;
+
     bool operator==(const Block& other) const
     {
         return this->name == other.name;

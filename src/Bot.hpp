@@ -61,6 +61,7 @@ public:
     bool last_on_ground;
 
     bool horizontal_collision;
+    bool vertical_collision;
     bool last_horizontal_collision;
 
     int temp_sequence = 1;

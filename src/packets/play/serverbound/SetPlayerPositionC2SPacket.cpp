@@ -22,10 +22,3 @@ std::vector<uint8_t> SetPlayerPositionC2SPacket::encode()
     x_bytes.push_back(bit_field);
     return x_bytes;
 }
-
-void SetPlayerPositionC2SPacket::default_handler(Bot& bot, Event<SetPlayerPositionC2SPacket>& event)
-{
-    bot.position = event.data.position;
-    bot.on_ground = event.data.on_ground;
-    bot.horizontal_collision = event.data.pushing_against_wall;
-}

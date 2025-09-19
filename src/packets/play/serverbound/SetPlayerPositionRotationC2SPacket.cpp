@@ -30,13 +30,3 @@ std::vector<uint8_t> SetPlayerPositionRotationC2SPacket::encode()
     x_bytes.push_back(bit_field);
     return x_bytes;
 }
-
-void SetPlayerPositionRotationC2SPacket::default_handler(Bot &bot, Event<SetPlayerPositionRotationC2SPacket> &event)
-{
-    bot.position = event.data.position;
-    bot.yaw = event.data.yaw;
-    bot.pitch = event.data.pitch;
-    // TODO: Check what the vanilla behavior is when sending this packet
-    // bot.on_ground = event.data.on_ground;
-    bot.horizontal_collision = event.data.pushing_against_wall;
-}

@@ -23,6 +23,4 @@ public:
     };
 
     Data data{};
-
-    static void default_handler(Bot& bot, Event<SetPlayerPositionRotationC2SPacket>& event);
 };

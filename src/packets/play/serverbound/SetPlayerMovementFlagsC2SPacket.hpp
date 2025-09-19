@@ -19,6 +19,4 @@ public:
     };
 
     Data data{};
-
-    static void default_handler(Bot& bot, Event<SetPlayerMovementFlagsC2SPacket>& event);
 };

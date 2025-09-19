@@ -33,10 +33,11 @@ Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_b
                                                                          network_handler(server_ip, server_port, event_bus),
                                                                          pathfinder(*this), ticks(0),
                                                                          currently_mining(false), current_block_break_delay(0),
-                                                                         is_alive(true), jumping(false),
-                                                                         sneaking(false), sprinting(false), on_ground(true),
+                                                                         is_alive(true), on_ground(true),
                                                                          last_on_ground(true), horizontal_collision(false),
                                                                          last_horizontal_collision(false),
+                                                                         jumping(false), sneaking(false),
+                                                                         sprinting(false),
                                                                          ticks_since_last_position_packet_sent(0), disconnected(false),
 server_ip(server_ip), server_port(server_port)
 {
@@ -162,6 +163,7 @@ void Bot::tick_loop()
         }
 
         lock.unlock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
 }
 
@@ -225,9 +227,15 @@ void Bot::move()
     // TODO: Figure out how movementMuliplier gets used. In testing its not used. May be used for speed effects
     // TODO: adjustMovementForSneaking
     // printf("Velocity before: %s\n", this->velocity.to_string().c_str());
+    Vec3d velocity_before_collision = this->velocity;
     this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
     // printf("Velocity after: %s\n", this->velocity.to_string().c_str());
-    // TODO: Set collision variables
+    // if the velocity of x or z changed by >= 1e-5 after the collision calculation
+    this->horizontal_collision = std::fabs(this->velocity.x - velocity_before_collision.x) >= 1e-5 || std::fabs(this->velocity.z - velocity_before_collision.z) >= 1e-5;
+    this->vertical_collision = velocity_before_collision.y != this->velocity.y;
+    this->on_ground = this->vertical_collision && velocity_before_collision.y <= 0.0; // vertical collision thats not on the players head
+
+
     // TODO: getVelocityMultiplier stuff
     this->position = this->position.add(this->velocity);
 }
@@ -437,7 +445,7 @@ void Bot::mine_block(BlockPos pos)
                 }, "mine_block_delay", 999);
             }
         }
-    }, "mine_block", -5);
+    }, "mine_block", 0);
 }
 
 int Bot::calculate_block_break_ticks(const Block& block, const InventorySlot& item_stack)

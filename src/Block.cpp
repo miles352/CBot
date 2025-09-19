@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include "registry/BlockRegistryGenerated.hpp"
+
 Block::Block(std::string name, const BlockSetting &settings) : name(std::move(name)), settings(settings) {}
 
 Block::BlockSetting::BlockSetting()
@@ -90,4 +92,9 @@ float Block::get_velocity_multiplier() const
 bool Block::get_collidable() const
 {
     return this->settings.collidable;
+}
+
+bool Block::is_air() const
+{
+    return *this == Blocks::AIR || *this == Blocks::CAVE_AIR || *this == Blocks::VOID_AIR;
 }
