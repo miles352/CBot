@@ -10,6 +10,7 @@
 #include "math/Vec3.hpp"
 #include "World.hpp"
 #include "math/Box.hpp"
+#include "MicrosoftAuth.hpp"
 
 
 class Bot
@@ -95,8 +96,7 @@ public:
 
     Box get_bounding_box() const;
 
-    // TODO: Set this when authenticating with microsoft
-    const std::string UUID = "df53a8c3e23547c58466311dc35d23b0";
+    MCAccount account;
 
 private:
     void init();

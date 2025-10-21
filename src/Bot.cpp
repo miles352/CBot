@@ -39,15 +39,14 @@ Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_b
                                                                          jumping(false), sneaking(false),
                                                                          sprinting(false),
                                                                          ticks_since_last_position_packet_sent(0), disconnected(false),
-server_ip(server_ip), server_port(server_port)
+                                                                         server_ip(server_ip), server_port(server_port)
 {
+    this->account = MicrosoftAuth::login_full();
     this->init();
     const auto& block_states = get_block_states();
     BlockRegistry::generate_block_states(block_states);
 
     this->last_tick_time = std::chrono::system_clock::now();
-
-    // Do authentication
 }
 
 void Bot::init()
@@ -64,7 +63,7 @@ void Bot::start()
 
     this->network_handler.set_client_state(ClientState::LOGIN);
 
-    this->network_handler.write_packet(LoginStartC2SPacket("x658", UUID));
+    this->network_handler.write_packet(LoginStartC2SPacket(this->account.username, this->account.uuid));
 
     std::thread packet_thread(&Bot::packet_read_loop, this);
     std::thread tick_thread(&Bot::tick_loop, this);

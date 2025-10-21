@@ -43,12 +43,12 @@ void EncryptionRequestS2CPacket::default_handler(Bot& bot, Event<EncryptionReque
 
     std::string oAuthCreateAddr = "sessionserver.mojang.com/session/minecraft/join";
     std::string oAuthCreateBody = "{"
-                                        "\"accessToken\": \"" + ACCESS_TOKEN + "\","
-                                        "\"selectedProfile\": \"" + bot.UUID + "\","
+                                        "\"accessToken\": \"" + bot.account.token + "\","
+                                        "\"selectedProfile\": \"" + bot.account.uuid + "\","
                                         "\"serverId\": \"" + hash_string + "\""
                                 "}";
 
-    std::string response = MicrosoftAuth::httpsPost(oAuthCreateAddr, oAuthCreateBody, "application/json");
+    std::string response = MicrosoftAuth::https_post(oAuthCreateAddr, oAuthCreateBody, "application/json");
     if (response.find("204 No Content") == std::string::npos)
     {
         throw std::runtime_error("Failed to join session!");
