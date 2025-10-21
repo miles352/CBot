@@ -4,7 +4,7 @@ Basic Usage:
 
 ```c++
 const char* SERVER_IP = "127.0.0.1";
-const char* SERVER_IP = "25565";
+const char* SERVER_PORT = "25565";
 
 int main()
 {
