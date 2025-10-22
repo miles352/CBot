@@ -60,6 +60,8 @@ tests.cpp
         ../src/ItemStack.cpp
         ../src/Inventory.cpp
         ../src/InventorySlot.cpp
+        ../src/utils/Crypto.cpp
+        ../src/utils/WebRequests.cpp
 )
 
 find_package(OpenSSL REQUIRED)

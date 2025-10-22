@@ -69,6 +69,8 @@ src/math/Box.cpp
 src/ItemStack.cpp
 src/Inventory.cpp
 src/InventorySlot.cpp
+src/utils/WebRequests.cpp
+src/utils/Crypto.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

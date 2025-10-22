@@ -13,6 +13,7 @@
 #include "conversions/Position.hpp"
 #include "math/BlockPos.hpp"
 #include "math/Vec3.hpp"
+#include "utils/JSON.hpp"
 
 void test_VarInt()
 {
@@ -116,15 +117,15 @@ void test_position()
 void test_read_json()
 {
     const std::string json = R"({"user":{"id":42,"name":"{{Alice,,}:","active" : true,"meta":{"joined":"2021-07-03T12:00:00Z","score":98.6,"notes":null}},"config":{"theme":"dark","notifications":{"email":false,"sms":true}},"session":{"token":"abc123xyz","expires":1732123200},"version":"1.0.0"})";
-    assert(*MicrosoftAuth::read_json(json, "joined") == "2021-07-03T12:00:00Z");
-    assert(*MicrosoftAuth::read_json(json, "name") == "{{Alice,,}:");
-    assert(*MicrosoftAuth::read_json(json, "notifications") == R"({"email":false,"sms":true})");
-    assert(*MicrosoftAuth::read_json(json, "expires") == "1732123200");
-    assert(*MicrosoftAuth::read_json(json, "notes") == "null");
-    assert(*MicrosoftAuth::read_json(json, "config") == R"({"theme":"dark","notifications":{"email":false,"sms":true}})");
-    assert(*MicrosoftAuth::read_json(json, "active") == "true");
+    assert(*JSON::get_value(json, "joined") == "2021-07-03T12:00:00Z");
+    assert(*JSON::get_value(json, "name") == "{{Alice,,}:");
+    assert(*JSON::get_value(json, "notifications") == R"({"email":false,"sms":true})");
+    assert(*JSON::get_value(json, "expires") == "1732123200");
+    assert(*JSON::get_value(json, "notes") == "null");
+    assert(*JSON::get_value(json, "config") == R"({"theme":"dark","notifications":{"email":false,"sms":true}})");
+    assert(*JSON::get_value(json, "active") == "true");
 
-    assert(!MicrosoftAuth::read_json(json, "random_missing_key").has_value());
+    assert(!JSON::get_value(json, "random_missing_key").has_value());
 }
 
 int main() {

@@ -4,10 +4,10 @@
 
 #include "config.hpp"
 #include "../serverbound/EncryptionResponseC2SPacket.hpp"
-#include "MicrosoftAuth.hpp"
 #include "conversions/MCString.hpp"
 #include "conversions/PrefixedArray.hpp"
 #include "conversions/Utils.hpp"
+#include "utils/WebRequests.hpp"
 
 EncryptionRequestS2CPacket::EncryptionRequestS2CPacket(std::vector<uint8_t> bytes, EventBus& event_bus)
 {
@@ -48,7 +48,7 @@ void EncryptionRequestS2CPacket::default_handler(Bot& bot, Event<EncryptionReque
                                         "\"serverId\": \"" + hash_string + "\""
                                 "}";
 
-    std::string response = MicrosoftAuth::https_post(oAuthCreateAddr, oAuthCreateBody, "application/json");
+    std::string response = WebRequests::https_post(oAuthCreateAddr, oAuthCreateBody, "application/json");
     if (response.find("204 No Content") == std::string::npos)
     {
         throw std::runtime_error("Failed to join session!");
