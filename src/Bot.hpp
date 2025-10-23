@@ -10,7 +10,7 @@
 #include "math/Vec3.hpp"
 #include "World.hpp"
 #include "math/Box.hpp"
-#include "MicrosoftAuth.hpp"
+#include "authentication/FullAuth.hpp"
 
 
 class Bot

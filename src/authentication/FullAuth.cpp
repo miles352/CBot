@@ -1,4 +1,4 @@
-#include "MicrosoftAuth.hpp"
+#include "FullAuth.hpp"
 #include <iostream>
 #include <format>
 #include <sys/socket.h>
@@ -10,14 +10,14 @@
 #include <chrono>
 #include <openssl/rand.h>
 
-#include "authentication/MCAuth.hpp"
-#include "authentication/MsaDeviceCode.hpp"
-#include "authentication/MsaTokenResponse.hpp"
-#include "authentication/SisuAuth.hpp"
-#include "authentication/XblDeviceToken.hpp"
-#include "utils/JSON.hpp"
+#include "MCAuth.hpp"
+#include "MsaDeviceCode.hpp"
+#include "MsaTokenResponse.hpp"
+#include "SisuAuth.hpp"
+#include "XblDeviceToken.hpp"
+#include "../utils/JSON.hpp"
 
-MCAccount MicrosoftAuth::login_full()
+MCAccount FullAuth::login()
 {
     MsaDeviceCode msa_device_code{};
 

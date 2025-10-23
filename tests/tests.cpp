@@ -9,7 +9,7 @@
 
 #include <openssl/sha.h>
 
-#include "MicrosoftAuth.hpp"
+#include "../src/authentication/FullAuth.hpp"
 #include "conversions/Position.hpp"
 #include "math/BlockPos.hpp"
 #include "math/Vec3.hpp"

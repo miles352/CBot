@@ -9,11 +9,7 @@ struct MCAccount
     std::string token;
 };
 
-class MicrosoftAuth
+namespace FullAuth
 {
-    public:
-    MicrosoftAuth() = delete;
-
-    static MCAccount login_full();
-
-};
+    MCAccount login();
+}

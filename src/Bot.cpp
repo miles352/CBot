@@ -41,7 +41,7 @@ Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_b
                                                                          ticks_since_last_position_packet_sent(0), disconnected(false),
                                                                          server_ip(server_ip), server_port(server_port)
 {
-    this->account = MicrosoftAuth::login_full();
+    this->account = FullAuth::login();
     this->init();
     const auto& block_states = get_block_states();
     BlockRegistry::generate_block_states(block_states);

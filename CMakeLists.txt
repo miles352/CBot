@@ -8,8 +8,8 @@ find_package(ZLIB REQUIRED)
 
 
 add_executable(CBot 
-src/main.cpp 
-src/MicrosoftAuth.cpp
+src/main.cpp
+        src/authentication/FullAuth.cpp
 src/NetworkHandler.cpp
 src/Chunk.cpp
 src/World.cpp

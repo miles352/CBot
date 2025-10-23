@@ -1,6 +1,6 @@
 add_executable(tests 
 tests.cpp
-        ../src/MicrosoftAuth.cpp
+        ../src/authentication/FullAuth.cpp
         ../src/NetworkHandler.cpp
         ../src/Chunk.cpp
         ../src/World.cpp

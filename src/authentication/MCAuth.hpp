@@ -1,5 +1,5 @@
 #pragma once
-#include "MicrosoftAuth.hpp"
+#include "FullAuth.hpp"
 #include "SisuAuth.hpp"
 
 class MCAuth

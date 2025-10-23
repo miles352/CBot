@@ -4,23 +4,10 @@
 #include "conversions/MCString.hpp"
 
 #include "Bot.hpp"
-#include "MicrosoftAuth.hpp"
 #include "conversions/Position.hpp"
-#include "events/DisconnectEvent.hpp"
-#include "events/TickEvent.hpp"
-#include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
-#include "packets/configuration/serverbound/KnownPacksC2SPacket.hpp"
-#include "packets/login/serverbound/LoginStartC2SPacket.hpp"
 #include "packets/login/clientbound/LoginSuccessS2CPacket.hpp"
 #include "packets/play/clientbound/SetHealthS2CPacket.hpp"
-#include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
-#include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
-#include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
-#include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
-#include "packets/play/serverbound/SetHeldItemC2SPacket.hpp"
-#include "registry/BlockRegistryGenerated.hpp"
-#include "utils/Time.hpp"
 
 // const char* SERVER_IP = "127.0.0.1";
 const char* SERVER_IP = "connect.2b2t.org";
