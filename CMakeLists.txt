@@ -71,6 +71,14 @@ src/Inventory.cpp
 src/InventorySlot.cpp
 src/utils/WebRequests.cpp
 src/utils/Crypto.cpp
+src/authentication/MsaDeviceCode.cpp
+src/authentication/MsaTokenResponse.cpp
+src/authentication/XblDeviceToken.cpp
+        src/utils/Time.hpp
+        src/authentication/SisuAuth.cpp
+        src/authentication/SisuAuth.hpp
+        src/authentication/MCAuth.cpp
+        src/authentication/MCAuth.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

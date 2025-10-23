@@ -62,6 +62,7 @@ tests.cpp
         ../src/InventorySlot.cpp
         ../src/utils/Crypto.cpp
         ../src/utils/WebRequests.cpp
+        ../src/utils/Time.hpp
 )
 
 find_package(OpenSSL REQUIRED)
