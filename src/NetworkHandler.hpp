@@ -21,6 +21,8 @@ struct RawPacket
 class NetworkHandler
 {
     int sockfd;
+
+    EventBus& event_bus;
     
     bool use_encryption;
     unsigned char shared_secret[16]{};
@@ -34,10 +36,12 @@ class NetworkHandler
     bool connection_closed;
     ClientState client_state; // TODO: make private
     /** The constructor, which creates the socket connection using the specified server ip and port. */
-    NetworkHandler(const std::string& server_ip, const std::string& server_port, EventBus& event_bus);
+    NetworkHandler(EventBus& event_bus);
 
-    /* The deconstructor closes the socket connection. */
+    /** The deconstructor closes the socket connection. */
     ~NetworkHandler();
+
+    void join_server(const std::string& server_ip, const std::string& server_port);
 
     /** Write a raw buffer to the socket.
      * @param data A pointer to the buffer of data. 
@@ -122,7 +126,4 @@ class NetworkHandler
     void set_client_state(ClientState client_state);
 
     int read_varint(int *bytes_read) const;
-
-private:
-    EventBus& event_bus;
 };

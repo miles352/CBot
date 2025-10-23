@@ -22,9 +22,9 @@
 #include "registry/BlockRegistryGenerated.hpp"
 #include "utils/Time.hpp"
 
-const char* SERVER_IP = "127.0.0.1";
-// const char* SERVER_IP = "connect.2b2t.org";
-const char* SERVER_PORT = "25555";
+// const char* SERVER_IP = "127.0.0.1";
+const char* SERVER_IP = "connect.2b2t.org";
+const char* SERVER_PORT = "25565";
 // const char* SERVER_IP = "tcpshield.horizonanarchy.net";
 
 // void follow_path(Bot& bot, std::vector<BlockPos> path)

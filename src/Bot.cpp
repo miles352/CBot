@@ -30,7 +30,7 @@
 #include "registry/BlockRegistryGenerated.hpp"
 
 Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_bus(*this),
-                                                                         network_handler(server_ip, server_port, event_bus),
+                                                                         network_handler(event_bus),
                                                                          pathfinder(*this), ticks(0),
                                                                          currently_mining(false), current_block_break_delay(0),
                                                                          is_alive(true), on_ground(true),
@@ -55,10 +55,11 @@ void Bot::init()
     register_serverbound_packets(this->event_bus);
 }
 
+
 void Bot::start()
 {
-    // TODO: actually start the network handler here. Right now its already started when its initialized in the constructor.
-    // Bot instance should be able to sit for x seconds before connecting if it wants to.
+    network_handler.join_server(this->server_ip, this->server_port);
+    //                                                               1.21.5
     this->network_handler.write_packet(HandshakeC2SPacket(770, this->server_ip, this->server_port, HandshakeC2SPacket::HandshakeIntent::LOGIN));
 
     this->network_handler.set_client_state(ClientState::LOGIN);
@@ -77,7 +78,7 @@ void Bot::packet_read_loop()
     while (true)
     {
         RawPacket raw_packet = this->network_handler.read_packet();
-        // printf("Read packet id: 0x%02x\n", raw_packet.id);
+        printf("Read packet id: 0x%02x\n", raw_packet.id);
 
         std::lock_guard<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;

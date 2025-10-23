@@ -10,13 +10,27 @@
 
 #include <stdexcept>
 
-NetworkHandler::NetworkHandler(const std::string& server_ip, const std::string& server_port, EventBus& event_bus) : connection_closed(false), event_bus(event_bus)
+NetworkHandler::NetworkHandler(EventBus& event_bus) : sockfd(-1), event_bus(event_bus), connection_closed(false)
 {
     this->use_encryption = false;
     this->use_compression = false;
 
     this->client_state = ClientState::HANDSHAKING;
+}
 
+NetworkHandler::~NetworkHandler()
+{
+    close(this->sockfd);
+
+    if (this->use_encryption)
+    {
+        EVP_CIPHER_CTX_free(this->encrypt_ctx);
+        EVP_CIPHER_CTX_free(this->decrypt_ctx);
+    }
+}
+
+void NetworkHandler::join_server(const std::string& server_ip, const std::string& server_port)
+{
     addrinfo hints;
     addrinfo *servInfo;
     int status;
@@ -43,17 +57,6 @@ NetworkHandler::NetworkHandler(const std::string& server_ip, const std::string& 
     }
 
     freeaddrinfo(servInfo);
-}
-
-NetworkHandler::~NetworkHandler()
-{
-    close(this->sockfd);
-
-    if (this->use_encryption)
-    {
-        EVP_CIPHER_CTX_free(this->encrypt_ctx);
-        EVP_CIPHER_CTX_free(this->decrypt_ctx);
-    }
 }
 
 void NetworkHandler::write_raw(const void* data, int size)
