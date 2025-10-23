@@ -9,7 +9,7 @@ find_package(ZLIB REQUIRED)
 
 add_executable(CBot 
 src/main.cpp
-        src/authentication/FullAuth.cpp
+src/authentication/FullAuth.cpp
 src/NetworkHandler.cpp
 src/Chunk.cpp
 src/World.cpp
@@ -74,11 +74,11 @@ src/utils/Crypto.cpp
 src/authentication/MsaDeviceCode.cpp
 src/authentication/MsaTokenResponse.cpp
 src/authentication/XblDeviceToken.cpp
-        src/utils/Time.hpp
-        src/authentication/SisuAuth.cpp
-        src/authentication/SisuAuth.hpp
-        src/authentication/MCAuth.cpp
-        src/authentication/MCAuth.hpp
+src/utils/Time.hpp
+src/authentication/SisuAuth.cpp
+src/authentication/SisuAuth.hpp
+src/authentication/MCAuth.cpp
+src/authentication/MCAuth.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
