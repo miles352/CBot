@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <fstream>
 
 #include "config.hpp"
 #include "utils/JSON.hpp"
@@ -33,4 +34,40 @@ MsaTokenResponse::MsaTokenResponse(const MsaDeviceCode& msa_device_code)
     this->not_after = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() + expires_in;
     this->access_token = std::move(oAuthToken.value());
     this->refresh_token = JSON::get_value(response, "refresh_token").value();
+}
+
+std::optional<MsaTokenResponse> MsaTokenResponse::load_saved_account()
+{
+    std::ifstream stream;
+    stream.open(".AUTH");
+    if (stream.fail()) return std::nullopt;
+
+    MsaTokenResponse res;
+    stream >> res.not_after;
+    stream >> res.access_token;
+    stream >> res.refresh_token; // Assumes the data was read correctly
+
+    stream.close();
+
+    long current_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    if (current_time > res.not_after) return res; // If the token isn't expired
+
+    // Otherwise, use refresh token to get new token
+    std::string msaRefreshAddr = "login.live.com/oauth20_token.srf";
+    std::string msaRefreshBody = "grant_type=refresh_token"
+                                 "&client_id=" + CLIENT_ID +
+                                 "&refresh_token=" + res.refresh_token +
+                                 "&scope=service::user.auth.xboxlive.com::MBI_SSL";
+
+    std::string response = WebRequests::https_post(msaRefreshAddr, msaRefreshBody);
+
+    std::optional<std::string> oAuthToken = JSON::get_value(response, "access_token");
+    if (!oAuthToken.has_value()) return std::nullopt;
+
+    long expires_in = std::stoi(JSON::get_value(response, "expires_in").value());
+    res.not_after = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() + expires_in;
+    res.access_token = std::move(oAuthToken.value());
+    res.refresh_token = JSON::get_value(response, "refresh_token").value();
+
+    return res;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <string>
 
 #include "MsaDeviceCode.hpp"
@@ -7,7 +8,10 @@
 class MsaTokenResponse
 {
 public:
+    MsaTokenResponse() = default;
     explicit MsaTokenResponse(const MsaDeviceCode& msa_device_code);
+
+    static std::optional<MsaTokenResponse> load_saved_account();
 
     long not_after;
     std::string access_token;
