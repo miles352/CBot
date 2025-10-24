@@ -11,7 +11,7 @@ public:
     MsaTokenResponse() = default;
     explicit MsaTokenResponse(const MsaDeviceCode& msa_device_code);
 
-    static std::optional<MsaTokenResponse> load_saved_account();
+    static std::optional<MsaTokenResponse> load_saved_account(const std::string& save_name);
 
     long not_after;
     std::string access_token;

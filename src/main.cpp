@@ -42,7 +42,7 @@ const char* SERVER_PORT = "25565";
 
 int main()
 {
-    Bot bot(SERVER_IP, SERVER_PORT);
+    Bot bot{SERVER_IP, SERVER_PORT};
 
     // Acts as a spawn event
     bot.event_bus.once<SynchronizePlayerPositionS2CPacket>([](Bot& bot, Event<SynchronizePlayerPositionS2CPacket>& event) {

@@ -2,8 +2,9 @@
 
 #include <mutex>
 #include <thread>
+#include <utility>
 
-#include "config.hpp"
+#include "Constants.hpp"
 #include "events/BlockUpdateEvent.hpp"
 #include "events/TickEvent.hpp"
 #include "events/DisconnectEvent.hpp"
@@ -29,19 +30,20 @@
 #include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
-Bot::Bot(const std::string& server_ip, const std::string& server_port) : event_bus(*this),
+Bot::Bot(std::string server_ip, std::string server_port, const std::string& save_name) : event_bus(*this),
                                                                          network_handler(event_bus),
                                                                          pathfinder(*this), ticks(0),
                                                                          currently_mining(false), current_block_break_delay(0),
                                                                          is_alive(true), on_ground(true),
                                                                          last_on_ground(true), horizontal_collision(false),
-                                                                         last_horizontal_collision(false),
-                                                                         jumping(false), sneaking(false),
-                                                                         sprinting(false),
-                                                                         ticks_since_last_position_packet_sent(0), disconnected(false),
-                                                                         server_ip(server_ip), server_port(server_port)
+                                                                         vertical_collision(false),
+                                                                         last_horizontal_collision(false), jumping(false),
+                                                                         sneaking(false),
+                                                                         sprinting(false), ticks_since_last_position_packet_sent(0),
+                                                                         disconnected(false), server_ip(std::move(server_ip)),
+                                                                         server_port(std::move(server_port))
 {
-    this->account = FullAuth::login();
+    this->account = FullAuth::login(save_name + ".txt");
     this->init();
     const auto& block_states = get_block_states();
     BlockRegistry::generate_block_states(block_states);
@@ -78,7 +80,7 @@ void Bot::packet_read_loop()
     while (true)
     {
         RawPacket raw_packet = this->network_handler.read_packet();
-        printf("Read packet id: 0x%02x\n", raw_packet.id);
+        // printf("Read packet id: 0x%02x\n", raw_packet.id);
 
         std::lock_guard<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;

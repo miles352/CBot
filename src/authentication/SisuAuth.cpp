@@ -5,7 +5,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 
-#include "config.hpp"
+#include "Constants.hpp"
 #include "utils/Crypto.hpp"
 #include "utils/JSON.hpp"
 #include "utils/WebRequests.hpp"

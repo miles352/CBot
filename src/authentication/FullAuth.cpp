@@ -2,14 +2,18 @@
 #include <optional>
 
 #include "FullAuth.hpp"
+
+#include <filesystem>
+
+#include "Constants.hpp"
 #include "MCAuth.hpp"
 #include "MsaTokenResponse.hpp"
 #include "SisuAuth.hpp"
 #include "XblDeviceToken.hpp"
 
-MCAccount FullAuth::login()
+MCAccount FullAuth::login(const std::string& save_name)
 {
-    std::optional<MsaTokenResponse> msa_token_response = MsaTokenResponse::load_saved_account();
+    std::optional<MsaTokenResponse> msa_token_response = MsaTokenResponse::load_saved_account(save_name);
 
     if (!msa_token_response.has_value())
     {
@@ -21,8 +25,10 @@ MCAccount FullAuth::login()
     }
 
     // Write auth to file to save for later. This is kind of inefficient because it rewrites even if it didn't change, but whatever
+    std::filesystem::create_directory(AUTH_SAVE_FOLDER);
+
     std::ofstream stream;
-    stream.open(".AUTH");
+    stream.open(AUTH_SAVE_FOLDER + save_name);
 
     if (!stream.fail())
     {

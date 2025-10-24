@@ -6,7 +6,7 @@
 #include <thread>
 #include <fstream>
 
-#include "config.hpp"
+#include "Constants.hpp"
 #include "utils/JSON.hpp"
 #include "utils/WebRequests.hpp"
 
@@ -36,10 +36,10 @@ MsaTokenResponse::MsaTokenResponse(const MsaDeviceCode& msa_device_code)
     this->refresh_token = JSON::get_value(response, "refresh_token").value();
 }
 
-std::optional<MsaTokenResponse> MsaTokenResponse::load_saved_account()
+std::optional<MsaTokenResponse> MsaTokenResponse::load_saved_account(const std::string& save_name)
 {
     std::ifstream stream;
-    stream.open(".AUTH");
+    stream.open(AUTH_SAVE_FOLDER + save_name);
     if (stream.fail()) return std::nullopt;
 
     MsaTokenResponse res;

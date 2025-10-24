@@ -2,7 +2,7 @@
 
 #include <openssl/rand.h>
 
-#include "config.hpp"
+#include "Constants.hpp"
 #include "../serverbound/EncryptionResponseC2SPacket.hpp"
 #include "conversions/MCString.hpp"
 #include "conversions/PrefixedArray.hpp"

@@ -11,5 +11,5 @@ struct MCAccount
 
 namespace FullAuth
 {
-    MCAccount login();
+    MCAccount login(const std::string& save_name);
 }

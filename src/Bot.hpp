@@ -16,7 +16,12 @@
 class Bot
 {
 public:
-    Bot(const std::string& server_ip, const std::string& server_port);
+    /** Must be constructed before the bot can connect to a server.
+     * @param server_ip The server ip, for example: connect.2b2t.org
+     * @param server_port The server port, for example: 25565
+     * @param save_name The name used to load and save auth tokens to a file. Must be a valid file name prefix.
+     */
+    explicit Bot(std::string server_ip, std::string server_port = "25565", const std::string& save_name = "saved_account");
 
     void start();
 
