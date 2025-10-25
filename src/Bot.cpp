@@ -464,7 +464,7 @@ int Bot::calculate_block_break_ticks(const Block& block, const InventorySlot& it
         if (it != item_stack.components.values.end())
         {
             EnchantmentComponent enchantment_component = std::get<EnchantmentComponent>(it->second);
-            auto it2 = enchantment_component.enchantments.find(Enchantment::EFFICIENCY);
+            auto it2 = enchantment_component.enchantments.find(EnchantmentComponent::EnchantmentIds::EFFICIENCY);
             if (it2 != enchantment_component.enchantments.end())
             {
                 speed_multiplier += (it2->second * it2->second) + 1;
