@@ -15,6 +15,10 @@ public:
         ChunkData chunk_data;
         chunk_data.heightmaps = PrefixedArray::from_bytes_variable_typed<Heightmap>(bytes);
         // TODO: Read world height from registry_data packet. https://minecraft.wiki/w/Java_Edition_protocol/Registry_data
+        // Actually this wont work because theres no good way to know the dimension type when decoding here
+        // Instead I need to save as raw bytes and decode when querying the chunk for block data
+
+
         // For testing in the nether, world height is 256
         // sections are 16 blocks tall, so 16 sections
         int temp = VarInt::from_bytes(bytes);
