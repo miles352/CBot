@@ -37,7 +37,7 @@ Bot::Bot(std::string server_ip, std::string server_port, const std::string& save
                                                                          is_alive(true), on_ground(true),
                                                                          last_on_ground(true), horizontal_collision(false),
                                                                          vertical_collision(false),
-                                                                         last_horizontal_collision(false), jumping(false),
+                                                                         last_horizontal_collision(false), use_gravity(true), jumping(false),
                                                                          sneaking(false),
                                                                          sprinting(false), ticks_since_last_position_packet_sent(0),
                                                                          disconnected(false), server_ip(std::move(server_ip)),
@@ -276,23 +276,25 @@ void Bot::travel(Vec3d movement_input)
     Vec3d new_velocity = this->apply_movement_input(movement_input, slipperiness);
     double y_velocity = new_velocity.y;
     // TODO: add levitation code
-    if (!this->world._loaded_chunks.contains(ChunkPos(this->get_block_pos())))
+    if (this->use_gravity)
     {
-        int minimum_y = this->world._dimension_types[this->world._current_dimension_index].data.read_int("min_y").value();
-        if (this->position.y > minimum_y)
+        if (!this->world._loaded_chunks.contains(ChunkPos(this->get_block_pos())))
         {
-            y_velocity = -0.1;
+            int minimum_y = this->world._dimension_types[this->world._current_dimension_index].data.read_int("min_y").value();
+            if (this->position.y > minimum_y)
+            {
+                y_velocity = -0.1;
+            }
+            else
+            {
+                y_velocity = 0.0;
+            }
         }
         else
         {
-            y_velocity = 0.0;
+            y_velocity -= this->get_effective_gravity();
         }
     }
-    else
-    {
-        y_velocity -= this->get_effective_gravity();
-    }
-
 
     float drag = 0.98F;
     this->velocity = { new_velocity.x * slipperiness_scaled, y_velocity * drag, new_velocity.z * slipperiness_scaled };

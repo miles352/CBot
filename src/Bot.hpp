@@ -70,6 +70,9 @@ public:
     bool vertical_collision;
     bool last_horizontal_collision;
 
+    /** Controls whether gravity is used in the collision calculations. */
+    bool use_gravity;
+
     int temp_sequence = 1;
 
     struct Input
