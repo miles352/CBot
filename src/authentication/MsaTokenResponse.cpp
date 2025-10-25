@@ -50,7 +50,7 @@ std::optional<MsaTokenResponse> MsaTokenResponse::load_saved_account(const std::
     stream.close();
 
     long current_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    if (current_time > res.not_after) return res; // If the token isn't expired
+    if (res.not_after > current_time) return res; // If the token isn't expired
 
     // Otherwise, use refresh token to get new token
     std::string msaRefreshAddr = "login.live.com/oauth20_token.srf";
