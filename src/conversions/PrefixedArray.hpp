@@ -26,7 +26,7 @@ namespace PrefixedArray
     }
 
     /** Converts an array of variably sized elements of type T, prefixed with a VarInt that gives the size of the array.
-     * T must be a class with a <code>from_array</code> method defined.
+     * T must be a class with a <code>from_bytes</code> method defined.
      */
     template<typename T>
     static std::vector<T> from_bytes_variable_typed(uint8_t*& array)
@@ -43,7 +43,7 @@ namespace PrefixedArray
 
     /** Similar to from_bytes_variable_typed, but this should be used when the conversion type does not
      * store the converted type as a member variable, for example MCString.
-     * T must be a class with a <code>from_array</code> method and a <code>T::type</code> type defined.
+     * T must be a class with a <code>from_bytes</code> method and a <code>T::type</code> type defined.
      */
     template<typename T>
     static std::vector<typename T::type> from_bytes_variable(uint8_t*& array)

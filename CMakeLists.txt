@@ -63,7 +63,7 @@ src/registry/BlockRegistry.cpp
 src/Block.cpp
 src/BlockState.cpp
 src/conversions/NBT.cpp
-src/conversions/StructuredComponents.cpp
+        src/conversions/StructuredComponents/StructuredComponents.cpp
 src/Pathfinder.cpp
 src/math/Box.cpp
 src/ItemStack.cpp
@@ -79,6 +79,8 @@ src/authentication/SisuAuth.cpp
 src/authentication/SisuAuth.hpp
 src/authentication/MCAuth.cpp
 src/authentication/MCAuth.hpp
+        src/conversions/StructuredComponents/FireworkComponent.hpp
+        src/conversions/StructuredComponents/EnchantmentComponent.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

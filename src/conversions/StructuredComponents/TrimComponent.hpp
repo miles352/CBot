@@ -1,11 +1,10 @@
 #pragma once
 #include <cstdint>
 
-#include "IDOrX.hpp"
+#include "../IDOrX.hpp"
 
-struct Trim
+struct TrimComponent
 {
-
     struct Material
     {
         using type = Material;
@@ -29,12 +28,11 @@ struct Trim
     std::variant<int, Material> material;
     std::variant<int, Pattern> pattern;
 
-    static Trim from_bytes(uint8_t*& bytes)
+    static TrimComponent from_bytes(uint8_t*& bytes)
     {
-        Trim trim{};
+        TrimComponent trim{};
         trim.material = IDOrX::from_bytes<Material>(bytes);
         trim.pattern = IDOrX::from_bytes<Pattern>(bytes);
         return trim;
     }
 };
-

@@ -3,7 +3,7 @@
 #include <optional>
 #include <vector>
 
-#include "StructuredComponents.hpp"
+#include "StructuredComponents/StructuredComponents.hpp"
 #include "VarInt.hpp"
 #include "registry/ItemRegistryGenerated.hpp"
 

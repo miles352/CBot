@@ -9,7 +9,7 @@ struct ItemData;
 class InventorySlot
 {
 public:
-    explicit InventorySlot(Slot& slot);
+    explicit InventorySlot(const Slot& slot);
     InventorySlot();
 
     const ItemStack* item;

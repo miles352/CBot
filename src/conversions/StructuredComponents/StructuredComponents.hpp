@@ -4,23 +4,10 @@
 #include <unordered_map>
 #include <variant>
 
-#include "MCString.hpp"
-#include "NBT.hpp"
-#include "PrefixedArray.hpp"
-#include "Trim.hpp"
-
-enum class Enchantment
-{
-    EFFICIENCY = 8
-};
-
-struct EnchantmentComponent
-{
-    /** ID to level. */
-    std::unordered_map<Enchantment, int> enchantments;
-
-    static EnchantmentComponent from_bytes(uint8_t*& bytes);
-};
+#include "EnchantmentComponent.hpp"
+#include "../NBT.hpp"
+#include "TrimComponent.hpp"
+#include "FireworkComponent.hpp"
 
 struct StructuredComponents
 {
@@ -34,10 +21,11 @@ struct StructuredComponents
         ENCHANTMENTS = 10,
         REPAIR_COST = 16,
         TRIM = 47,
+        FIREWORK = 60,
         CONTAINER = 66,
     };
 
-    typedef std::variant<EnchantmentComponent, int, NBT::TagCompound, NBT::TagString, Trim, std::vector<struct Slot>> ComponentTypes;
+    typedef std::variant<EnchantmentComponent, int, NBT::TagCompound, NBT::TagString, TrimComponent, std::vector<struct Slot>, FireworkComponent> ComponentTypes;
 
     std::unordered_map<ComponentId, ComponentTypes> values;
 
@@ -45,7 +33,3 @@ struct StructuredComponents
 
     static std::unordered_map<ComponentId, std::function<ComponentTypes(uint8_t*&)>> readers;
 };
-
-
-
-

@@ -2,7 +2,7 @@
 
 #include "registry/ItemRegistryGenerated.hpp"
 
-InventorySlot::InventorySlot(Slot& slot)
+InventorySlot::InventorySlot(const Slot& slot)
 {
     if (slot.item_count == 0 || !slot.item_data.has_value())
     {
@@ -10,7 +10,7 @@ InventorySlot::InventorySlot(Slot& slot)
     }
     else
     {
-        ItemData& data = slot.item_data.value();
+        const ItemData& data = slot.item_data.value();
         this->item = ItemRegistry[data.item_id];
         this->components = data.components_to_add; // TODO: Subtract removed components if they ever get used
     }

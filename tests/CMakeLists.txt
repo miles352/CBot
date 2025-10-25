@@ -54,7 +54,7 @@ tests.cpp
 ../src/Block.cpp
 ../src/BlockState.cpp
 ../src/conversions/NBT.cpp
-../src/conversions/StructuredComponents.cpp
+        ../src/conversions/StructuredComponents/StructuredComponents.cpp
 ../src/Pathfinder.cpp
 ../src/math/Box.cpp
 ../src/ItemStack.cpp
