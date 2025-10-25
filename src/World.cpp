@@ -22,8 +22,8 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     Chunk& chunk = it->second;
 
     // If outside of the world
-    if (block_pos.y < this->_dimension_types[_current_dimension_index].data.read_int("min_y").value()
-        || block_pos.y >= this->_dimension_types[_current_dimension_index].data.read_int("height").value())
+    int min_height = this->get_min_height();
+    if (block_pos.y < min_height || block_pos.y >= min_height + this->get_height())
     {
         return BlockState(&Blocks::VOID_AIR, {});
     }
@@ -105,6 +105,7 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
             // convert single to indirect
             // BPE for single palette is 1, so just divide by size of long. index of palette is 0 because there is only 1 entry
             section.block_states.data.assign(4096 / 64, 0);
+            // TODO: Change .assign to memcpy for performance
             section.block_states.bits_per_entry = 1;
             section.block_states.format = PalettedContainer::INDIRECT;
 
@@ -178,4 +179,14 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
             throw std::runtime_error("Block palettes should only be stored in single or indirect mode.");
         }
     }
+}
+
+int World::get_height() const
+{
+    return this->_dimension_types[this->_current_dimension_index].data.read_int("height").value();
+}
+
+int World::get_min_height() const
+{
+    return this->_dimension_types[_current_dimension_index].data.read_int("min_y").value();
 }

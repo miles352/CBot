@@ -24,6 +24,12 @@ public:
     */
     std::optional<std::pair<BlockState, BlockState>> update_block(BlockPos block_pos, uint16_t new_id);
 
+    /** @Returns The total height of the world, equal to the max height minus the minimum height. */
+    int get_height() const;
+
+    /** @Returns The minimum height of the world. */
+    int get_min_height() const;
+
     std::unordered_map<ChunkPos, Chunk> _loaded_chunks;
 
     std::vector<RegistryEntry> _dimension_types;
