@@ -81,6 +81,11 @@ src/authentication/MCAuth.cpp
 src/authentication/MCAuth.hpp
         src/conversions/StructuredComponents/FireworkComponent.hpp
         src/conversions/StructuredComponents/EnchantmentComponent.hpp
+        src/packets/play/clientbound/PlayerInfoRemoveS2CPacket.cpp
+        src/packets/play/clientbound/PlayerInfoRemoveS2CPacket.hpp
+        src/packets/play/clientbound/PlayerInfoUpdateS2CPacket.cpp
+        src/packets/play/clientbound/PlayerInfoUpdateS2CPacket.hpp
+        src/conversions/PlayerTabActions.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

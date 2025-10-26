@@ -1,13 +1,21 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <stdexcept>
 #include <cstdint>
 
+#include "StandardTypes.hpp"
 
-namespace UUID
+
+struct UUID
 {
-    static void to_big_endian_bytes(const std::string& uuid, uint8_t buffer[16]) 
+    // UUID stored in big-endian order
+    std::array<uint8_t, 16> bytes;
+
+    UUID() = default;
+
+    explicit UUID(const std::string& uuid)
     {
         std::string hex;
         for (char c : uuid) {
@@ -32,7 +40,20 @@ namespace UUID
                     throw std::invalid_argument("Invalid character in UUID");
                 } 
             }
-            buffer[i] = byte;
+            bytes[i] = byte;
         }
     }
-}
+
+    static UUID from_bytes(uint8_t*& bytes)
+    {
+        UUID uuid;
+
+        memcpy(uuid.bytes.data(), bytes, 2 * sizeof(uint64_t));
+
+        bytes += 2 * sizeof(uint64_t);
+
+        return uuid;
+    }
+
+    // std::string to_string();
+};

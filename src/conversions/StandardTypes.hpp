@@ -5,6 +5,7 @@
 
 namespace StandardTypes
 {
+    /** Reads from a big-endian byte point and properly converts it into type T. */
     template <typename T>
     T from_bytes(uint8_t*& array, int* bytes_read = nullptr)
     {
@@ -23,6 +24,7 @@ namespace StandardTypes
         return result;
     }
 
+    /** Converts input of type T into a vector of big-endian bytes. */
     template <typename T>
     std::vector<uint8_t> to_bytes(T input)
     {

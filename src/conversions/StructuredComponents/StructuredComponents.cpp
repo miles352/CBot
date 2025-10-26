@@ -8,7 +8,7 @@ void StructuredComponents::add(uint8_t*& bytes)
 {
     int type = VarInt::from_bytes(bytes);
     auto component_id = static_cast<ComponentId>(type);
-    printf("Component Id: %d\n", component_id);
+    // printf("Component Id: %d\n", component_id);
     // This will crash if the reader isn't defined, but I don't think there's any way to skip a component because the size varies
     auto it = readers.find(component_id);
     if (it == readers.end())
