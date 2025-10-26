@@ -1,5 +1,6 @@
 #pragma once
 #include "EventBus.hpp"
+#include "conversions/NBT.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class DisconnectS2CPacket : public ClientboundPacket
@@ -12,7 +13,7 @@ public:
 
     using Data = struct
     {
-        std::string reason;
+        NBT::TagCompound reason;
     };
 
     Data data{};
