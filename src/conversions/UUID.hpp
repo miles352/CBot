@@ -55,5 +55,17 @@ struct UUID
         return uuid;
     }
 
-    // std::string to_string();
+    std::string to_string() const
+    {
+        std::string converted;
+        converted.reserve(16);
+        for (uint8_t byte : bytes)
+        {
+            uint8_t first_half = byte >> 4;
+            converted += (first_half <= 9 ? first_half + '0' : first_half + (-10 + 'a'));
+            uint8_t second_half = byte & 0x0F;
+            converted += (second_half <= 9 ? second_half + '0' : second_half + (-10 + 'a'));
+        }
+        return converted;
+    }
 };
