@@ -7,7 +7,10 @@ class Chunk
 {
 public:
     ChunkPos pos;
-    ChunkData chunk_data;
+    std::vector<ChunkSection> sections;
+    std::vector<Heightmap> heightmaps;
+    std::vector<BlockEntity> block_entities;
     // LightData light_data;
-    Chunk(const ChunkPos& pos, const ChunkData& chunk_data/*, LightData light_data*/) : pos(pos), chunk_data(chunk_data) {};
+    Chunk(ChunkPos pos, std::vector<ChunkSection> sections, std::vector<Heightmap> heightmaps, std::vector<BlockEntity> block_entities /*, LightData light_data*/)
+        : pos(pos), sections(std::move(sections)), heightmaps(std::move(heightmaps)), block_entities(std::move(block_entities)) {};
 };

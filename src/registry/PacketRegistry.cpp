@@ -63,9 +63,9 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<PlayerAbilitiesS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetHeldItemS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetHealthS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<ChunkDataS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<DisconnectS2CPacket>(ClientState::PLAY, event_bus);
-    // register_clientbound_packet<BlockUpdateS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<BlockUpdateS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetContainerContentS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<GameEventS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoRemoveS2CPacket>(ClientState::PLAY, event_bus);
