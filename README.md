@@ -1,6 +1,17 @@
 A C++ library for creating bots that can connect to Minecraft servers. Mostly a work in progress.
 
-Basic Usage:
+## Installation
+I would recommend adding this repository as a git submodule in your project:
+```
+git submodule add https://github.com/miles352/CBot.git CBot
+```
+Then in your CMakeLists.txt you should just have to:
+```
+add_subdirectory(CBot)
+target_link_libraries(${PROJECT_NAME} PUBLIC CBot)
+```
+
+## Basic Usage:
 
 ```c++
 const char* SERVER_IP = "127.0.0.1";
