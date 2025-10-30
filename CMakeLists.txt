@@ -53,9 +53,6 @@ add_library(CBot
         src/packets/play/serverbound/SetPlayerMovementFlagsC2SPacket.cpp
         src/packets/play/serverbound/PlayerLoadedC2SPacket.cpp
         src/packets/play/clientbound/GameEventS2CPacket.cpp
-        src/events/TickEvent.cpp
-        src/events/DisconnectEvent.cpp
-        src/events/BlockUpdateEvent.cpp
         src/EventBus.cpp
         src/Bot.cpp
         src/registry/BlockRegistry.cpp
@@ -85,6 +82,8 @@ add_library(CBot
         src/packets/play/clientbound/PlayerInfoUpdateS2CPacket.cpp
         src/packets/play/clientbound/PlayerInfoUpdateS2CPacket.hpp
         src/conversions/PlayerTabActions.hpp
+        src/events/PlayerJoinEvent.hpp
+        src/events/PlayerLeaveEvent.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

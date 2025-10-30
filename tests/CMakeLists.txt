@@ -45,10 +45,7 @@ tests.cpp
 ../src/packets/play/serverbound/SetPlayerMovementFlagsC2SPacket.cpp
 ../src/packets/play/serverbound/PlayerLoadedC2SPacket.cpp
 ../src/packets/play/clientbound/GameEventS2CPacket.cpp
-../src/events/TickEvent.cpp
-../src/events/DisconnectEvent.cpp
-../src/events/BlockUpdateEvent.cpp
-../src/EventBus.cpp
+        ../src/EventBus.cpp
 ../src/Bot.cpp
 ../src/registry/BlockRegistry.cpp
 ../src/Block.cpp

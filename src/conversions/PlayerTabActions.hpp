@@ -87,7 +87,7 @@ using TabActionType = std::variant<AddPlayer, InitializeChat, int32_t, bool, std
 struct PlayerTabActions
 {
     UUID uuid;
-    std::unordered_map<TabActionMasks, TabActionType> player_actions;
+    std::unordered_map<TabActionMasks, TabActionType> actions;
 
     static PlayerTabActions from_bytes(uint8_t*& bytes, uint8_t actions)
     {
@@ -102,27 +102,27 @@ struct PlayerTabActions
             {
                 case TabActionMasks::ADD_PLAYER:
                 {
-                    tab_actions.player_actions[TabActionMasks::ADD_PLAYER] = AddPlayer::from_bytes(bytes);
+                    tab_actions.actions[TabActionMasks::ADD_PLAYER] = AddPlayer::from_bytes(bytes);
                     break;
                 }
                 case TabActionMasks::INITIALIZE_CHAT:
                 {
-                    tab_actions.player_actions[TabActionMasks::INITIALIZE_CHAT] = InitializeChat::from_bytes(bytes);
+                    tab_actions.actions[TabActionMasks::INITIALIZE_CHAT] = InitializeChat::from_bytes(bytes);
                     break;
                 }
                 case TabActionMasks::UPDATE_GAME_MODE:
                 {
-                    tab_actions.player_actions[TabActionMasks::UPDATE_GAME_MODE] = VarInt::from_bytes(bytes);
+                    tab_actions.actions[TabActionMasks::UPDATE_GAME_MODE] = VarInt::from_bytes(bytes);
                     break;
                 }
                 case TabActionMasks::UPDATE_LISTED:
                 {
-                    tab_actions.player_actions[TabActionMasks::UPDATE_LISTED] = StandardTypes::from_bytes<bool>(bytes);
+                    tab_actions.actions[TabActionMasks::UPDATE_LISTED] = StandardTypes::from_bytes<bool>(bytes);
                     break;
                 }
                 case TabActionMasks::UPDATE_LATENCY:
                 {
-                    tab_actions.player_actions[TabActionMasks::UPDATE_LATENCY] = VarInt::from_bytes(bytes);
+                    tab_actions.actions[TabActionMasks::UPDATE_LATENCY] = VarInt::from_bytes(bytes);
                     break;
                 }
                 case TabActionMasks::UPDATE_DISPLAY_NAME:
@@ -130,18 +130,18 @@ struct PlayerTabActions
                     bool optional = StandardTypes::from_bytes<bool>(bytes);
                     if (optional)
                     {
-                        tab_actions.player_actions[TabActionMasks::UPDATE_DISPLAY_NAME] = NBT::read_root(bytes);
+                        tab_actions.actions[TabActionMasks::UPDATE_DISPLAY_NAME] = NBT::read_root(bytes);
                     }
                     break;
                 }
                 case TabActionMasks::UPDATE_LIST_PRIORITY:
                 {
-                    tab_actions.player_actions[TabActionMasks::UPDATE_LIST_PRIORITY] = VarInt::from_bytes(bytes);
+                    tab_actions.actions[TabActionMasks::UPDATE_LIST_PRIORITY] = VarInt::from_bytes(bytes);
                     break;
                 }
                 case TabActionMasks::UPDATE_HAT:
                 {
-                    tab_actions.player_actions[TabActionMasks::UPDATE_HAT] = StandardTypes::from_bytes<bool>(bytes);
+                    tab_actions.actions[TabActionMasks::UPDATE_HAT] = StandardTypes::from_bytes<bool>(bytes);
                     break;
                 }
             }

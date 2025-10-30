@@ -1,8 +1,10 @@
 #pragma once
 #include <cstdint>
 
+#include "Bot.hpp"
 #include "EventBus.hpp"
 #include "conversions/PlayerTabActions.hpp"
+#include "events/PlayerJoinEvent.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class PlayerInfoUpdateS2CPacket : public ClientboundPacket
@@ -20,4 +22,8 @@ public:
     };
 
     Data data{};
+
+    static void default_handler(Bot& bot, Event<PlayerInfoUpdateS2CPacket>& event);
 };
+
+

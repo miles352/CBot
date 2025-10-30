@@ -3,9 +3,7 @@
 #include <variant>
 
 #include "conversions/PlayerTabActions.hpp"
-#include "conversions/PrefixedArray.hpp"
 #include "conversions/UUID.hpp"
-
 
 
 PlayerInfoUpdateS2CPacket::PlayerInfoUpdateS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
@@ -20,4 +18,23 @@ PlayerInfoUpdateS2CPacket::PlayerInfoUpdateS2CPacket(std::vector<uint8_t> data, 
     }
 
     event_bus.emit<PlayerInfoUpdateS2CPacket>(this->data);
+}
+
+void PlayerInfoUpdateS2CPacket::default_handler(Bot& bot, Event<PlayerInfoUpdateS2CPacket>& event)
+{
+    // If add player is included in the actions
+    if (event.data.actions | static_cast<uint8_t>(TabActionMasks::ADD_PLAYER))
+    {
+        for (const PlayerTabActions& p_actions : event.data.player_actions)
+        {
+            auto it = p_actions.actions.find(TabActionMasks::ADD_PLAYER);
+            if (it != p_actions.actions.end())
+            {
+                bot.event_bus.emit<PlayerJoinEvent>(PlayerJoinEvent::Data{
+                    p_actions.uuid,
+                    std::get<AddPlayer>(it->second).name
+                });
+            }
+        }
+    }
 }
