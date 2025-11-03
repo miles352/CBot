@@ -17,6 +17,11 @@ MCAuth::MCAuth(const SisuAuth& sisu_auth)
 
     std::string response = WebRequests::https_post(mcAuthAddr, mcAuthBody, "application/json");
 
+    if (response.contains("Too Many Requests"))
+    {
+        throw std::runtime_error("Rate limited, try again.");
+    }
+
     std::optional<std::string> mc_access_token = JSON::get_value(response, "access_token");
 
     if (!mc_access_token.has_value()) throw std::runtime_error("Failed to find mc auth token!");
