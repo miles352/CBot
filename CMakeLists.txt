@@ -84,6 +84,7 @@ add_library(CBot
         src/conversions/PlayerTabActions.hpp
         src/events/PlayerJoinEvent.hpp
         src/events/PlayerLeaveEvent.hpp
+        src/events/ChunkDataEvent.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

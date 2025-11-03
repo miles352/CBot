@@ -1,6 +1,5 @@
 #include "World.hpp"
 
-#include "Block.hpp"
 #include "registry/BlockRegistry.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
 
@@ -37,7 +36,7 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
         }
         case PalettedContainer::INDIRECT:
         {
-            return BlockRegistry::block_registry[section.block_states.palette[this->get_block_id(block_pos, chunk, section)]];
+            return BlockRegistry::block_registry[section.block_states.palette[World::get_block_id(block_pos, section)]];
         }
         case PalettedContainer::DIRECT:
         {
@@ -46,30 +45,104 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     }
 }
 
-ChunkSection& World::get_section_at_pos(Chunk& chunk, BlockPos block_pos) const
+void World::chunk_iterator(ChunkPos chunk_pos, const std::function<bool(const BlockPos& block_pos, const BlockState& block_state)>& callback)
 {
-    return chunk.sections[(block_pos.y - this->get_min_height()) / 16];
+    auto it = this->_loaded_chunks.find(chunk_pos);
+    if (it == this->_loaded_chunks.end()) return;
+    BlockPos block_pos(chunk_pos.x * 16, this->get_min_height(), chunk_pos.z * 16);
+    for (const ChunkSection& chunk_section : it->second.sections)
+    {
+        switch (chunk_section.block_states.format)
+        {
+            case PalettedContainer::SINGLE:
+            {
+                for (int i = 0; i < 4096; i++)
+                {
+                    if (!callback(block_pos, BlockRegistry::block_registry[chunk_section.block_states.palette[0]])) return;
+
+                    block_pos.x++;
+                    if (block_pos.x % 16 == 0)
+                    {
+                        block_pos.z++;
+                        block_pos.x -= 16;
+                        if (block_pos.z % 16 == 0)
+                        {
+                            block_pos.y++;
+                            block_pos.z -= 16;
+                        }
+                    }
+                }
+                break;
+            }
+            case PalettedContainer::INDIRECT:
+            {
+                uint8_t bpe = chunk_section.block_states.bits_per_entry;
+
+                const uint64_t mask = (static_cast<uint64_t>(1) << bpe) - 1;
+                const uint64_t* data_ptr = chunk_section.block_states.data.data();
+                uint64_t data = *data_ptr;
+                int bits_seen = 0;
+
+                for (int i = 0; i < 4096; i++)
+                {
+                    size_t palette_index = data & mask;
+
+                    if (!callback(block_pos, BlockRegistry::block_registry[chunk_section.block_states.palette[palette_index]])) return;
+
+                    block_pos.x++;
+                    if (block_pos.x % 16 == 0)
+                    {
+                        block_pos.z++;
+                        block_pos.x -= 16;
+                        if (block_pos.z % 16 == 0)
+                        {
+                            block_pos.y++;
+                            block_pos.z -= 16;
+                        }
+                    }
+
+                    data >>= bpe;
+                    bits_seen += bpe;
+                    if (bits_seen > 64 - bpe)
+                    {
+                        bits_seen = 0;
+                        data = *(++data_ptr);
+                    }
+                }
+                break;
+            }
+            case PalettedContainer::DIRECT:
+            {
+                throw std::runtime_error("Block palettes should only be stored in single or indirect mode.");
+            }
+        }
+    }
 }
 
-uint16_t World::get_block_id(const BlockPos block_pos, const Chunk& chunk, const ChunkSection& section) const
+ChunkSection& World::get_section_at_pos(Chunk& chunk, BlockPos block_pos) const
 {
-    int entries_for_coord = ((block_pos.y - this->get_min_height()) & 15) * 256 +
-                            (block_pos.z - chunk.pos.z * 16) * 16 +
-                            (block_pos.x - chunk.pos.x * 16);
+    return chunk.sections[(block_pos.y - this->get_min_height()) >> 4];
+}
+
+uint32_t World::get_block_id(const BlockPos& block_pos, const ChunkSection& section)
+{
+    int entries_for_coord = ((block_pos.y & 15) << 8) +
+                            ((block_pos.z & 15) << 4) +
+                            (block_pos.x & 15);
     uint8_t bpe = section.block_states.bits_per_entry;
     int entries_per_long = 64 / bpe;
     int long_index = entries_for_coord / entries_per_long;
     uint64_t packed_entries = section.block_states.data[long_index];
     uint64_t bitmask = (static_cast<uint64_t>(1) << bpe) - 1;
     int entry_in_long = entries_for_coord % entries_per_long;
-    return static_cast<uint16_t>((packed_entries >> (entry_in_long * bpe)) & bitmask);
+    return static_cast<uint32_t>((packed_entries >> (entry_in_long * bpe)) & bitmask);
 }
 
-void World::set_block_id(const BlockPos block_pos, const Chunk& chunk, ChunkSection& section, uint16_t new_id) const
+void World::set_block_id(const BlockPos block_pos, ChunkSection& section, uint16_t new_id)
 {
-    int entries_for_coord = ((block_pos.y - this->get_min_height()) & 15) * 256 +
-                            (block_pos.z - chunk.pos.z * 16) * 16 +
-                            (block_pos.x - chunk.pos.x * 16);
+    int entries_for_coord = ((block_pos.y & 15) << 8) +
+                            ((block_pos.z & 15) << 4) +
+                            (block_pos.x & 15);
     uint8_t bpe = section.block_states.bits_per_entry;
     int entries_per_long = 64 / bpe;
     int long_index = entries_for_coord / entries_per_long;
@@ -101,7 +174,6 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
     {
         case PalettedContainer::SINGLE:
         {
-            // printf("Converting to indirect\n");
             // convert single to indirect
             // BPE for single palette is 1, so just divide by size of long. index of palette is 0 because there is only 1 entry
             section.block_states.data.assign(4096 / 64, 0);
@@ -131,7 +203,6 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
 
             if (new_bpe != block_states.bits_per_entry)
             {
-                // printf("Updating BPE!\n");
                 // Reformat packed longs with the new bpe
                 std::vector<uint64_t> repacked;
                 repacked.reserve(4096);
@@ -165,13 +236,7 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
                 block_states.data = std::move(repacked);
             }
 
-            // if bpe did not change:
-            // just replace at index with proper palette index
-
-            // else:
-            // loop block ids and add to new packed vector, then replace at index with proper palette index
-
-            this->set_block_id(block_pos, chunk_it->second, section, palette_index);
+            World::set_block_id(block_pos, section, palette_index);
             return std::make_pair(old_state, BlockRegistry::block_registry[new_id]);
         }
         default:

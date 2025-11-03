@@ -28,7 +28,7 @@ public:
      * If in Single format, then the palette only contains one entry.
      * If in Direct format, then the type is stored directly in the data and not mapped to the palette.
      */
-    std::vector<uint16_t> palette;
+    std::vector<uint32_t> palette;
     /** A vector of packed 8 byte numbers that contain entries.
      * Each entry has <code>bits_per_entry</code> bits in it, and there are multiple entries per number.
      * Each entry is an index in the palette vector to get the type of block or biome.
