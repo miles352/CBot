@@ -1,6 +1,7 @@
 #include "ChunkDataS2CPacket.hpp"
 
 #include "Bot.hpp"
+#include "events/ChunkDataEvent.hpp"
 
 ChunkDataS2CPacket::ChunkDataS2CPacket(std::vector<std::uint8_t> data, EventBus& event_bus)
 {
@@ -23,7 +24,9 @@ void ChunkDataS2CPacket::default_handler(Bot& bot, Event<ChunkDataS2CPacket>& ev
     {
         sections.push_back(ChunkSection::from_bytes(section_bytes));
     }
-    bot.world._loaded_chunks.emplace(event.data.chunk_pos,
-        Chunk(event.data.chunk_pos, std::move(sections), event.data.chunk_data.heightmaps, event.data.chunk_data.block_entities)
-    );
+    Chunk chunk{event.data.chunk_pos, std::move(sections), event.data.chunk_data.heightmaps, event.data.chunk_data.block_entities};
+
+    bot.event_bus.emit<ChunkDataEvent>(ChunkDataEvent::Data{chunk});
+
+    bot.world._loaded_chunks.emplace(event.data.chunk_pos, std::move(chunk));
 }

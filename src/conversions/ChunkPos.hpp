@@ -11,9 +11,9 @@ public:
 
 
     ChunkPos() : x(0), z(0) {};
-    ChunkPos(const int x, const int z) : x(x), z(z) {};
+    ChunkPos(int x, int z) : x(x), z(z) {};
 
-    explicit ChunkPos(const BlockPos block_pos)
+    ChunkPos(BlockPos block_pos)
     {
         this->x = std::floor(block_pos.x / 16.0);
         this->z = std::floor(block_pos.z / 16.0);
