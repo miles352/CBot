@@ -30,6 +30,11 @@ public:
         return this->x == other.x && this->z == other.z;
     }
 
+    [[nodiscard]] constexpr std::string to_string() const
+    {
+        return std::format("({}, {})", this->x, this->z);
+    }
+
 };
 
 template<>
