@@ -85,13 +85,11 @@ int NetworkHandler::read_raw(void* buffer, int size) const
     if (this->use_encryption)
     {
         int out_len;
-        std::vector<unsigned char> decrypted(bytes_read);
-        EVP_DecryptUpdate(this->decrypt_ctx, decrypted.data(), &out_len, static_cast<unsigned char*>(buffer), bytes_read);
+        EVP_DecryptUpdate(this->decrypt_ctx, static_cast<uint8_t*>(buffer), &out_len, static_cast<uint8_t*>(buffer), bytes_read);
         if (out_len != bytes_read)
         {
             throw std::runtime_error("Failed to decrypt packet!");
         }
-        memcpy(buffer, decrypted.data(), bytes_read);
     }
     return bytes_read;
 }
