@@ -9,7 +9,7 @@ struct TrimComponent
     {
         using type = Material;
 
-        static Material from_bytes(uint8_t*& bytes)
+        static Material from_bytes(const uint8_t*& bytes)
         {
 
         }
@@ -19,7 +19,7 @@ struct TrimComponent
     {
         using type = Pattern;
 
-        static Pattern from_bytes(uint8_t*& bytes)
+        static Pattern from_bytes(const uint8_t*& bytes)
         {
 
         }
@@ -28,7 +28,7 @@ struct TrimComponent
     std::variant<int, Material> material;
     std::variant<int, Pattern> pattern;
 
-    static TrimComponent from_bytes(uint8_t*& bytes)
+    static TrimComponent from_bytes(const uint8_t*& bytes)
     {
         TrimComponent trim{};
         trim.material = IDOrX::from_bytes<Material>(bytes);

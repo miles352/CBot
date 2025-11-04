@@ -9,7 +9,7 @@
 class LoginSuccessS2CPacket : public ClientboundPacket
 {
     public:
-    LoginSuccessS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    LoginSuccessS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     using Data = struct
     {

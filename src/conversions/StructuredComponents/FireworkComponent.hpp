@@ -23,7 +23,7 @@ struct FireworkExplosion
     bool has_trail;
     bool has_twinkle;
 
-    static FireworkExplosion from_bytes(uint8_t*& bytes)
+    static FireworkExplosion from_bytes(const uint8_t*& bytes)
     {
         FireworkExplosion fe;
         fe.shape = static_cast<Shape>(VarInt::from_bytes(bytes));
@@ -40,7 +40,7 @@ struct FireworkComponent
     int flight_duration;
     std::vector<FireworkExplosion> explosions;
 
-    static FireworkComponent from_bytes(uint8_t*& bytes)
+    static FireworkComponent from_bytes(const uint8_t*& bytes)
     {
         FireworkComponent fc;
         fc.flight_duration = VarInt::from_bytes(bytes);

@@ -19,7 +19,7 @@ public:
         this->z = std::floor(block_pos.z / 16.0);
     }
 
-    explicit ChunkPos(uint8_t*& bytes)
+    explicit ChunkPos(const uint8_t*& bytes)
     {
         this->x = StandardTypes::from_bytes<int>(bytes);
         this->z = StandardTypes::from_bytes<int>(bytes);

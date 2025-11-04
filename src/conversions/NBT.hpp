@@ -26,7 +26,7 @@ namespace NBT
 
     struct TagByte
     {
-        static TagByte from_bytes(uint8_t*& bytes);
+        static TagByte from_bytes(const uint8_t*& bytes);
         int8_t get() const;
 
         std::string to_string() const;
@@ -36,7 +36,7 @@ namespace NBT
 
     struct TagShort
     {
-        static TagShort from_bytes(uint8_t*& bytes);
+        static TagShort from_bytes(const uint8_t*& bytes);
         int16_t get() const;
 
         std::string to_string() const;
@@ -46,7 +46,7 @@ namespace NBT
 
     struct TagInt
     {
-        static TagInt from_bytes(uint8_t*& bytes);
+        static TagInt from_bytes(const uint8_t*& bytes);
         int32_t get() const;
 
         std::string to_string() const;
@@ -56,7 +56,7 @@ namespace NBT
 
     struct TagLong
     {
-        static TagLong from_bytes(uint8_t*& bytes);
+        static TagLong from_bytes(const uint8_t*& bytes);
         int64_t get() const;
 
         std::string to_string() const;
@@ -66,7 +66,7 @@ namespace NBT
 
     struct TagFloat
     {
-        static TagFloat from_bytes(uint8_t*& bytes);
+        static TagFloat from_bytes(const uint8_t*& bytes);
         float get() const;
 
         std::string to_string() const;
@@ -76,7 +76,7 @@ namespace NBT
 
     struct TagDouble
     {
-        static TagDouble from_bytes(uint8_t*& bytes);
+        static TagDouble from_bytes(const uint8_t*& bytes);
         double get() const;
 
         std::string to_string() const;
@@ -86,7 +86,7 @@ namespace NBT
 
     struct TagByteArray
     {
-        static TagByteArray from_bytes(uint8_t*& bytes);
+        static TagByteArray from_bytes(const uint8_t*& bytes);
         const std::vector<int8_t>& get() const;
 
         std::string to_string() const;
@@ -96,7 +96,7 @@ namespace NBT
 
     struct TagString
     {
-        static TagString from_bytes(uint8_t*& bytes);
+        static TagString from_bytes(const uint8_t*& bytes);
         const std::string& get() const;
 
         std::string to_string() const;
@@ -106,7 +106,7 @@ namespace NBT
 
     struct TagList
     {
-        static TagList from_bytes(uint8_t*& bytes);
+        static TagList from_bytes(const uint8_t*& bytes);
         const std::vector<Tag>& get() const;
 
         std::string to_string() const;
@@ -117,7 +117,7 @@ namespace NBT
 
     struct TagCompound
     {
-        static TagCompound from_bytes(uint8_t*& bytes);
+        static TagCompound from_bytes(const uint8_t*& bytes);
 
         std::optional<int8_t> read_byte(const std::string& tag_name) const;
         std::optional<int16_t> read_short(const std::string& tag_name) const;
@@ -144,7 +144,7 @@ namespace NBT
 
     struct TagIntArray
     {
-        static TagIntArray from_bytes(uint8_t*& bytes);
+        static TagIntArray from_bytes(const uint8_t*& bytes);
         const std::vector<int32_t>& get() const;
 
         std::string to_string() const;
@@ -154,7 +154,7 @@ namespace NBT
 
     struct TagLongArray
     {
-        static TagLongArray from_bytes(uint8_t*& bytes);
+        static TagLongArray from_bytes(const uint8_t*& bytes);
         const std::vector<int64_t>& get() const;
 
         std::string to_string() const;
@@ -180,11 +180,11 @@ namespace NBT
         TAG_LONG_ARRAY
     };
 
-    TagCompound read_root(uint8_t*& bytes);
+    TagCompound read_root(const uint8_t*& bytes);
 
-    Tag read_tag(Types type, uint8_t*& bytes);
+    Tag read_tag(Types type, const uint8_t*& bytes);
 
-    inline std::unordered_map<Types, std::function<Tag(uint8_t*&)>> readers =
+    inline std::unordered_map<Types, std::function<Tag(const uint8_t*&)>> readers =
     {
         { TAG_BYTE, TagByte::from_bytes },
         { TAG_SHORT, TagShort::from_bytes },

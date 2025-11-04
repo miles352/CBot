@@ -6,9 +6,9 @@
 #include "conversions/VarInt.hpp"
 #include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 
-SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
-    uint8_t* data_ptr = data.data();
+    const uint8_t* data_ptr = data.data();
     this->data.teleport_id = VarInt::from_bytes(data_ptr);
 
     this->data.position.x = StandardTypes::from_bytes<double>(data_ptr);

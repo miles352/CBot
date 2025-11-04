@@ -4,7 +4,7 @@
 #include "conversions/PrefixedArray.hpp"
 
 
-void StructuredComponents::add(uint8_t*& bytes)
+void StructuredComponents::add(const uint8_t*& bytes)
 {
     int type = VarInt::from_bytes(bytes);
     auto component_id = static_cast<ComponentId>(type);
@@ -18,7 +18,7 @@ void StructuredComponents::add(uint8_t*& bytes)
     this->values[component_id] = it->second(bytes);
 }
 
-std::unordered_map<StructuredComponents::ComponentId, std::function<StructuredComponents::ComponentTypes(uint8_t*&)>>
+std::unordered_map<StructuredComponents::ComponentId, std::function<StructuredComponents::ComponentTypes(const uint8_t*&)>>
 StructuredComponents::readers = {
     { ComponentId::DAMAGE, VarInt::from_bytes },
     { ComponentId::CUSTOM_DATA, NBT::read_root },

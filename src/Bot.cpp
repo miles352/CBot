@@ -89,14 +89,14 @@ void Bot::packet_read_loop()
         if (raw_packet.id == SetCompressionS2CPacket::id && this->network_handler.client_state == ClientState::LOGIN)
         {
             const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
-            const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
-            packet_ptr(raw_packet.data, this->event_bus);
+            auto packet_constructor = clientbound_packet_registry[key];
+            packet_constructor(raw_packet.data, this->event_bus);
         }
         else if (raw_packet.id == KeepAliveS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
         {
             const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
-            const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
-            packet_ptr(raw_packet.data, this->event_bus);
+            auto packet_constructor = clientbound_packet_registry[key];
+            packet_constructor(raw_packet.data, this->event_bus);
         }
         else
         {
@@ -144,11 +144,11 @@ void Bot::tick_loop()
                     continue;
                 }
 
-                const std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)> packet_ptr = clientbound_packet_registry[key];
+                auto packet_constructor = clientbound_packet_registry[key];
 
                 // printf("Received packet id 0x%02x\n", raw_packet.id);
 
-                packet_ptr(raw_packet.data, this->event_bus);
+                packet_constructor(raw_packet.data, this->event_bus);
                 if (raw_packet.id == DisconnectS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
                 {
                     this->disconnected = true;

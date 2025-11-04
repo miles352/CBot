@@ -4,9 +4,9 @@
 #include "conversions/StandardTypes.hpp"
 #include "packets/play/serverbound/PlayerLoadedC2SPacket.hpp"
 
-GameEventS2CPacket::GameEventS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+GameEventS2CPacket::GameEventS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
-    uint8_t* bytes = data.data();
+    const uint8_t* bytes = data.data();
     this->data.event = static_cast<GameEvent>(StandardTypes::from_bytes<uint8_t>(bytes));
     this->data.value = StandardTypes::from_bytes<float>(bytes);
 

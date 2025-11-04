@@ -9,7 +9,7 @@ public:
 
     int get_id() const override { return this->id; }
 
-    StartConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    StartConfigurationS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     using Data = struct
     {

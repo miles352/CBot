@@ -8,7 +8,7 @@ public:
     std::string entry_id;
     NBT::TagCompound data;
 
-    static RegistryEntry from_bytes(uint8_t*& bytes)
+    static RegistryEntry from_bytes(const uint8_t*& bytes)
     {
 
         RegistryEntry entry;

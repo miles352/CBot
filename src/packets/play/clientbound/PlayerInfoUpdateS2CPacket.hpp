@@ -10,7 +10,7 @@
 class PlayerInfoUpdateS2CPacket : public ClientboundPacket
 {
 public:
-    PlayerInfoUpdateS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    PlayerInfoUpdateS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x3F;
     int get_id() const override { return this->id; }

@@ -5,7 +5,7 @@
 class UpdateTagsS2CPacket : public ClientboundPacket
 {
 public:
-    UpdateTagsS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    UpdateTagsS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x0D;
     int get_id() const override { return this->id; }

@@ -10,7 +10,7 @@ public:
     PalettedContainer block_states;
     PalettedContainer biomes;
 
-    static ChunkSection from_bytes(uint8_t*& bytes)
+    static ChunkSection from_bytes(const uint8_t*& bytes)
     {
         ChunkSection chunk_section;
         chunk_section.non_air_blocks = StandardTypes::from_bytes<int16_t>(bytes);

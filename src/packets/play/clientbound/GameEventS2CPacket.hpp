@@ -10,7 +10,7 @@ enum class GameEvent
 class GameEventS2CPacket : public ClientboundPacket
 {
 public:
-    GameEventS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    GameEventS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x22;
     int get_id() const override { return this->id; }

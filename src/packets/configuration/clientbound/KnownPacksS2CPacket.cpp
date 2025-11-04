@@ -3,7 +3,7 @@
 #include "../serverbound/KnownPacksC2SPacket.hpp"
 
 
-KnownPacksS2CPacket::KnownPacksS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+KnownPacksS2CPacket::KnownPacksS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     event_bus.emit<KnownPacksS2CPacket>(this->data);
 }

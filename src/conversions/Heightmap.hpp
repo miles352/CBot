@@ -15,7 +15,7 @@ public:
     Type type;
     std::vector<int64_t> data;
 
-    static Heightmap from_bytes(uint8_t*& bytes)
+    static Heightmap from_bytes(const uint8_t*& bytes)
     {
         Heightmap hm;
         hm.type = static_cast<Type>(VarInt::from_bytes(bytes));

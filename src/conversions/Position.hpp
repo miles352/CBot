@@ -6,9 +6,9 @@
 class Position
 {
 public:
-    static Vec3i from_bytes(uint8_t*& array)
+    static Vec3i from_bytes(const uint8_t*& bytes)
     {
-        int64_t encoded_position = StandardTypes::from_bytes<int64_t>(array);
+        int64_t encoded_position = StandardTypes::from_bytes<int64_t>(bytes);
         Vec3i result;
         result.x = (encoded_position & 0xFFFFFFC000000000) >> 38; // move first 26 bits to the end
         result.z = (encoded_position & 0x0000003FFFFFF000) >> 12; // move next 26 bits to the end

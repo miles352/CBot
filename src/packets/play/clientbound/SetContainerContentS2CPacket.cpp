@@ -4,9 +4,9 @@
 #include "conversions/PrefixedArray.hpp"
 #include "conversions/VarInt.hpp"
 
-SetContainerContentS2CPacket::SetContainerContentS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+SetContainerContentS2CPacket::SetContainerContentS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
-    uint8_t* ptr = data.data();
+    const uint8_t* ptr = data.data();
     this->data.window_id = VarInt::from_bytes(ptr);
     this->data.state_id = VarInt::from_bytes(ptr);
     this->data.slot_data = PrefixedArray::from_bytes_variable_typed<Slot>(ptr);

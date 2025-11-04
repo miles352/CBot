@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <cstdint>
-#include <unistd.h>
 #include <stdexcept>
 
 constexpr uint8_t SEGMENT_BITMASK = 0b01111111;
@@ -32,7 +31,7 @@ public:
         }
     }
 
-    static int from_bytes(uint8_t*& array)
+    static int from_bytes(const uint8_t*& array)
     {
         int num = 0;
         uint8_t byte = 0;
@@ -50,6 +49,4 @@ public:
         }
         return num;
     }
-
-
 };

@@ -5,7 +5,7 @@
 class PingS2CPacket : public ClientboundPacket
 {
 public:
-    PingS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    PingS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x36;
     int get_id() const override { return this->id; }

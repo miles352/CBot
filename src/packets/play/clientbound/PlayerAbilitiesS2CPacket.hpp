@@ -5,7 +5,7 @@
 class PlayerAbilitiesS2CPacket : public ClientboundPacket
 {
 public:
-    PlayerAbilitiesS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    PlayerAbilitiesS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x39;
     int get_id() const override { return this->id; }

@@ -3,7 +3,7 @@
 #include "Bot.hpp"
 #include "../serverbound/LoginAcknowledgedC2SPacket.hpp"
 
-LoginSuccessS2CPacket::LoginSuccessS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+LoginSuccessS2CPacket::LoginSuccessS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     // TODO: decode data
     event_bus.emit<LoginSuccessS2CPacket>(this->data);

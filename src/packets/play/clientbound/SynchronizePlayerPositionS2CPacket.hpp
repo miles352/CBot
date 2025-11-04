@@ -9,7 +9,7 @@
 class SynchronizePlayerPositionS2CPacket : public ClientboundPacket
 {
 public:
-    SynchronizePlayerPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    SynchronizePlayerPositionS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x41;
     int get_id() const override { return this->id; }

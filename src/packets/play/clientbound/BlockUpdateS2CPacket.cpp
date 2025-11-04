@@ -7,9 +7,9 @@
 #include "conversions/VarInt.hpp"
 #include "events/BlockUpdateEvent.hpp"
 
-BlockUpdateS2CPacket::BlockUpdateS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+BlockUpdateS2CPacket::BlockUpdateS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
-    uint8_t* bytes = data.data();
+    const uint8_t* bytes = data.data();
     this->data.location = Position::from_bytes(bytes);
     this->data.new_block_id = VarInt::from_bytes(bytes);
 

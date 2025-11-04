@@ -5,7 +5,7 @@
 class SetHealthS2CPacket : public ClientboundPacket
 {
 public:
-    SetHealthS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    SetHealthS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x61;
     int get_id() const override { return this->id; }

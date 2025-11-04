@@ -149,17 +149,19 @@ RawPacket NetworkHandler::read_packet()
 
     if (is_data_compressed)
     {
-        std::vector<uint8_t> uncompressed(data_length);
+        std::vector<uint8_t> uncompressed;
+        uncompressed.reserve(data_length);
         uLongf uncompressed_len = data_length;
         uncompress(uncompressed.data(), &uncompressed_len, data_array.data(), remaining_bytes);
         if (uncompressed_len != data_length)
         {
             throw std::runtime_error("Failed to uncompress packet.");
         }
-        uint8_t* uncompressed_ptr = uncompressed.data();
+        const uint8_t* uncompressed_ptr = uncompressed.data();
         int packet_id_bytes;
-        uint8_t* start = uncompressed_ptr;
+        const uint8_t* start = uncompressed_ptr;
         packet_id = VarInt::from_bytes(uncompressed_ptr);
+        // TODO: Dont make copy of entire uncompressed data bruh
         data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - (uncompressed_ptr - start));
     }
 

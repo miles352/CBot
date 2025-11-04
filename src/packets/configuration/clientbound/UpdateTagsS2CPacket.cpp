@@ -4,7 +4,7 @@
 #include "conversions/PrefixedArray.hpp"
 #include "conversions/VarInt.hpp"
 
-UpdateTagsS2CPacket::UpdateTagsS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+UpdateTagsS2CPacket::UpdateTagsS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     // uint8_t* bytes = data.data();
     // int count = VarInt::from_bytes(bytes);

@@ -44,7 +44,7 @@ struct UUID
         }
     }
 
-    static UUID from_bytes(uint8_t*& bytes)
+    static UUID from_bytes(const uint8_t*& bytes)
     {
         UUID uuid;
 

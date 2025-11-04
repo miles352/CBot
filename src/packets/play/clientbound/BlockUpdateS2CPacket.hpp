@@ -6,7 +6,7 @@
 class BlockUpdateS2CPacket : public ClientboundPacket
 {
 public:
-    BlockUpdateS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    BlockUpdateS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x08;
     int get_id() const override { return this->id; }

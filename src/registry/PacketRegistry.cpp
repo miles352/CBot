@@ -22,6 +22,7 @@
 #include "packets/play/clientbound/LoginS2CPacket.hpp"
 #include "packets/play/clientbound/PingS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerAbilitiesS2CPacket.hpp"
+#include "packets/play/clientbound/PlayerChatMessage.hpp"
 #include "packets/play/clientbound/PlayerInfoRemoveS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerInfoUpdateS2CPacket.hpp"
 #include "packets/play/clientbound/SetContainerContentS2CPacket.hpp"
@@ -42,7 +43,7 @@
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
 
 
-std::unordered_map<PacketRegistryKey, std::function<std::unique_ptr<ClientboundPacket>(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
+std::unordered_map<PacketRegistryKey, std::function<void(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
 
 void register_clientbound_packets(EventBus& event_bus)
 {
@@ -70,6 +71,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<GameEventS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoRemoveS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoUpdateS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<PlayerChatMessage>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
@@ -106,9 +108,8 @@ void register_clientbound_packet(ClientState client_state, EventBus& event_bus)
     }
 
     PacketRegistryKey key = std::make_pair(client_state, T::id);
-    clientbound_packet_registry[key] = [](std::vector<uint8_t> data, EventBus& event_bus) {
-        auto x = std::make_unique<T>(data, event_bus);
-        return x;
+    clientbound_packet_registry[key] = [](const std::vector<uint8_t>& data, EventBus& event_bus) {
+        T{data, event_bus};
     };
 }
 

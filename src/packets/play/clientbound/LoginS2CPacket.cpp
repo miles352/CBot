@@ -6,9 +6,9 @@
 #include "conversions/StandardTypes.hpp"
 #include "Bot.hpp"
 
-LoginS2CPacket::LoginS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
+LoginS2CPacket::LoginS2CPacket(const std::vector<uint8_t>& data, EventBus &event_bus)
 {
-    uint8_t* ptr = data.data();
+    const uint8_t* ptr = data.data();
     this->data.entity_id = StandardTypes::from_bytes<int>(ptr);
     this->data.hardcore = StandardTypes::from_bytes<bool>(ptr);
     this->data.dimension_identifiers = PrefixedArray::from_bytes_variable<MCString>(ptr);

@@ -3,9 +3,9 @@
 #include "../serverbound/PongC2SPacket.hpp"
 #include "conversions/StandardTypes.hpp"
 
-PingS2CPacket::PingS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+PingS2CPacket::PingS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
-    uint8_t* ptr = data.data();
+    const uint8_t* ptr = data.data();
     this->data.id = StandardTypes::from_bytes<int>(ptr);
 
     // printf("Received ping with id: %d\n", this->data.id);

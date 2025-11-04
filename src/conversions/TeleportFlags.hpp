@@ -17,7 +17,7 @@ public:
     bool relative_velocity_z;
     bool rotate_velocity_rotation;
 
-    static TeleportFlags from_array(std::uint8_t*& array)
+    static TeleportFlags from_array(const std::uint8_t*& array)
     {
         int bit_field = StandardTypes::from_bytes<int>(array);
         TeleportFlags flags;

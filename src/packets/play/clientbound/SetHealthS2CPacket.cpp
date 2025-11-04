@@ -4,9 +4,9 @@
 #include "conversions/StandardTypes.hpp"
 #include "conversions/VarInt.hpp"
 
-SetHealthS2CPacket::SetHealthS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
+SetHealthS2CPacket::SetHealthS2CPacket(const std::vector<uint8_t>& data, EventBus &event_bus)
 {
-    uint8_t* ptr = data.data();
+    const uint8_t* ptr = data.data();
     this->data.health = StandardTypes::from_bytes<float>(ptr);
     this->data.food = VarInt::from_bytes(ptr);
     this->data.saturation = StandardTypes::from_bytes<float>(ptr);

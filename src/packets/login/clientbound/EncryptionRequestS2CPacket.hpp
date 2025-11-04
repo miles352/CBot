@@ -12,7 +12,7 @@
 class EncryptionRequestS2CPacket : public ClientboundPacket
 {
     public:
-    EncryptionRequestS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    EncryptionRequestS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x01;
 

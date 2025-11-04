@@ -3,9 +3,9 @@
 #include "conversions/MCString.hpp"
 #include "conversions/PrefixedArray.hpp"
 
-RegistryDataS2CPacket::RegistryDataS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
+RegistryDataS2CPacket::RegistryDataS2CPacket(const std::vector<uint8_t>& data, EventBus &event_bus)
 {
-    uint8_t* bytes = data.data();
+    const uint8_t* bytes = data.data();
     this->data.registry_id = MCString::from_bytes(bytes);
 
     this->data.entries = PrefixedArray::from_bytes_variable_typed<RegistryEntry>(bytes);

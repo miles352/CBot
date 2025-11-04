@@ -50,7 +50,7 @@ public:
         return (number_of_entries + entries_per_long - 1) / entries_per_long;
     }
 
-    static PalettedContainer from_bytes(uint8_t*& bytes, Type type)
+    static PalettedContainer from_bytes(const uint8_t*& bytes, Type type)
     {
         // printf("Reading paletted container\n");
         PalettedContainer container;

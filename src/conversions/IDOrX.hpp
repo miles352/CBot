@@ -7,7 +7,7 @@
 namespace IDOrX
 {
     template <typename X>
-    std::variant<int, typename X::type> from_bytes(uint8_t*& bytes)
+    std::variant<int, typename X::type> from_bytes(const uint8_t*& bytes)
     {
         int id = VarInt::from_bytes(bytes);
         if (id != 0) return id - 1;

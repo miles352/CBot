@@ -8,7 +8,7 @@
 class SetCompressionS2CPacket : public ClientboundPacket
 {
     public:
-    SetCompressionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    SetCompressionS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x03;
 

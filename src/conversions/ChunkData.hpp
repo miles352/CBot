@@ -11,7 +11,7 @@ public:
 
     std::vector<BlockEntity> block_entities;
 
-    static ChunkData from_bytes(uint8_t*& bytes)
+    static ChunkData from_bytes(const uint8_t*& bytes)
     {
         ChunkData chunk_data;
         chunk_data.heightmaps = PrefixedArray::from_bytes_variable_typed<Heightmap>(bytes);

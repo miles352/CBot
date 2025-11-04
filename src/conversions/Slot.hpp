@@ -23,7 +23,7 @@ public:
 
     std::optional<ItemData> item_data;
 
-    static Slot from_bytes(uint8_t*& bytes)
+    static Slot from_bytes(const uint8_t*& bytes)
     {
         Slot slot;
 

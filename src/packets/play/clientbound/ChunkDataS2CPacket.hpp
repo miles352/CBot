@@ -8,7 +8,7 @@
 class ChunkDataS2CPacket : public ClientboundPacket
 {
 public:
-    ChunkDataS2CPacket(std::vector<std::uint8_t> data, EventBus& event_bus);
+    ChunkDataS2CPacket(const std::vector<std::uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x27;
     int get_id() const override { return this->id; }

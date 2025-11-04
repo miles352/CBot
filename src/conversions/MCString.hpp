@@ -19,7 +19,7 @@ public:
         return result;
     }
 
-    static std::string from_bytes(uint8_t*& bytes)
+    static std::string from_bytes(const uint8_t*& bytes)
     {
         std::string res;
         int length = VarInt::from_bytes(bytes);

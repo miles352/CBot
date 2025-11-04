@@ -9,7 +9,7 @@ class LoginS2CPacket : public ClientboundPacket
 {
 public:
 
-    LoginS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    LoginS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x2B;
     int get_id() const override { return this->id; }

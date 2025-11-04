@@ -9,7 +9,7 @@
 class FinishConfigurationS2CPacket : public ClientboundPacket
 {
     public:
-    FinishConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    FinishConfigurationS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x03;
 

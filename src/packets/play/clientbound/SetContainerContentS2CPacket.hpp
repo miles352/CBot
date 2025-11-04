@@ -6,7 +6,7 @@
 class SetContainerContentS2CPacket : public ClientboundPacket
 {
 public:
-    SetContainerContentS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    SetContainerContentS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x12;
     int get_id() const override { return this->id; }

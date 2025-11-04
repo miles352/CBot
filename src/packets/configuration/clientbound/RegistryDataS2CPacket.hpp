@@ -7,7 +7,7 @@
 class RegistryDataS2CPacket : public ClientboundPacket
 {
 public:
-    RegistryDataS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    RegistryDataS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x07;
     int get_id() const override { return this->id; }

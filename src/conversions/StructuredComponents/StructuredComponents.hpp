@@ -29,7 +29,7 @@ struct StructuredComponents
 
     std::unordered_map<ComponentId, ComponentTypes> values;
 
-    void add(uint8_t*& bytes);
+    void add(const uint8_t*& bytes);
 
-    static std::unordered_map<ComponentId, std::function<ComponentTypes(uint8_t*&)>> readers;
+    static std::unordered_map<ComponentId, std::function<ComponentTypes(const uint8_t*&)>> readers;
 };

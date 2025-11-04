@@ -14,7 +14,7 @@ struct EnchantmentComponent
     /** ID to level. */
     std::unordered_map<EnchantmentIds, int> enchantments;
 
-    static EnchantmentComponent from_bytes(uint8_t*& bytes)
+    static EnchantmentComponent from_bytes(const uint8_t*& bytes)
     {
         int count = VarInt::from_bytes(bytes);
         EnchantmentComponent component;

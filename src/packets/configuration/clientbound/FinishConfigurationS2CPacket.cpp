@@ -3,7 +3,7 @@
 #include "../serverbound/AcknowledgeFinishConfigurationC2SPacket.hpp"
 
 
-FinishConfigurationS2CPacket::FinishConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+FinishConfigurationS2CPacket::FinishConfigurationS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     event_bus.emit<FinishConfigurationS2CPacket>();
 }

@@ -2,7 +2,7 @@
 
 #include "../serverbound/AcknowledgeConfigurationC2SPacket.hpp"
 
-StartConfigurationS2CPacket::StartConfigurationS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
+StartConfigurationS2CPacket::StartConfigurationS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     event_bus.emit<StartConfigurationS2CPacket>();
 }

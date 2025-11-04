@@ -7,7 +7,7 @@
 class PlayerInfoRemoveS2CPacket : public ClientboundPacket
 {
 public:
-    PlayerInfoRemoveS2CPacket(std::vector<uint8_t> data, EventBus& event_bus);
+    PlayerInfoRemoveS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus);
 
     static constexpr int id = 0x3E;
 

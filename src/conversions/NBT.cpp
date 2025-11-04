@@ -8,7 +8,7 @@
 
 namespace NBT
 {
-    std::string read_nbt_string(uint8_t*& bytes)
+    std::string read_nbt_string(const uint8_t*& bytes)
     {
         const uint16_t name_length = StandardTypes::from_bytes<uint16_t>(bytes);
         std::string str;
@@ -20,7 +20,7 @@ namespace NBT
         return str;
     }
 
-    TagCompound read_root(uint8_t*& bytes)
+    TagCompound read_root(const uint8_t*& bytes)
     {
         int id = StandardTypes::from_bytes<uint8_t>(bytes);
         if (id != TAG_COMPOUND)
@@ -30,12 +30,12 @@ namespace NBT
         return std::get<TagCompound>(read_tag(TAG_COMPOUND, bytes));
     }
 
-    Tag read_tag(Types type, uint8_t*& bytes)
+    Tag read_tag(Types type, const uint8_t*& bytes)
     {
         return readers[type](bytes);
     }
 
-    TagByte TagByte::from_bytes(uint8_t*& bytes)
+    TagByte TagByte::from_bytes(const uint8_t*& bytes)
     {
         TagByte tag;
         tag.value = StandardTypes::from_bytes<int8_t>(bytes);
@@ -52,7 +52,7 @@ namespace NBT
         return this->value;
     }
 
-    TagShort TagShort::from_bytes(uint8_t*& bytes)
+    TagShort TagShort::from_bytes(const uint8_t*& bytes)
     {
         TagShort tag;
         tag.value = StandardTypes::from_bytes<int16_t>(bytes);
@@ -69,7 +69,7 @@ namespace NBT
         return this->value;
     }
 
-    TagInt TagInt::from_bytes(uint8_t*& bytes)
+    TagInt TagInt::from_bytes(const uint8_t*& bytes)
     {
         TagInt tag;
         tag.value = StandardTypes::from_bytes<int32_t>(bytes);
@@ -86,7 +86,7 @@ namespace NBT
         return this->value;
     }
 
-    TagLong TagLong::from_bytes(uint8_t*& bytes)
+    TagLong TagLong::from_bytes(const uint8_t*& bytes)
     {
         TagLong tag;
         tag.value = StandardTypes::from_bytes<int64_t>(bytes);
@@ -103,7 +103,7 @@ namespace NBT
         return this->value;
     }
 
-    TagFloat TagFloat::from_bytes(uint8_t*& bytes)
+    TagFloat TagFloat::from_bytes(const uint8_t*& bytes)
     {
         TagFloat tag;
         tag.value = StandardTypes::from_bytes<float>(bytes);
@@ -120,7 +120,7 @@ namespace NBT
         return this->value;
     }
 
-    TagDouble TagDouble::from_bytes(uint8_t*& bytes)
+    TagDouble TagDouble::from_bytes(const uint8_t*& bytes)
     {
         TagDouble tag;
         tag.value = StandardTypes::from_bytes<double>(bytes);
@@ -137,7 +137,7 @@ namespace NBT
         return this->value;
     }
 
-    TagByteArray TagByteArray::from_bytes(uint8_t*& bytes)
+    TagByteArray TagByteArray::from_bytes(const uint8_t*& bytes)
     {
         int32_t list_length = StandardTypes::from_bytes<int32_t>(bytes);
         TagByteArray tag;
@@ -164,7 +164,7 @@ namespace NBT
         return this->data;
     }
 
-    TagString TagString::from_bytes(uint8_t*& bytes)
+    TagString TagString::from_bytes(const uint8_t*& bytes)
     {
         TagString tag;
         tag.value = read_nbt_string(bytes);
@@ -181,7 +181,7 @@ namespace NBT
         return this->value;
     }
 
-    TagList TagList::from_bytes(uint8_t*& bytes)
+    TagList TagList::from_bytes(const uint8_t*& bytes)
     {
         uint8_t list_type = StandardTypes::from_bytes<uint8_t>(bytes);
         int32_t list_length = StandardTypes::from_bytes<int32_t>(bytes);
@@ -213,7 +213,7 @@ namespace NBT
         return this->data;
     }
 
-    TagCompound TagCompound::from_bytes(uint8_t*& bytes)
+    TagCompound TagCompound::from_bytes(const uint8_t*& bytes)
     {
         uint8_t type_id = StandardTypes::from_bytes<uint8_t>(bytes);
         TagCompound compound;
@@ -326,7 +326,7 @@ namespace NBT
         return this->get<TagLongArray, std::vector<int64_t>>(tag_name);
     }
 
-    TagIntArray TagIntArray::from_bytes(uint8_t*& bytes)
+    TagIntArray TagIntArray::from_bytes(const uint8_t*& bytes)
     {
         int32_t list_length = StandardTypes::from_bytes<int32_t>(bytes);
         TagIntArray tag;
@@ -354,7 +354,7 @@ namespace NBT
         return this->data;
     }
 
-    TagLongArray TagLongArray::from_bytes(uint8_t*& bytes)
+    TagLongArray TagLongArray::from_bytes(const uint8_t*& bytes)
     {
         int64_t list_length = StandardTypes::from_bytes<int64_t>(bytes);
         TagLongArray tag;

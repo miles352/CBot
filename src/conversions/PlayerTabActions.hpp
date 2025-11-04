@@ -27,7 +27,7 @@ struct AddPlayer
         std::string value;
         std::optional<std::string> signature;
 
-        static Property from_bytes(uint8_t*& bytes)
+        static Property from_bytes(const uint8_t*& bytes)
         {
             Property property;
             property.name = MCString::from_bytes(bytes);
@@ -44,7 +44,7 @@ struct AddPlayer
     std::string name;
     std::vector<Property> properties;
 
-    static AddPlayer from_bytes(uint8_t*& bytes)
+    static AddPlayer from_bytes(const uint8_t*& bytes)
     {
         AddPlayer add_player;
         add_player.name = MCString::from_bytes(bytes);
@@ -65,7 +65,7 @@ struct InitializeChat
 
     std::optional<Data> data;
 
-    static InitializeChat from_bytes(uint8_t*& bytes)
+    static InitializeChat from_bytes(const uint8_t*& bytes)
     {
         InitializeChat initialize_chat;
         bool optional = StandardTypes::from_bytes<bool>(bytes);
@@ -89,7 +89,7 @@ struct PlayerTabActions
     UUID uuid;
     std::unordered_map<TabActionMasks, TabActionType> actions;
 
-    static PlayerTabActions from_bytes(uint8_t*& bytes, uint8_t actions)
+    static PlayerTabActions from_bytes(const uint8_t*& bytes, uint8_t actions)
     {
         PlayerTabActions tab_actions;
         tab_actions.uuid = UUID::from_bytes(bytes);

@@ -2,10 +2,10 @@
 
 #include "conversions/StandardTypes.hpp"
 
-PlayerAbilitiesS2CPacket::PlayerAbilitiesS2CPacket(std::vector<uint8_t> data, EventBus &event_bus)
+PlayerAbilitiesS2CPacket::PlayerAbilitiesS2CPacket(const std::vector<uint8_t>& data, EventBus &event_bus)
 {
-    uint8_t* ptr = data.data();
-    int8_t bit_field = StandardTypes::from_bytes<int8_t>(ptr);
+    const uint8_t* ptr = data.data();
+    auto bit_field = StandardTypes::from_bytes<int8_t>(ptr);
 
     this->data.invulnerable = bit_field & 0b0001;
     this->data.flying = bit_field & 0b0010;
