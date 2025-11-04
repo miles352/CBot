@@ -143,29 +143,28 @@ RawPacket NetworkHandler::read_packet()
     }
     while (total_read_bytes < remaining_bytes);
 
-    std::vector<uint8_t> data = data_array;
-
     if (is_data_compressed)
     {
-        std::vector<uint8_t> uncompressed;
-        uncompressed.reserve(data_length);
+        std::unique_ptr<uint8_t[]> uncompressed(new uint8_t[data_length]);
         uLongf uncompressed_len = data_length;
-        uncompress(uncompressed.data(), &uncompressed_len, data_array.data(), remaining_bytes);
+        uncompress(uncompressed.get(), &uncompressed_len, data_array.data(), remaining_bytes);
         if (uncompressed_len != data_length)
         {
             throw std::runtime_error("Failed to uncompress packet.");
         }
-        const uint8_t* uncompressed_ptr = uncompressed.data();
+        const uint8_t* uncompressed_ptr = uncompressed.get();
         int packet_id_bytes;
         const uint8_t* start = uncompressed_ptr;
         packet_id = VarInt::from_bytes(uncompressed_ptr);
-        // TODO: Dont make copy of entire uncompressed data bruh
-        data = std::vector<uint8_t>(uncompressed_ptr, uncompressed_ptr + data_length - (uncompressed_ptr - start));
+
+        std::vector<uint8_t> final_data(data_length - (uncompressed_ptr - start)); // length = total length - amount of bytes in packet_id
+        memcpy(final_data.data(), uncompressed_ptr, final_data.size());
+        data_array = std::move(final_data);
     }
 
     // printf("Cannot find packet matching id: 0x%02x\n", packet_id);
 
-    return RawPacket(packet_id, data);
+    return RawPacket(packet_id, data_array);
 }
 
 void NetworkHandler::enable_encryption(unsigned char (&shared_secret)[16])
