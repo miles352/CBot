@@ -43,7 +43,7 @@
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
 
 
-std::unordered_map<PacketRegistryKey, std::function<void(std::vector<uint8_t>, EventBus& event_bus)>> clientbound_packet_registry;
+std::unordered_map<PacketRegistryKey, std::function<void(const std::vector<uint8_t>&, EventBus& event_bus)>> clientbound_packet_registry;
 
 void register_clientbound_packets(EventBus& event_bus)
 {
