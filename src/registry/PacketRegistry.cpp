@@ -22,7 +22,6 @@
 #include "packets/play/clientbound/LoginS2CPacket.hpp"
 #include "packets/play/clientbound/PingS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerAbilitiesS2CPacket.hpp"
-#include "packets/play/clientbound/PlayerChatMessage.hpp"
 #include "packets/play/clientbound/PlayerInfoRemoveS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerInfoUpdateS2CPacket.hpp"
 #include "packets/play/clientbound/SetContainerContentS2CPacket.hpp"
@@ -71,7 +70,6 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<GameEventS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoRemoveS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoUpdateS2CPacket>(ClientState::PLAY, event_bus);
-    register_clientbound_packet<PlayerChatMessage>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
