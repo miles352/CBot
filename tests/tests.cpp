@@ -29,10 +29,10 @@ void test_VarInt()
     assert(VarInt::to_bytes(-1) == (std::vector<uint8_t>{0xff, 0xff, 0xff, 0xff, 0x0f}));
     assert(VarInt::to_bytes(-2147483648) == (std::vector<uint8_t>{0x80, 0x80, 0x80, 0x80, 0x08}));
 
-    uint8_t* x = new uint8_t[]{0x80, 0x80, 0x80, 0x80, 0x08};
+    const uint8_t* x = new uint8_t[]{0x80, 0x80, 0x80, 0x80, 0x08};
     assert(VarInt::from_bytes(x) == -2147483648);
 
-    uint8_t* y = new uint8_t[]{162, 0x00};
+    const uint8_t* y = new uint8_t[]{162, 0x00};
     assert(VarInt::from_bytes(y) == 34);
 
 }
