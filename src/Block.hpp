@@ -10,7 +10,17 @@ public:
     class BlockSetting
     {
     public:
-        BlockSetting();
+        constexpr BlockSetting()
+        {
+            this->resistance = 0.0F;
+            this->hardness = 0.0F;
+            this->tool_required = false;
+            this->slipperiness = 0.6F;
+            this->velocity_multiplier = 1.0F;
+            this->jump_velocity_multiplier = 1.0F;
+            this->collidable = true;
+        }
+
         float resistance;
         float hardness;
         bool tool_required;
@@ -18,31 +28,66 @@ public:
         float velocity_multiplier;
         float jump_velocity_multiplier;
         bool collidable;
-        BlockSetting& set_resistance(float resistance);
-        BlockSetting& set_hardness(float hardness);
-        BlockSetting& requires_tool(bool required);
-        BlockSetting& set_slipperiness(float slipperiness);
-        BlockSetting& set_velocity_multiplier(float velocity_multiplier);
-        BlockSetting& set_jump_velocity_multiplier(float jump_velocity_multiplier);
-        BlockSetting& set_collidable(bool collidable);
+
+        constexpr BlockSetting& set_resistance(float resistance)
+        {
+            this->resistance = std::max(0.0F, resistance);
+            return *this;
+        }
+
+        constexpr BlockSetting& set_hardness(float hardness)
+        {
+            this->hardness = hardness;
+            return *this;
+        }
+
+        constexpr BlockSetting& requires_tool(bool required)
+        {
+            this->tool_required = required;
+            return *this;
+        }
+
+        constexpr BlockSetting& set_slipperiness(float slipperiness)
+        {
+            this->slipperiness = slipperiness;
+            return *this;
+        }
+
+        constexpr BlockSetting& set_velocity_multiplier(float velocity_multiplier)
+        {
+            this->velocity_multiplier = velocity_multiplier;
+            return *this;
+        }
+
+        constexpr BlockSetting& set_jump_velocity_multiplier(float jump_velocity_multiplier)
+        {
+            this->jump_velocity_multiplier = jump_velocity_multiplier;
+            return *this;
+        }
+
+        constexpr BlockSetting& set_collidable(bool collidable)
+        {
+            this->collidable = collidable;
+            return *this;
+        }
     };
 
-    Block(std::string name, const BlockSetting &settings);
+    constexpr Block(std::string_view name, const BlockSetting& settings) : name(name), settings(settings) {};
 
-    const std::string name;
+    std::string_view name;
 
-    float get_resistance() const;
-    float get_hardness() const;
-    bool get_tool_required() const;
-    float get_slipperiness() const;
-    float get_velocity_multiplier() const;
-    float get_jump_velocity_multiplier() const;
-    bool get_collidable() const;
+    constexpr float get_resistance() const { return this->settings.resistance; }
+    constexpr float get_hardness() const { return this->settings.hardness; }
+    constexpr bool get_tool_required() const { return this->settings.tool_required; }
+    constexpr float get_slipperiness() const { return this->settings.slipperiness; }
+    constexpr float get_velocity_multiplier() const { return this->settings.velocity_multiplier; }
+    constexpr float get_jump_velocity_multiplier() const { return this->settings.jump_velocity_multiplier; }
+    constexpr bool get_collidable() const { return this->settings.collidable; }
 
     /** @returns True if the block is any of the 3 types of air. */
     bool is_air() const;
 
-    bool operator==(const Block& other) const
+    constexpr bool operator==(const Block& other) const
     {
         return this->name == other.name;
     }

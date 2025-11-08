@@ -157,7 +157,7 @@ with open("block_properties.json", "r") as properties:
                 block_states[state["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {formatted_state} }}"
             block_properties = props[block_name]
             block_settings = f"Block::BlockSetting().set_resistance({block_properties["resistance"]}).set_hardness({block_properties["hardness"]}).requires_tool({block_properties["tool_required"]}).set_slipperiness({block_properties["slipperiness"]}).set_velocity_multiplier({block_properties["velocity_multiplier"]}).set_jump_velocity_multiplier({block_properties["jump_velocity_multiplier"]}).set_collidable({block_properties["collision"]})"
-            blocks.append(f"const Block {block_name[10:].upper()}(\"{block_name[10:]}\", {block_settings});\n")
+            blocks.append(f"constexpr Block {block_name[10:].upper()}(\"{block_name[10:]}\", {block_settings});\n")
 
 
 # namespace Blocks
@@ -166,7 +166,7 @@ with open("block_properties.json", "r") as properties:
 # }
 
 with open("BlockRegistryGenerated.hpp", "w") as output:
-    output.write("#pragma once\n\n#include <vector>\n#include <string>\n#include <typeindex>\n\n")
+    output.write("#pragma once\n\n#include <vector>\n#include <typeindex>\n#include \"Block.hpp\"\n\n")
     for i in enums:
         output.write(f"enum class {enums[i]} \n{{\n")
         for state in ast.literal_eval(i.split(" ", 1)[1]):
@@ -183,7 +183,7 @@ with open("BlockRegistryGenerated.hpp", "w") as output:
 
     output.write("}")
 
-    output.write("inline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& get_block_states() \n{\n")
+    output.write("\n\ninline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& get_block_states() \n{\n")
     output.write("    static const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>> block_states = {\n")
     sorted = dict(sorted(block_states.items()))
     for i in sorted:
