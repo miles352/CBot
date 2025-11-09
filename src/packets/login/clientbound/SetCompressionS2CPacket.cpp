@@ -12,5 +12,4 @@ SetCompressionS2CPacket::SetCompressionS2CPacket(const std::vector<uint8_t>& dat
 void SetCompressionS2CPacket::default_handler(Bot& bot, Event<SetCompressionS2CPacket>& event)
 {
     bot.network_handler.enable_compression(event.data.compression_threshold);
-    printf("Enabled compression\n");
 }

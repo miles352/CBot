@@ -12,6 +12,5 @@ std::vector<uint8_t> AcknowledgeFinishConfigurationC2SPacket::encode()
 
 void AcknowledgeFinishConfigurationC2SPacket::default_handler(Bot& bot, Event<AcknowledgeFinishConfigurationC2SPacket>& event)
 {
-    printf("finished configuration\n");
     // Event.cancel();
 }
