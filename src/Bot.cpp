@@ -29,24 +29,30 @@
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
+#include "utils/Crypto.hpp"
 
-Bot::Bot(std::string server_ip, std::string server_port, const std::string& save_name) : event_bus(*this),
-                                                                         network_handler(event_bus),
-                                                                         pathfinder(*this), ticks(0),
-                                                                         currently_mining(false), current_block_break_delay(0),
-                                                                         is_alive(true), on_ground(true),
-                                                                         last_on_ground(true), horizontal_collision(false),
-                                                                         vertical_collision(false),
-                                                                         last_horizontal_collision(false), use_gravity(true), jumping(false),
-                                                                         sneaking(false),
-                                                                         sprinting(false), ticks_since_last_position_packet_sent(0),
-                                                                         disconnected(false), server_ip(std::move(server_ip)),
-                                                                         server_port(std::move(server_port))
+Bot::Bot(std::string server_ip, std::string server_port, const std::string& save_name, bool offline) : event_bus(*this),
+                                                                                                       network_handler(event_bus),
+                                                                                                       pathfinder(*this), ticks(0),
+                                                                                                       currently_mining(false), current_block_break_delay(0),
+                                                                                                       is_alive(true), on_ground(true),
+                                                                                                       last_on_ground(true), horizontal_collision(false),
+                                                                                                       vertical_collision(false),
+                                                                                                       last_horizontal_collision(false), use_gravity(true),
+                                                                                                       offline(offline), jumping(false),
+                                                                                                       sneaking(false), sprinting(false),
+                                                                                                       ticks_since_last_position_packet_sent(0), disconnected(false),
+                                                                                                       server_ip(std::move(server_ip)), server_port(std::move(server_port))
 {
-    this->account = FullAuth::login(save_name + ".txt");
+    if (this->offline) this->account = MCAccount{save_name, Crypto::get_random_uuid(), ""};
+    else this->account = FullAuth::login(save_name + ".txt");
+
     this->init();
-    const auto& block_states = get_block_states();
-    BlockRegistry::generate_block_states(block_states);
+
+    std::call_once(BlockRegistry::block_registry_flag, []() {
+        const auto& block_states = get_block_states();
+        BlockRegistry::generate_block_states(block_states);
+    });
 
     this->last_tick_time = std::chrono::system_clock::now();
 }

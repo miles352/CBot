@@ -1,10 +1,10 @@
 #pragma once
 
 #include <optional>
+#include <typeindex>
 #include <unordered_map>
 
 #include "Block.hpp"
-#include "registry/BlockRegistry.hpp"
 
 
 class BlockState

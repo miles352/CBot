@@ -20,8 +20,10 @@ public:
      * @param server_ip The server ip, for example: connect.2b2t.org
      * @param server_port The server port, for example: 25565
      * @param save_name The name used to load and save auth tokens to a file. Must be a valid file name prefix.
+     * If offline is true, then this name is used as the username for the bot.
+     * @param offline A boolean deciding whether online authentication will be done.
      */
-    explicit Bot(std::string server_ip, std::string server_port = "25565", const std::string& save_name = "saved_account");
+    explicit Bot(std::string server_ip, std::string server_port = "25565", const std::string& save_name = "saved_account", bool offline = false);
 
     void start();
 
@@ -105,6 +107,7 @@ public:
     Box get_bounding_box() const;
 
     MCAccount account;
+    bool offline;
 
 private:
     void init();

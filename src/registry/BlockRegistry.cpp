@@ -19,8 +19,6 @@ void BlockRegistry::get_combinations(std::vector<std::vector<int>>& output, cons
     }
 }
 
-std::vector<BlockState> BlockRegistry::block_registry;
-
 void BlockRegistry::generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input)
 {
     for (const auto&[block, states] : input)

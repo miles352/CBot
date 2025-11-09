@@ -1,17 +1,18 @@
 #pragma once
 
-#include "Block.hpp"
+#include <mutex>
 #include <vector>
 #include <typeindex>
 
-class BlockState;
+#include "Block.hpp"
+#include "BlockState.hpp"
 
-class BlockRegistry
+namespace BlockRegistry
 {
-public:
-    static void get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index);
+    void get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index);
 
-    static std::vector<BlockState> block_registry;
+    inline std::once_flag block_registry_flag;
+    inline std::vector<BlockState> block_registry;
 
-    static void generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input);
+    void generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input);
 };
