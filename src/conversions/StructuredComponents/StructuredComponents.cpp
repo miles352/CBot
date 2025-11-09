@@ -22,7 +22,7 @@ std::unordered_map<StructuredComponents::ComponentId, std::function<StructuredCo
 StructuredComponents::readers = {
     { ComponentId::DAMAGE, VarInt::from_bytes },
     { ComponentId::CUSTOM_DATA, NBT::read_root },
-    { ComponentId::CUSTOM_NAME, TextComponent::from_string_bytes },
+    { ComponentId::CUSTOM_NAME, TextComponent::from_bytes },
     { ComponentId::ENCHANTMENTS, EnchantmentComponent::from_bytes },
     { ComponentId::REPAIR_COST,  VarInt::from_bytes },
     { ComponentId::TRIM, TrimComponent::from_bytes },

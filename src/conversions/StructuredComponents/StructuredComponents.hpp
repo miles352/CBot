@@ -8,6 +8,7 @@
 #include "../NBT.hpp"
 #include "TrimComponent.hpp"
 #include "FireworkComponent.hpp"
+#include "conversions/TextComponent.hpp"
 
 struct StructuredComponents
 {
@@ -25,7 +26,7 @@ struct StructuredComponents
         CONTAINER = 66,
     };
 
-    typedef std::variant<EnchantmentComponent, int, NBT::TagCompound, NBT::TagString, TrimComponent, std::vector<struct Slot>, FireworkComponent> ComponentTypes;
+    typedef std::variant<EnchantmentComponent, int, NBT::TagCompound, NBT::TagString, TextComponent, TrimComponent, std::vector<struct Slot>, FireworkComponent> ComponentTypes;
 
     std::unordered_map<ComponentId, ComponentTypes> values;
 

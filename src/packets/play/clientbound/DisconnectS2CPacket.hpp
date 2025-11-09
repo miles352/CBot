@@ -1,6 +1,7 @@
 #pragma once
 #include "EventBus.hpp"
 #include "conversions/NBT.hpp"
+#include "conversions/TextComponent.hpp"
 #include "packets/ClientboundPacket.hpp"
 
 class DisconnectS2CPacket : public ClientboundPacket
@@ -13,7 +14,7 @@ public:
 
     using Data = struct
     {
-        NBT::TagCompound reason;
+        TextComponent reason;
     };
 
     Data data{};

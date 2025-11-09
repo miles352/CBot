@@ -1,18 +1,18 @@
 #pragma once
 
 #include "NBT.hpp"
-#include "StandardTypes.hpp"
 
-namespace TextComponent
+struct TextComponent
 {
-    /** Special case where a string is sent as a nameless NBT String but still includes the nbt id of 8
-     * https://minecraft.wiki/w/Java_Edition_protocol/Data_types#Type:Text_Component
-     */
-    static NBT::TagString from_string_bytes(const uint8_t*& bytes)
-    {
-        // Read the useless id
-        StandardTypes::from_bytes<uint8_t>(bytes);
+    /** This tag will only contain either a TAG_STRING or a TAG_COMPOUND */
+    NBT::Tag data;
 
-        return NBT::TagString::from_bytes(bytes);
+    static TextComponent from_bytes(const uint8_t*& bytes)
+    {
+        TextComponent text_component;
+        auto type = static_cast<NBT::Types>(*bytes);
+        if (type != NBT::Types::TAG_STRING && type != NBT::Types::TAG_COMPOUND) throw std::invalid_argument("Not a valid TextComponent");
+        text_component.data = NBT::read_tag(type, ++bytes);
+        return text_component;
     }
-}
+};
