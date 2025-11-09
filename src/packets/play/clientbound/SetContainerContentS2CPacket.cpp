@@ -15,6 +15,7 @@ SetContainerContentS2CPacket::SetContainerContentS2CPacket(const std::vector<uin
     event_bus.emit<SetContainerContentS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void SetContainerContentS2CPacket::default_handler(Bot& bot, Event<SetContainerContentS2CPacket>& event)
 {
     if (event.data.window_id == 0) // Player inventory window id
@@ -27,4 +28,4 @@ void SetContainerContentS2CPacket::default_handler(Bot& bot, Event<SetContainerC
     }
     bot.inventory.carried_slot = InventorySlot(event.data.carried_item);
 }
-
+#endif

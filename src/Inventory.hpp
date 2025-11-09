@@ -1,4 +1,7 @@
 #pragma once
+
+#ifndef NO_REGISTRY
+
 #include <array>
 
 #include "InventorySlot.hpp"
@@ -17,3 +20,5 @@ public:
     /** Returns the InventorySlot of the currently selected hotbar slot. */
     const InventorySlot& get_held_slot() const;
 };
+
+#endif

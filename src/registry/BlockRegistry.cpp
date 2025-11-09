@@ -1,3 +1,5 @@
+#ifndef NO_REGISTRY
+
 #include "BlockRegistry.hpp"
 
 #include <print>
@@ -48,3 +50,5 @@ void BlockRegistry::generate_block_states(const std::vector<std::pair<const Bloc
         }
     }
 }
+
+#endif

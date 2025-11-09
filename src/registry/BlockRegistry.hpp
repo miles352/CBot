@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NO_REGISTRY
+
 #include <mutex>
 #include <vector>
 #include <typeindex>
@@ -16,3 +18,5 @@ namespace BlockRegistry
 
     void generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input);
 };
+
+#endif

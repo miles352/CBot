@@ -13,6 +13,7 @@ ChunkDataS2CPacket::ChunkDataS2CPacket(const std::vector<std::uint8_t>& data, Ev
     event_bus.emit<ChunkDataS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void ChunkDataS2CPacket::default_handler(Bot& bot, Event<ChunkDataS2CPacket>& event)
 {
 
@@ -30,3 +31,4 @@ void ChunkDataS2CPacket::default_handler(Bot& bot, Event<ChunkDataS2CPacket>& ev
 
     bot.event_bus.emit<ChunkDataEvent>(ChunkDataEvent::Data{std::move(chunk)});
 }
+#endif

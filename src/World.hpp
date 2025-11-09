@@ -1,4 +1,7 @@
 #pragma once
+
+#ifndef NO_REGISTRY
+
 #include <unordered_map>
 
 #include "Block.hpp"
@@ -46,3 +49,5 @@ private:
     static void set_block_id(BlockPos block_pos, ChunkSection& section, uint16_t new_id);
     ChunkSection& get_section_at_pos(Chunk& chunk, BlockPos block_pos) const;
 };
+
+#endif

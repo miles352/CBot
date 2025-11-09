@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NO_REGISTRY
+
 #include <string>
 
 /** A class that represents a block in the world. Only one instance of this class should exist for each unique block. */
@@ -95,3 +97,5 @@ public:
 private:
     BlockSetting settings;
 };
+
+#endif

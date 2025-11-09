@@ -1,6 +1,8 @@
 #pragma once
+
+#ifndef NO_REGISTRY
+
 #include "ItemStack.hpp"
-// #include "conversions/StructuredComponents.hpp"
 #include "conversions/Slot.hpp"
 
 struct ItemData;
@@ -15,3 +17,5 @@ public:
     const ItemStack* item;
     StructuredComponents components;
 };
+
+#endif

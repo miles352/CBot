@@ -13,6 +13,7 @@ RegistryDataS2CPacket::RegistryDataS2CPacket(const std::vector<uint8_t>& data, E
     event_bus.emit<RegistryDataS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void RegistryDataS2CPacket::default_handler(Bot& bot, Event<RegistryDataS2CPacket>& event)
 {
     if (event.data.registry_id == "minecraft:dimension_type")
@@ -20,3 +21,4 @@ void RegistryDataS2CPacket::default_handler(Bot& bot, Event<RegistryDataS2CPacke
         bot.world._dimension_types = event.data.entries;
     }
 }
+#endif

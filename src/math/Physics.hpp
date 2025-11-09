@@ -66,12 +66,17 @@ public:
         // TODO: Add world border collisions
 
         // printf("Bounding box: %s %s\n", moving_entity_bounding_box.min.to_string().c_str(), moving_entity_bounding_box.max.to_string().c_str());
+#ifndef NO_REGISTRY
         std::vector<Box> block_collisions = get_block_collisions(bot.world, moving_entity_bounding_box);
+#else
+        std::vector<Box> block_collisions = {};
+#endif
         collisions.insert(collisions.end(), block_collisions.begin(), block_collisions.end());
 
         return collisions;
     }
 
+#ifndef NO_REGISTRY
     static std::vector<Box> get_block_collisions(World& world, Box moving_entity_bounding_box)
     {
 
@@ -110,4 +115,5 @@ public:
 
         return collisions;
     }
+#endif
 };

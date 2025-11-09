@@ -30,10 +30,12 @@ public:
     EventBus event_bus;
     NetworkHandler network_handler;
 
+#ifndef NO_REGISTRY
     World world;
+
     Pathfinder pathfinder;
     Inventory inventory;
-
+#endif
     /** The number of ticks that have passed since the bot was started */
     int ticks;
     /** The amount of health the bot has. 0-20 */
@@ -127,8 +129,10 @@ private:
 
     int ticks_since_last_position_packet_sent;
 
+#ifndef NO_REGISTRY
     /** Calculates the time needed to break a block. Assumes you are using a diamond pickaxe and breaking blocks that drop items when using a pickaxe. Otherwise, uses hand breaking time.*/
     static int calculate_block_break_ticks(const Block& block, const InventorySlot& item_stack);
+#endif
 
     float get_movement_speed(float slipperiness);
     Vec3d movement_input_to_velocity(Vec3d movement_input, float speed, float yaw);

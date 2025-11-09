@@ -1,5 +1,7 @@
 #include "SetPlayerPositionC2SPacket.hpp"
 
+#include "conversions/StandardTypes.hpp"
+
 SetPlayerPositionC2SPacket::SetPlayerPositionC2SPacket(Vec3d position, bool on_ground, bool pushing_against_wall)
 {
     this->data.position = position;

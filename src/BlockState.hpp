@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NO_REGISTRY
+
 #include <optional>
 #include <typeindex>
 #include <unordered_map>
@@ -28,3 +30,5 @@ public:
         return static_cast<T>(it->second);
     }
 };
+
+#endif

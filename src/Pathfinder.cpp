@@ -1,3 +1,5 @@
+#ifndef NO_REGISTRY
+
 #include "Pathfinder.hpp"
 
 #include "Bot.hpp"
@@ -79,3 +81,4 @@ std::vector<BlockPos> Pathfinder::get_path(Node goal)
     return path;
 }
 
+#endif

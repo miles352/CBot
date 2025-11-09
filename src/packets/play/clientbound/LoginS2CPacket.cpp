@@ -50,7 +50,9 @@ LoginS2CPacket::LoginS2CPacket(const std::vector<uint8_t>& data, EventBus &event
     event_bus.emit<LoginS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void LoginS2CPacket::default_handler(Bot& bot, Event<LoginS2CPacket>& event)
 {
     bot.world._current_dimension_index = event.data.dimension_type;
 }
+#endif

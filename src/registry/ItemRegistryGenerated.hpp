@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NO_REGISTRY
+
 #include "ItemStack.hpp"
 
 namespace Items
@@ -2800,3 +2802,5 @@ inline const std::vector<const ItemStack*> ItemRegistry = {
 	&Items::VAULT,
 	&Items::OMINOUS_BOTTLE,
 };
+
+#endif

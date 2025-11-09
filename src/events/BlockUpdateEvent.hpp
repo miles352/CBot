@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NO_REGISTRY
+
 #include "BlockState.hpp"
 #include "math/BlockPos.hpp"
 
@@ -17,3 +19,5 @@ public:
 
     Data data;
 };
+
+#endif

@@ -1,6 +1,7 @@
 #pragma once
 #include "MCString.hpp"
 #include "NBT.hpp"
+#include "StandardTypes.hpp"
 
 class RegistryEntry
 {
@@ -14,7 +15,7 @@ public:
         RegistryEntry entry;
         entry.entry_id = MCString::from_bytes(bytes);
 
-        bool contains_data = StandardTypes::from_bytes<bool>(bytes);
+        auto contains_data = StandardTypes::from_bytes<bool>(bytes);
         if (contains_data)
         {
             entry.data = std::move(NBT::read_root(bytes));

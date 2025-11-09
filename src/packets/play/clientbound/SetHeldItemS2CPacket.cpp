@@ -11,7 +11,9 @@ SetHeldItemS2CPacket::SetHeldItemS2CPacket(const std::vector<uint8_t>& data, Eve
     event_bus.emit<SetHeldItemS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void SetHeldItemS2CPacket::default_handler(Bot& bot, Event<SetHeldItemS2CPacket>& event)
 {
     bot.inventory.hotbar_slot = event.data.slot;
 }
+#endif

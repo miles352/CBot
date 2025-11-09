@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef NO_REGISTRY
+
 #include <vector>
 #include <typeindex>
 #include "Block.hpp"
@@ -3188,3 +3190,5 @@ inline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type
     };
     return block_states;
 };
+
+#endif

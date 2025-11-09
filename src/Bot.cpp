@@ -33,7 +33,10 @@
 
 Bot::Bot(std::string server_ip, std::string server_port, const std::string& save_name, bool offline) : event_bus(*this),
                                                                                                        network_handler(event_bus),
-                                                                                                       pathfinder(*this), ticks(0),
+#ifndef NO_REGISTRY
+                                                                                                       pathfinder(*this),
+#endif
+                                                                                                       ticks(0),
                                                                                                        currently_mining(false), current_block_break_delay(0),
                                                                                                        is_alive(true), on_ground(true),
                                                                                                        last_on_ground(true), horizontal_collision(false),
@@ -49,10 +52,12 @@ Bot::Bot(std::string server_ip, std::string server_port, const std::string& save
 
     this->init();
 
+#ifndef NO_REGISTRY
     std::call_once(BlockRegistry::block_registry_flag, []() {
         const auto& block_states = get_block_states();
         BlockRegistry::generate_block_states(block_states);
     });
+#endif
 
     this->last_tick_time = std::chrono::system_clock::now();
 }
@@ -282,6 +287,7 @@ void Bot::travel(Vec3d movement_input)
     Vec3d new_velocity = this->apply_movement_input(movement_input, slipperiness);
     double y_velocity = new_velocity.y;
     // TODO: add levitation code
+#ifndef NO_REGISTRY
     if (this->use_gravity)
     {
         if (!this->world._loaded_chunks.contains(ChunkPos(this->get_block_pos())))
@@ -301,6 +307,7 @@ void Bot::travel(Vec3d movement_input)
             y_velocity -= this->get_effective_gravity();
         }
     }
+#endif
 
     float drag = 0.98F;
     this->velocity = { new_velocity.x * slipperiness_scaled, y_velocity * drag, new_velocity.z * slipperiness_scaled };
@@ -395,6 +402,7 @@ void Bot::look_at(BlockPos pos)
     this->yaw = yaw;
 }
 
+#ifndef NO_REGISTRY
 void Bot::mine_block(BlockPos pos)
 {
     if (this->currently_mining) return;
@@ -496,4 +504,4 @@ int Bot::calculate_block_break_ticks(const Block& block, const InventorySlot& it
     return std::ceil(1 / damage);
 }
 
-
+#endif

@@ -13,7 +13,9 @@ std::vector<uint8_t> SetHeldItemC2SPacket::encode()
     return StandardTypes::to_bytes<int16_t>(this->data.slot);
 }
 
+#ifndef NO_REGISTRY
 void SetHeldItemC2SPacket::default_handler(Bot& bot, Event<SetHeldItemC2SPacket>& event)
 {
     bot.inventory.hotbar_slot = event.data.slot;
 }
+#endif

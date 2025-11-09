@@ -1,3 +1,5 @@
+#ifndef NO_REGISTRY
+
 #include "World.hpp"
 
 #include "registry/BlockRegistry.hpp"
@@ -255,3 +257,5 @@ int World::get_min_height() const
 {
     return this->_dimension_types[_current_dimension_index].data.read_int("min_y").value();
 }
+
+#endif

@@ -1,4 +1,7 @@
 #pragma once
+
+#ifndef NO_REGISTRY
+
 #include <queue>
 #include <set>
 #include <unordered_map>
@@ -66,3 +69,5 @@ private:
 
     Bot& bot;
 };
+
+#endif

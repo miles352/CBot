@@ -16,6 +16,7 @@ BlockUpdateS2CPacket::BlockUpdateS2CPacket(const std::vector<uint8_t>& data, Eve
     event_bus.emit<BlockUpdateS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void BlockUpdateS2CPacket::default_handler(Bot& bot, Event<BlockUpdateS2CPacket>& event)
 {
     std::optional<std::pair<BlockState, BlockState>> states = bot.world.update_block(event.data.location, event.data.new_block_id);
@@ -24,3 +25,4 @@ void BlockUpdateS2CPacket::default_handler(Bot& bot, Event<BlockUpdateS2CPacket>
         bot.event_bus.emit<BlockUpdateEvent>(BlockUpdateEvent::Data(event.data.location, states.value().first, states.value().second));
     }
 }
+#endif

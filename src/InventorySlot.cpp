@@ -1,3 +1,5 @@
+#ifndef NO_REGISTRY
+
 #include "InventorySlot.hpp"
 
 #include "registry/ItemRegistryGenerated.hpp"
@@ -21,3 +23,4 @@ InventorySlot::InventorySlot()
     this->item = &Items::AIR;
 }
 
+#endif
