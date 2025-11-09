@@ -2078,11 +2078,8 @@ namespace Blocks
     constexpr Block YELLOW_WOOL("yellow_wool", Block::BlockSetting().set_resistance(0.8).set_hardness(0.8).requires_tool(false).set_slipperiness(0.6).set_velocity_multiplier(1.0).set_jump_velocity_multiplier(1.0).set_collidable(true));
     constexpr Block ZOMBIE_HEAD("zombie_head", Block::BlockSetting().set_resistance(1.0).set_hardness(1.0).requires_tool(false).set_slipperiness(0.6).set_velocity_multiplier(1.0).set_jump_velocity_multiplier(1.0).set_collidable(true));
     constexpr Block ZOMBIE_WALL_HEAD("zombie_wall_head", Block::BlockSetting().set_resistance(1.0).set_hardness(1.0).requires_tool(false).set_slipperiness(0.6).set_velocity_multiplier(1.0).set_jump_velocity_multiplier(1.0).set_collidable(true));
-}
 
-inline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& get_block_states()
-{
-    static const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>> block_states = {
+	inline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>> BlockRegistry = {
         {&Blocks::AIR, {} },
         {&Blocks::STONE, {} },
         {&Blocks::GRANITE, {} },
@@ -3187,8 +3184,6 @@ inline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type
         {&Blocks::POTTED_OPEN_EYEBLOSSOM, {} },
         {&Blocks::POTTED_CLOSED_EYEBLOSSOM, {} },
         {&Blocks::FIREFLY_BUSH, {} },
-    };
-    return block_states;
-};
-
+	};
+}
 #endif

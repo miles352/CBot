@@ -9,7 +9,7 @@
 #include "Block.hpp"
 #include "BlockState.hpp"
 
-namespace BlockRegistry
+namespace BlockRegistryUtils
 {
     void get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index);
 

@@ -166,7 +166,7 @@ with open("block_properties.json", "r") as properties:
 # }
 
 with open("BlockRegistryGenerated.hpp", "w") as output:
-    output.write("#pragma once\n\n#include <vector>\n#include <typeindex>\n#include \"Block.hpp\"\n\n")
+    output.write("#pragma once\n\n#ifndef NO_REGISTRY\n\n#include <vector>\n#include <typeindex>\n#include \"Block.hpp\"\n\n")
     for i in enums:
         output.write(f"enum class {enums[i]} \n{{\n")
         for state in ast.literal_eval(i.split(" ", 1)[1]):
@@ -181,11 +181,11 @@ with open("BlockRegistryGenerated.hpp", "w") as output:
     for block in blocks:
         output.write(f"    {block}")
 
-    output.write("}")
+    # output.write("}")
 
-    output.write("\n\ninline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& get_block_states() \n{\n")
-    output.write("    static const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>> block_states = {\n")
+    # output.write("\n\ninline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& get_block_states() \n{\n")
+    output.write("\n\tinline const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>> BlockRegistry = {\n")
     sorted = dict(sorted(block_states.items()))
     for i in sorted:
         output.write("        " + sorted[i] + ",\n")
-    output.write("    };\n    return block_states;\n};\n")
+    output.write("\t};\n}\n#endif")

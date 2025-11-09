@@ -53,9 +53,8 @@ Bot::Bot(std::string server_ip, std::string server_port, const std::string& save
     this->init();
 
 #ifndef NO_REGISTRY
-    std::call_once(BlockRegistry::block_registry_flag, []() {
-        const auto& block_states = get_block_states();
-        BlockRegistry::generate_block_states(block_states);
+    std::call_once(BlockRegistryUtils::block_registry_flag, []() {
+        BlockRegistryUtils::generate_block_states(Blocks::BlockRegistry);
     });
 #endif
 

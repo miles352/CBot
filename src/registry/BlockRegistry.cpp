@@ -6,7 +6,7 @@
 
 #include "BlockState.hpp"
 
-void BlockRegistry::get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index)
+void BlockRegistryUtils::get_combinations(std::vector<std::vector<int>>& output, const std::vector<int>& original_states, std::vector<int>& current, int index)
 {
     if (index == original_states.size())
     {
@@ -21,7 +21,7 @@ void BlockRegistry::get_combinations(std::vector<std::vector<int>>& output, cons
     }
 }
 
-void BlockRegistry::generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input)
+void BlockRegistryUtils::generate_block_states(const std::vector<std::pair<const Block*, std::vector<std::pair<std::type_index, int>>>>& input)
 {
     for (const auto&[block, states] : input)
     {

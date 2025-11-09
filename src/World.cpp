@@ -34,11 +34,11 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     {
         case PalettedContainer::SINGLE:
         {
-            return BlockRegistry::block_registry[section.block_states.palette[0]];
+            return BlockRegistryUtils::block_registry[section.block_states.palette[0]];
         }
         case PalettedContainer::INDIRECT:
         {
-            return BlockRegistry::block_registry[section.block_states.palette[World::get_block_id(block_pos, section)]];
+            return BlockRegistryUtils::block_registry[section.block_states.palette[World::get_block_id(block_pos, section)]];
         }
         case PalettedContainer::DIRECT:
         {
@@ -60,7 +60,7 @@ void World::chunk_iterator(ChunkPos chunk_pos, const std::function<bool(const Bl
             {
                 for (int i = 0; i < 4096; i++)
                 {
-                    if (!callback(block_pos, BlockRegistry::block_registry[chunk_section.block_states.palette[0]])) return;
+                    if (!callback(block_pos, BlockRegistryUtils::block_registry[chunk_section.block_states.palette[0]])) return;
 
                     block_pos.x++;
                     if (block_pos.x % 16 == 0)
@@ -89,7 +89,7 @@ void World::chunk_iterator(ChunkPos chunk_pos, const std::function<bool(const Bl
                 {
                     size_t palette_index = data & mask;
 
-                    if (!callback(block_pos, BlockRegistry::block_registry[chunk_section.block_states.palette[palette_index]])) return;
+                    if (!callback(block_pos, BlockRegistryUtils::block_registry[chunk_section.block_states.palette[palette_index]])) return;
 
                     block_pos.x++;
                     if (block_pos.x % 16 == 0)
@@ -239,7 +239,7 @@ std::optional<std::pair<BlockState, BlockState>> World::update_block(BlockPos bl
             }
 
             World::set_block_id(block_pos, section, palette_index);
-            return std::make_pair(old_state, BlockRegistry::block_registry[new_id]);
+            return std::make_pair(old_state, BlockRegistryUtils::block_registry[new_id]);
         }
         default:
         {
