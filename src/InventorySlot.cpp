@@ -13,7 +13,7 @@ InventorySlot::InventorySlot(const Slot& slot)
     else
     {
         const ItemData& data = slot.item_data.value();
-        this->item = ItemRegistry[data.item_id];
+        this->item = &Items::ItemRegistry[data.item_id];
         this->components = data.components_to_add; // TODO: Subtract removed components if they ever get used
     }
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <utility>
 
 enum class Rarity
 {
@@ -13,15 +12,15 @@ enum class Rarity
 /** A class used to represent the constant fields of an item */
 class ItemStack
 {
-    const std::string name;
+    const std::string_view name;
     const int max_stack_size;
     const Rarity rarity;
 
 public:
-    ItemStack(std::string name, int max_stack_size, Rarity rarity) :
-    name(std::move(name)), max_stack_size(max_stack_size), rarity(rarity) {};
+    constexpr ItemStack(std::string_view name, int max_stack_size, Rarity rarity) :
+    name(name), max_stack_size(max_stack_size), rarity(rarity) {};
 
-    const std::string& get_name() const;
+    std::string_view get_name() const;
 
     bool operator==(const ItemStack& item_stack) const
     {
