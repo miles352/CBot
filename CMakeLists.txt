@@ -85,6 +85,8 @@ add_library(CBot
         src/events/PlayerJoinEvent.hpp
         src/events/PlayerLeaveEvent.hpp
         src/events/ChunkDataEvent.hpp
+        src/packets/play/serverbound/PlayerCommandC2SPacket.cpp
+        src/packets/play/serverbound/PlayerCommandC2SPacket.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

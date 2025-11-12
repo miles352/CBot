@@ -77,7 +77,9 @@ add_executable(tests
         ../src/events/PlayerJoinEvent.hpp
         ../src/events/PlayerLeaveEvent.hpp
         ../src/events/ChunkDataEvent.hpp
-#        ../src/packets/play/clientbound/PlayerChatMessage.cpp
+        ../src/packets/play/serverbound/PlayerCommandC2SPacket.cpp
+        ../src/packets/play/serverbound/PlayerCommandC2SPacket.hpp
+        #        ../src/packets/play/clientbound/PlayerChatMessage.cpp
 #        ../src/packets/play/clientbound/PlayerChatMessage.hpp
 )
 
