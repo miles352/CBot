@@ -87,6 +87,8 @@ add_library(CBot
         src/events/ChunkDataEvent.hpp
         src/packets/play/serverbound/PlayerCommandC2SPacket.cpp
         src/packets/play/serverbound/PlayerCommandC2SPacket.hpp
+        src/packets/play/serverbound/ClickContainerC2SPacket.cpp
+        src/packets/play/serverbound/ClickContainerC2SPacket.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
