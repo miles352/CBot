@@ -9,7 +9,7 @@
 MsaDeviceCode::MsaDeviceCode()
 {
     std::string oAuthCreateAddr = "login.live.com/oauth20_connect.srf";
-    std::string oAuthCreateBody = "client_id=" + CLIENT_ID +
+    std::string oAuthCreateBody = "client_id=" + std::string{CLIENT_ID} +
                                   "&scope=service::user.auth.xboxlive.com::MBI_SSL" +
                                   "&response_type=device_code";
     std::string response = WebRequests::https_post(oAuthCreateAddr, oAuthCreateBody);

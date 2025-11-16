@@ -22,7 +22,7 @@ SisuAuth::SisuAuth(const XblDeviceToken& xbl_device_token, const MsaTokenRespons
     std::string sisuBody = "{"
                                 "\"AccessToken\": \"t=" + msa_token_response.access_token + "\","
                                 "\"DeviceToken\": \"" + xbl_device_token.token + "\","
-                                "\"AppId\": \"" + CLIENT_ID + "\","
+                                "\"AppId\": \"" + std::string{CLIENT_ID} + "\","
                                 "\"ProofKey\": " + proof_key + ","
                                 "\"SiteName\": \"user.auth.xboxlive.com\","
                                 "\"RelyingParty\": \"rp://api.minecraftservices.com/\","

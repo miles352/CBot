@@ -14,7 +14,7 @@ MsaTokenResponse::MsaTokenResponse(const MsaDeviceCode& msa_device_code)
 {
     std::string oAuthPollAddr = "login.live.com/oauth20_token.srf";
     std::string oAuthPollBody = "grant_type=device_code"
-                                "&client_id=" + CLIENT_ID +
+                                "&client_id=" + std::string{CLIENT_ID} +
                                 "&device_code=" + msa_device_code.device_code;
     std::string response = WebRequests::https_post(oAuthPollAddr, oAuthPollBody);
 
@@ -39,7 +39,7 @@ MsaTokenResponse::MsaTokenResponse(const MsaDeviceCode& msa_device_code)
 std::optional<MsaTokenResponse> MsaTokenResponse::load_saved_account(const std::string& save_name)
 {
     std::ifstream stream;
-    stream.open(AUTH_SAVE_FOLDER + save_name);
+    stream.open(std::string{AUTH_SAVE_FOLDER} + save_name);
     if (stream.fail()) return std::nullopt;
 
     MsaTokenResponse res;
@@ -55,7 +55,7 @@ std::optional<MsaTokenResponse> MsaTokenResponse::load_saved_account(const std::
     // Otherwise, use refresh token to get new token
     std::string msaRefreshAddr = "login.live.com/oauth20_token.srf";
     std::string msaRefreshBody = "grant_type=refresh_token"
-                                 "&client_id=" + CLIENT_ID +
+                                 "&client_id=" + std::string{CLIENT_ID} +
                                  "&refresh_token=" + res.refresh_token +
                                  "&scope=service::user.auth.xboxlive.com::MBI_SSL";
 

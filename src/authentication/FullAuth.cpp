@@ -28,7 +28,7 @@ MCAccount FullAuth::login(const std::string& save_name)
     std::filesystem::create_directory(AUTH_SAVE_FOLDER);
 
     std::ofstream stream;
-    stream.open(AUTH_SAVE_FOLDER + save_name);
+    stream.open(std::string{AUTH_SAVE_FOLDER} + save_name);
 
     if (!stream.fail())
     {
