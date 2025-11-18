@@ -81,6 +81,13 @@ add_executable(tests
         ../src/packets/play/serverbound/PlayerCommandC2SPacket.hpp
         ../src/packets/play/serverbound/ClickContainerC2SPacket.cpp
         ../src/packets/play/serverbound/ClickContainerC2SPacket.hpp
+        ../src/packets/play/clientbound/SpawnEntityS2CPacket.cpp
+        ../src/packets/play/clientbound/SpawnEntityS2CPacket.hpp
+        ../src/packets/play/clientbound/UpdateEntityPositionS2CPacket.cpp
+        ../src/packets/play/clientbound/UpdateEntityPositionRotationS2CPacket.cpp
+        ../src/packets/play/clientbound/UpdateEntityPositionS2CPacket.hpp
+        ../src/packets/play/clientbound/TeleportEntityS2CPacket.cpp
+        ../src/packets/play/clientbound/TeleportEntityS2CPacket.hpp
         #        ../src/packets/play/clientbound/PlayerChatMessage.cpp
 #        ../src/packets/play/clientbound/PlayerChatMessage.hpp
 )

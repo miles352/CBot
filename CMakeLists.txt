@@ -89,11 +89,19 @@ add_library(CBot
         src/packets/play/serverbound/PlayerCommandC2SPacket.hpp
         src/packets/play/serverbound/ClickContainerC2SPacket.cpp
         src/packets/play/serverbound/ClickContainerC2SPacket.hpp
+        src/packets/play/clientbound/SpawnEntityS2CPacket.cpp
+        src/packets/play/clientbound/SpawnEntityS2CPacket.hpp
+        src/packets/play/clientbound/UpdateEntityPositionS2CPacket.cpp
+        src/packets/play/clientbound/UpdateEntityPositionS2CPacket.hpp
+        src/packets/play/clientbound/UpdateEntityPositionRotationS2CPacket.cpp
+        src/packets/play/clientbound/UpdateEntityPositionRotationS2CPacket.hpp
+        src/packets/play/clientbound/TeleportEntityS2CPacket.cpp
+        src/packets/play/clientbound/TeleportEntityS2CPacket.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-target_link_libraries(CBot 
+target_link_libraries(CBot
         OpenSSL::SSL
         OpenSSL::Crypto
         ZLIB::ZLIB
