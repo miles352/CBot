@@ -385,20 +385,24 @@ Box Bot::get_bounding_box() const
 
 BlockPos Bot::get_block_pos() const
 {
-    return BlockPos(this->position);
+    return {this->position};
 }
 
-void Bot::look_at(BlockPos pos)
+void Bot::look_at(Vec3d pos)
 {
-    Vec3d vec = Vec3d(pos.x + 0.5, pos.y, pos.z + 0.5);
-    Vec3d delta = vec - this->position;
-    float yaw = static_cast<float>(std::atan2(-delta.x, delta.z) * 180.0 / M_PI);
+    Vec3d delta = pos - this->position;
+    auto yaw = static_cast<float>(std::atan2(-delta.x, delta.z) * 180.0 / M_PI);
 
     if (yaw < 0) {
         yaw += 360.0f;
     }
 
     this->yaw = yaw;
+}
+
+void Bot::look_at_block(BlockPos pos)
+{
+    this->look_at(Vec3d(pos.x + 0.5, pos.y, pos.z + 0.5));
 }
 
 #ifndef NO_REGISTRY

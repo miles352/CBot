@@ -101,10 +101,14 @@ public:
 
     BlockPos get_block_pos() const;
 
+    /** Changes the bots yaw and pitch to look at the given position in the world. */
+    void look_at(Vec3d pos);
     /** Changes the bots yaw and pitch to look at the center of the block position passed to this method. */
-    void look_at(BlockPos pos);
+    void look_at_block(BlockPos pos);
 
+#ifndef NO_REGISTRY
     void mine_block(BlockPos pos);
+#endif
 
     Box get_bounding_box() const;
 
