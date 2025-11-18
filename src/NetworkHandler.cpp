@@ -169,13 +169,11 @@ RawPacket NetworkHandler::read_packet()
 
 void NetworkHandler::enable_encryption(unsigned char (&shared_secret)[16])
 {
-    memcpy(this->shared_secret, shared_secret, 16);
-
     this->encrypt_ctx = EVP_CIPHER_CTX_new();
     this->decrypt_ctx = EVP_CIPHER_CTX_new();
 
-    EVP_EncryptInit(this->encrypt_ctx, EVP_aes_128_cfb8(), this->shared_secret, this->shared_secret);
-    EVP_DecryptInit(this->decrypt_ctx, EVP_aes_128_cfb8(), this->shared_secret, this->shared_secret);
+    EVP_EncryptInit(this->encrypt_ctx, EVP_aes_128_cfb8(), shared_secret, shared_secret);
+    EVP_DecryptInit(this->decrypt_ctx, EVP_aes_128_cfb8(), shared_secret, shared_secret);
 
     this->use_encryption = true;
 }

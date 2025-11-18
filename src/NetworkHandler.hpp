@@ -25,7 +25,6 @@ class NetworkHandler
     EventBus& event_bus;
     
     bool use_encryption;
-    unsigned char shared_secret[16]{};
     EVP_CIPHER_CTX* encrypt_ctx{};
     EVP_CIPHER_CTX* decrypt_ctx{};
 
@@ -36,7 +35,7 @@ class NetworkHandler
     bool connection_closed;
     ClientState client_state; // TODO: make private
     /** The constructor, which creates the socket connection using the specified server ip and port. */
-    NetworkHandler(EventBus& event_bus);
+    explicit NetworkHandler(EventBus& event_bus);
 
     /** The deconstructor closes the socket connection. */
     ~NetworkHandler();
