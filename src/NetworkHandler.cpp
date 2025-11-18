@@ -1,8 +1,12 @@
 #include "NetworkHandler.hpp"
+
+#include <iostream>
+
 #include "conversions/VarInt.hpp"
 #include "Bot.hpp"
 
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <netdb.h>
@@ -43,6 +47,11 @@ void NetworkHandler::join_server(const std::string& server_ip, const std::string
     }
 
     this->sockfd = socket(servInfo->ai_family, servInfo->ai_socktype, 0);
+
+    int enable_nodelay = 1;
+    if (setsockopt(this->sockfd, IPPROTO_TCP, TCP_NODELAY, &enable_nodelay, sizeof(enable_nodelay)) < 0) {
+        std::cout << "Failed to disable buffering on socket" << std::endl;
+    }
 
     if (this->sockfd == -1)
     {
