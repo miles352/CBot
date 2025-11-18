@@ -11,6 +11,8 @@ struct EnchantmentComponent
         EFFICIENCY = 8
     };
 
+    // TODO: Enchantment ids are sent in RegistryData packet
+
     /** ID to level. */
     std::unordered_map<EnchantmentIds, int> enchantments;
 

@@ -2,6 +2,7 @@
 
 #include "conversions/StandardTypes.hpp"
 #include "conversions/VarInt.hpp"
+#include <Bot.hpp>
 
 TeleportEntityS2CPacket::TeleportEntityS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
@@ -18,4 +19,14 @@ TeleportEntityS2CPacket::TeleportEntityS2CPacket(std::vector<uint8_t> data, Even
     this->data.on_ground = StandardTypes::from_bytes<bool>(bytes);
 
     event_bus.emit<TeleportEntityS2CPacket>(this->data);
+}
+
+void TeleportEntityS2CPacket::default_handler(Bot& bot, Event<TeleportEntityS2CPacket>& event)
+{
+    int type = static_cast<int>(bot.entity_id_to_type[event.data.entity_id]);
+    auto it = bot.entities[type].find(event.data.entity_id);
+    if (it != bot.entities[type].end())
+    {
+        it->second = event.data.position;
+    }
 }

@@ -2,6 +2,7 @@
 
 #include "conversions/StandardTypes.hpp"
 #include "conversions/VarInt.hpp"
+#include "Bot.hpp"
 
 UpdateEntityPositionS2CPacket::UpdateEntityPositionS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
@@ -14,4 +15,14 @@ UpdateEntityPositionS2CPacket::UpdateEntityPositionS2CPacket(std::vector<uint8_t
     this->data.on_ground = StandardTypes::from_bytes<bool>(bytes);
 
     event_bus.emit<UpdateEntityPositionS2CPacket>(this->data);
+}
+
+void UpdateEntityPositionS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionS2CPacket>& event)
+{
+    int type = static_cast<int>(bot.entity_id_to_type[event.data.entity_id]);
+    auto it = bot.entities[type].find(event.data.entity_id);
+    if (it != bot.entities[type].end())
+    {
+        it->second = it->second.add(event.data.position_delta);
+    }
 }

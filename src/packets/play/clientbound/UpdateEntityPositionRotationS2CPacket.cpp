@@ -2,6 +2,7 @@
 
 #include "conversions/StandardTypes.hpp"
 #include "conversions/VarInt.hpp"
+#include "Bot.hpp"
 
 static constexpr float BYTE_TO_DEGREES = 360.0 / 256.0;
 
@@ -17,4 +18,14 @@ UpdateEntityPositionRotationS2CPacket::UpdateEntityPositionRotationS2CPacket(std
     this->data.on_ground = StandardTypes::from_bytes<bool>(bytes);
 
     event_bus.emit<UpdateEntityPositionRotationS2CPacket>(this->data);
+}
+
+void UpdateEntityPositionRotationS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionRotationS2CPacket>& event)
+{
+    int type = static_cast<int>(bot.entity_id_to_type[event.data.entity_id]);
+    auto it = bot.entities[type].find(event.data.entity_id);
+    if (it != bot.entities[type].end())
+    {
+        it->second = it->second.add(event.data.position_delta);
+    }
 }

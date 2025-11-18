@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "EventBus.hpp"
+#include "registry/EntityRegistryGenerated.hpp"
 #include "conversions/UUID.hpp"
 #include "math/Vec3.hpp"
 #include "packets/ClientboundPacket.hpp"
@@ -19,7 +20,7 @@ public:
     {
         int entity_id;
         UUID entity_uuid;
-        int entity_type;
+        EntityType entity_type;
         Vec3d position;
         float pitch;
         float yaw;
@@ -29,4 +30,6 @@ public:
     };
 
     Data data{};
+
+    static void default_handler(Bot& bot, Event<SpawnEntityS2CPacket>& event);
 };

@@ -11,6 +11,7 @@
 #include "World.hpp"
 #include "math/Box.hpp"
 #include "authentication/FullAuth.hpp"
+#include "registry/EntityRegistryGenerated.hpp"
 
 
 class Bot
@@ -88,6 +89,11 @@ public:
 
         bool operator==(const Input& input) const = default;
     };
+
+    /** A list where each index corresponds to an entity type id. Each one contains a map of entity id to position in the world. */
+    std::array<std::unordered_map<int, Vec3d>, static_cast<int>(EntityType::COUNT)> entities;
+    /** A helper map for when you only know the id of the entity. */
+    std::unordered_map<int, EntityType> entity_id_to_type;
 
     /** Returns the current input state of the bot. */
     Input get_input() const;
