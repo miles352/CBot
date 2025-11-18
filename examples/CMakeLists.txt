@@ -3,3 +3,4 @@ project(Examples)
 
 add_subdirectory(basic_setup)
 add_subdirectory(multiple_bots)
+add_subdirectory(looker)
