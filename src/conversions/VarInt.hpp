@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <stdexcept>
 
-constexpr uint8_t SEGMENT_BITMASK = 0b01111111;
-constexpr uint8_t CONTINUE_BIT = 0b10000000;
+inline constexpr uint8_t SEGMENT_BITMASK = 0b01111111;
+inline constexpr uint8_t CONTINUE_BIT = 0b10000000;
 
 class NetworkHandler;
 
