@@ -28,11 +28,15 @@
 #include "packets/play/serverbound/PongC2SPacket.hpp"
 #include "packets/play/clientbound/SetHealthS2CPacket.hpp"
 #include "packets/play/clientbound/SetHeldItemS2CPacket.hpp"
+#include "packets/play/clientbound/SpawnEntityS2CPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
 #include "packets/play/clientbound/StartConfigurationS2CPacket.hpp"
 #include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
+#include "packets/play/clientbound/TeleportEntityS2CPacket.hpp"
+#include "packets/play/clientbound/UpdateEntityPositionRotationS2CPacket.hpp"
+#include "packets/play/clientbound/UpdateEntityPositionS2CPacket.hpp"
 #include "packets/play/serverbound/ClickContainerC2SPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
@@ -72,6 +76,10 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<GameEventS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoRemoveS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<PlayerInfoUpdateS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SpawnEntityS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<UpdateEntityPositionS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<UpdateEntityPositionRotationS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<TeleportEntityS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
