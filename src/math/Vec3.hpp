@@ -36,6 +36,11 @@ public:
         return std::pow(other.x - this->x, 2.0) + std::pow(other.y - this->y, 2.0) + std::pow(other.z - this->z, 2.0);
     }
 
+    [[nodiscard]] constexpr double horizontal_distance_to_squared(const Vec3<T>& other) const
+    {
+        return std::pow(other.x - this->x, 2.0) + std::pow(other.z - this->z, 2.0);
+    }
+
     [[nodiscard]] constexpr double distance_to(const Vec3<T>& other) const
     {
         return std::sqrt(std::pow(other.x - this->x, 2.0) + std::pow(other.y - this->y, 2.0) + std::pow(other.z - this->z, 2.0));
