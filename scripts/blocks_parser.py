@@ -157,7 +157,7 @@ with open("block_properties.json", "r") as properties:
                 block_states[state["id"]] = f"{{&Blocks::{block_name[10:].upper()}, {formatted_state} }}"
             block_properties = props[block_name]
             block_settings = f"Block::BlockSetting().set_resistance({block_properties["resistance"]}).set_hardness({block_properties["hardness"]}).requires_tool({block_properties["tool_required"]}).set_slipperiness({block_properties["slipperiness"]}).set_velocity_multiplier({block_properties["velocity_multiplier"]}).set_jump_velocity_multiplier({block_properties["jump_velocity_multiplier"]}).set_collidable({block_properties["collision"]})"
-            blocks.append(f"constexpr Block {block_name[10:].upper()}(\"{block_name[10:]}\", {block_settings});\n")
+            blocks.append(f"inline constexpr Block {block_name[10:].upper()}(\"{block_name[10:]}\", {block_settings});\n")
 
 
 # namespace Blocks
