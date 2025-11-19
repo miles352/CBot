@@ -88,6 +88,8 @@ add_executable(tests
         ../src/packets/play/clientbound/UpdateEntityPositionS2CPacket.hpp
         ../src/packets/play/clientbound/TeleportEntityS2CPacket.cpp
         ../src/packets/play/clientbound/TeleportEntityS2CPacket.hpp
+        ../src/packets/play/clientbound/UnloadChunkS2CPacket.cpp
+        ../src/packets/play/clientbound/UnloadChunkS2CPacket.hpp
         #        ../src/packets/play/clientbound/PlayerChatMessage.cpp
 #        ../src/packets/play/clientbound/PlayerChatMessage.hpp
 )

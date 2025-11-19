@@ -35,6 +35,7 @@
 #include "packets/play/serverbound/SwingArmC2SPacket.hpp"
 #include "packets/play/clientbound/SynchronizePlayerPositionS2CPacket.hpp"
 #include "packets/play/clientbound/TeleportEntityS2CPacket.hpp"
+#include "packets/play/clientbound/UnloadChunkS2CPacket.hpp"
 #include "packets/play/clientbound/UpdateEntityPositionRotationS2CPacket.hpp"
 #include "packets/play/clientbound/UpdateEntityPositionS2CPacket.hpp"
 #include "packets/play/serverbound/ClickContainerC2SPacket.hpp"
@@ -80,6 +81,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<UpdateEntityPositionS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<UpdateEntityPositionRotationS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<TeleportEntityS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<UnloadChunkS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
