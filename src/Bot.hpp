@@ -65,6 +65,7 @@ public:
     int current_block_break_delay;
     /** The tick delay between mining blocks. If the block is insta-minable, then the delay is ignored. */
     int BLOCK_BREAK_DELAY = 6;
+    int entity_id;
     /** If the bot is alive or not. */
     bool is_alive;
 
@@ -77,6 +78,13 @@ public:
 
     /** Controls whether gravity is used in the collision calculations. */
     bool use_gravity;
+
+    /** Do not write to this value, instead use Bot::set_render_distance */
+    int _render_distance;
+    /** Used in the vanilla client for certain things. Unused here, but will store the value the server sends. */
+    int simulation_distance;
+
+    void set_render_distance(int8_t distance);
 
     int temp_sequence = 1;
 
@@ -137,6 +145,8 @@ private:
     bool sneaking;
     bool sprinting;
 
+    bool disconnected;
+
     int ticks_since_last_position_packet_sent;
 
 #ifndef NO_REGISTRY
@@ -152,7 +162,6 @@ private:
     void travel(Vec3d movement_input);
 
     std::mutex loop_mutex;
-    bool disconnected;
 
     std::queue<RawPacket> packets_to_process;
 

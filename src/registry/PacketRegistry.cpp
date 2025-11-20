@@ -39,6 +39,7 @@
 #include "packets/play/clientbound/UpdateEntityPositionRotationS2CPacket.hpp"
 #include "packets/play/clientbound/UpdateEntityPositionS2CPacket.hpp"
 #include "packets/play/serverbound/ClickContainerC2SPacket.hpp"
+#include "packets/play/serverbound/ClientInformationC2SPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerCommandC2SPacket.hpp"
@@ -108,6 +109,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<PlayerLoadedC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<PlayerCommandC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<ClickContainerC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<ClientInformationC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>

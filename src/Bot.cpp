@@ -22,6 +22,7 @@
 
 #include "packets/play/clientbound/DisconnectS2CPacket.hpp"
 #include "packets/play/clientbound/KeepAliveS2CPacket.hpp"
+#include "packets/play/serverbound/ClientInformationC2SPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
@@ -178,6 +179,17 @@ void Bot::tick_loop()
         std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
 }
+
+void Bot::set_render_distance(int8_t distance)
+{
+    // TODO: If not in PLAY mode then store this for later and use in the configuration version of this packet
+    this->network_handler.write_packet(
+        ClientInformationC2SPacket{"en_US", distance, ClientInformationC2SPacket::ChatMode::ENABLED,
+        true, static_cast<uint8_t>(~0), ClientInformationC2SPacket::MainHand::RIGHT, false, true, ClientInformationC2SPacket::ParticleStatus::ALL}
+    );
+    this->_render_distance = distance;
+}
+
 
 void Bot::disconnect()
 {

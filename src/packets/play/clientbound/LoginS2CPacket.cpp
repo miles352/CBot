@@ -53,6 +53,9 @@ LoginS2CPacket::LoginS2CPacket(const std::vector<uint8_t>& data, EventBus &event
 #ifndef NO_REGISTRY
 void LoginS2CPacket::default_handler(Bot& bot, Event<LoginS2CPacket>& event)
 {
+    bot.entity_id = event.data.entity_id;
+    bot._render_distance = event.data.render_distance;
+    bot.simulation_distance = event.data.simulation_distance;
     bot.world._current_dimension_index = event.data.dimension_type;
 }
 #endif
