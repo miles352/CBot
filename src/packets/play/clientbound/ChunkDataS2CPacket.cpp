@@ -25,7 +25,7 @@ void ChunkDataS2CPacket::default_handler(Bot& bot, Event<ChunkDataS2CPacket>& ev
     {
         sections.push_back(ChunkSection::from_bytes(section_bytes));
     }
-    Chunk chunk{event.data.chunk_pos, std::move(sections), event.data.chunk_data.heightmaps, event.data.chunk_data.block_entities};
+    Chunk chunk{event.data.chunk_pos, std::move(sections), event.data.chunk_data.heightmaps, event.data.chunk_data.block_entities, bot.world.get_min_height()};
 
     bot.world._loaded_chunks.emplace(event.data.chunk_pos, chunk);
 
