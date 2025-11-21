@@ -47,12 +47,10 @@ std::optional<BlockState> World::get_block_state(BlockPos block_pos)
     }
 }
 
-void World::chunk_iterator(ChunkPos chunk_pos, const std::function<bool(const BlockPos& block_pos, const BlockState& block_state)>& callback)
+void World::chunk_iterator(const Chunk& chunk, const std::function<bool(const BlockPos& block_pos, const BlockState& block_state)>& callback)
 {
-    auto it = this->_loaded_chunks.find(chunk_pos);
-    if (it == this->_loaded_chunks.end()) return;
-    BlockPos block_pos(chunk_pos.x * 16, this->get_min_height(), chunk_pos.z * 16);
-    for (const ChunkSection& chunk_section : it->second.sections)
+    BlockPos block_pos(chunk.pos.x * 16, chunk.minimum_height, chunk.pos.z * 16);
+    for (const ChunkSection& chunk_section : chunk.sections)
     {
         switch (chunk_section.block_states.format)
         {

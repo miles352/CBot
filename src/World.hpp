@@ -25,7 +25,7 @@ public:
     /** Calls the passed in callback for each block in a chunk. This method is optimized for reading all the values and
      * faster by about 30x than reading them individually in a loop. If the callback returns false then the iterator will end early.
      */
-    void chunk_iterator(ChunkPos chunk_pos, const std::function<bool(const BlockPos& block_pos, const BlockState& block_state)>& callback);
+    static void chunk_iterator(const Chunk& chunk, const std::function<bool(const BlockPos& block_pos, const BlockState& block_state)>& callback);
 
     /** A method used internally when the block update packet is received.
      * @returns Optionally the old and new block state if the chunk was loaded.
