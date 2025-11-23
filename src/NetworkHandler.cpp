@@ -38,9 +38,9 @@ void NetworkHandler::join_server(const std::string& server_ip, const std::string
     addrinfo hints;
     addrinfo *servInfo;
     memset(&hints, 0, sizeof(hints)); // make sure hints is zeroed
-    hints.ai_family = AF_UNSPEC; // ipv4 or v6
+    hints.ai_family = AF_INET; // minecraft servers use ipv4
     hints.ai_socktype = SOCK_STREAM; // tcp
-    hints.ai_flags = AI_PASSIVE;
+    hints.ai_flags = 0;
     if (getaddrinfo(server_ip.c_str(), server_port.c_str(), &hints, &servInfo) != 0)
     {
         throw std::runtime_error("Error getting address info!");
