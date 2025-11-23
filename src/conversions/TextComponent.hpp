@@ -15,4 +15,11 @@ struct TextComponent
         text_component.data = NBT::read_tag(type, ++bytes);
         return text_component;
     }
+
+    std::string to_string()
+    {
+        return std::visit([](const auto& tag) {
+            return tag.to_string();
+        }, this->data);
+    }
 };
