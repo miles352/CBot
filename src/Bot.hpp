@@ -76,6 +76,8 @@ public:
     bool vertical_collision;
     bool last_horizontal_collision;
 
+    std::chrono::time_point<std::chrono::system_clock> _last_keepalive_time;
+
     /** Controls whether gravity is used in the collision calculations. */
     bool use_gravity;
 
@@ -99,6 +101,7 @@ public:
     };
 
     /** A list where each index corresponds to an entity type id. Each one contains a map of entity id to position in the world. */
+    // TODO: Fix this shit wtf 9kb array
     std::array<std::unordered_map<int, Vec3d>, static_cast<int>(EntityType::COUNT)> entities;
     /** A helper map for when you only know the id of the entity. */
     std::unordered_map<int, EntityType> entity_id_to_type;

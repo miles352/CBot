@@ -1,5 +1,6 @@
 #include "Bot.hpp"
 
+#include <iostream>
 #include <mutex>
 #include <thread>
 #include <utility>
@@ -7,7 +8,6 @@
 #include "Constants.hpp"
 #include "events/BlockUpdateEvent.hpp"
 #include "events/TickEvent.hpp"
-#include "events/DisconnectEvent.hpp"
 #include "math/AngleHelper.hpp"
 #include "math/Physics.hpp"
 #include "packets/configuration/clientbound/FinishConfigurationS2CPacket.hpp"
@@ -42,7 +42,8 @@ Bot::Bot(std::string server_ip, std::string server_port, const std::string& save
                                                                                                        is_alive(true), on_ground(true),
                                                                                                        last_on_ground(true), horizontal_collision(false),
                                                                                                        vertical_collision(false),
-                                                                                                       last_horizontal_collision(false), use_gravity(true),
+                                                                                                       last_horizontal_collision(false),
+                                                                                                       use_gravity(true),
                                                                                                        offline(offline), jumping(false),
                                                                                                        sneaking(false), sprinting(false),
                                                                                                        ticks_since_last_position_packet_sent(0), disconnected(false),
@@ -59,6 +60,7 @@ Bot::Bot(std::string server_ip, std::string server_port, const std::string& save
     });
 #endif
 
+    this->_last_keepalive_time = std::chrono::system_clock::now();
     this->last_tick_time = std::chrono::system_clock::now();
 }
 
@@ -130,53 +132,50 @@ void Bot::tick_loop()
         std::unique_lock<std::mutex> lock(this->loop_mutex);
         if (this->disconnected) return;
 
-
-
-
-        auto current_time = std::chrono::system_clock::now();
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(current_time - this->last_tick_time).count() > 50)
+        this->last_tick_time = std::chrono::system_clock::now();
+        for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
         {
-            this->last_tick_time = current_time;
-            for (; !this->packets_to_process.empty(); this->packets_to_process.pop())
+            RawPacket& raw_packet = this->packets_to_process.front();
+
+            if (raw_packet.id == -1) // socket closed for some reason
             {
-                RawPacket& raw_packet = this->packets_to_process.front();
-
-                if (raw_packet.id == -1) // socket closed for some reason
-                {
-                    this->disconnected = true;
-                    return;
-                }
-
-                const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
-
-                if (!clientbound_packet_registry.contains(key))
-                {
-                    // printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
-                    continue;
-                }
-
-                auto packet_constructor = clientbound_packet_registry[key];
-
-                // printf("Received packet id 0x%02x\n", raw_packet.id);
-
-                packet_constructor(raw_packet.data, this->event_bus);
-                if (raw_packet.id == DisconnectS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
-                {
-                    this->disconnected = true;
-                    return;
-                }
+                this->disconnected = true;
+                return;
             }
-            if (this->network_handler.client_state == ClientState::PLAY)
+
+            const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
+
+            if (!clientbound_packet_registry.contains(key))
             {
-                this->event_bus.emit<TickEvent>();
-                this->tick();
-                this->network_handler.write_packet(ClientTickEndC2SPacket());
+                // printf("Cannot find packet matching id: 0x%02x\n", raw_packet.id);
+                continue;
             }
-            this->ticks++;
+
+            auto packet_constructor = clientbound_packet_registry[key];
+
+            // printf("Received packet id 0x%02x\n", raw_packet.id);
+
+            packet_constructor(raw_packet.data, this->event_bus);
+            if (raw_packet.id == DisconnectS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
+            {
+                this->disconnected = true;
+                return;
+            }
         }
+        if (this->network_handler.client_state == ClientState::PLAY)
+        {
+            this->event_bus.emit<TickEvent>();
+            this->tick();
+            this->network_handler.write_packet(ClientTickEndC2SPacket());
+            if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - this->_last_keepalive_time).count() > 20)
+            {
+                this->disconnect();
+            }
+        }
+        this->ticks++;
 
         lock.unlock();
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        std::this_thread::sleep_until(this->last_tick_time + std::chrono::milliseconds(50));
     }
 }
 
@@ -193,7 +192,7 @@ void Bot::set_render_distance(int8_t distance)
 
 void Bot::disconnect()
 {
-    this->event_bus.emit<DisconnectEvent>();
+    // this->event_bus.emit<DisconnectEvent>();
     this->disconnected = true;
 }
 

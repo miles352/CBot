@@ -4,7 +4,7 @@
 #include "../serverbound/KeepAliveC2SPacket.hpp"
 #include "conversions/StandardTypes.hpp"
 
-KeepAliveS2CPacket::KeepAliveS2CPacket(const std::vector<uint8_t>& data, EventBus &event_bus)
+KeepAliveS2CPacket::KeepAliveS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     const uint8_t* ptr = data.data();
     this->data.keep_alive_id = StandardTypes::from_bytes<int64_t>(ptr);
@@ -12,7 +12,8 @@ KeepAliveS2CPacket::KeepAliveS2CPacket(const std::vector<uint8_t>& data, EventBu
     event_bus.emit<KeepAliveS2CPacket>(this->data);
 }
 
-void KeepAliveS2CPacket::default_handler(Bot &bot, Event<KeepAliveS2CPacket> &event)
+void KeepAliveS2CPacket::default_handler(Bot& bot, Event<KeepAliveS2CPacket>& event)
 {
+    bot._last_keepalive_time = std::chrono::system_clock::now();
     bot.network_handler.write_packet(KeepAliveC2SPacket(event.data.keep_alive_id));
 }
