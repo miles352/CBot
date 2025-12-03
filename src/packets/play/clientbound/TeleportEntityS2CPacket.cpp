@@ -23,7 +23,7 @@ TeleportEntityS2CPacket::TeleportEntityS2CPacket(std::vector<uint8_t> data, Even
 
 void TeleportEntityS2CPacket::default_handler(Bot& bot, Event<TeleportEntityS2CPacket>& event)
 {
-    int type = static_cast<int>(bot.entity_id_to_type[event.data.entity_id]);
+    EntityType type = bot.entity_id_to_type[event.data.entity_id];
     auto it = bot.entities[type].find(event.data.entity_id);
     if (it != bot.entities[type].end())
     {

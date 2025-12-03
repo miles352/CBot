@@ -19,7 +19,7 @@ UpdateEntityPositionS2CPacket::UpdateEntityPositionS2CPacket(std::vector<uint8_t
 
 void UpdateEntityPositionS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionS2CPacket>& event)
 {
-    int type = static_cast<int>(bot.entity_id_to_type[event.data.entity_id]);
+    EntityType type = bot.entity_id_to_type[event.data.entity_id];
     auto it = bot.entities[type].find(event.data.entity_id);
     if (it != bot.entities[type].end())
     {

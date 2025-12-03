@@ -29,6 +29,6 @@ SpawnEntityS2CPacket::SpawnEntityS2CPacket(std::vector<uint8_t> data, EventBus& 
 void SpawnEntityS2CPacket::default_handler(Bot& bot, Event<SpawnEntityS2CPacket>& event)
 {
     // Set the entity id of the given entity type to the given position
-    bot.entities[static_cast<int>(event.data.entity_type)][event.data.entity_id] = event.data.position;
+    bot.entities[event.data.entity_type][event.data.entity_id] = event.data.position;
     bot.entity_id_to_type[event.data.entity_id] = event.data.entity_type;
 }
