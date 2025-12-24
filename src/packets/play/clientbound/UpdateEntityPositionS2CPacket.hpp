@@ -22,5 +22,7 @@ public:
 
     Data data{};
 
+#ifndef NO_REGISTRY
     static void default_handler(Bot& bot, Event<UpdateEntityPositionS2CPacket>& event);
+#endif
 };

@@ -1,6 +1,5 @@
 #pragma once
 
-#ifndef NO_REGISTRY
 enum class EntityType
 {
 	ACACIA_BOAT,
@@ -155,4 +154,3 @@ enum class EntityType
 	FISHING_BOBBER,
 	COUNT
 };
-#endif

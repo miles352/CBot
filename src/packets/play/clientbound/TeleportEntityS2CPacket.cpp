@@ -21,6 +21,7 @@ TeleportEntityS2CPacket::TeleportEntityS2CPacket(std::vector<uint8_t> data, Even
     event_bus.emit<TeleportEntityS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void TeleportEntityS2CPacket::default_handler(Bot& bot, Event<TeleportEntityS2CPacket>& event)
 {
     EntityType type = bot.entity_id_to_type[event.data.entity_id];
@@ -30,3 +31,4 @@ void TeleportEntityS2CPacket::default_handler(Bot& bot, Event<TeleportEntityS2CP
         it->second = event.data.position;
     }
 }
+#endif

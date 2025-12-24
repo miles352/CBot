@@ -100,10 +100,12 @@ public:
         bool operator==(const Input& input) const = default;
     };
 
+#ifndef NO_REGISTRY
     /** A list where each index corresponds to an entity type id. Each one contains a map of entity id to position in the world. */
     std::unordered_map<EntityType, std::unordered_map<int, Vec3d>> entities;
     /** A helper map for when you only know the id of the entity. */
     std::unordered_map<int, EntityType> entity_id_to_type;
+#endif
 
     /** Returns the current input state of the bot. */
     Input get_input() const;

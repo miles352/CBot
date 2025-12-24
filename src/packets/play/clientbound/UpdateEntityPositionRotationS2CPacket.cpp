@@ -20,6 +20,7 @@ UpdateEntityPositionRotationS2CPacket::UpdateEntityPositionRotationS2CPacket(std
     event_bus.emit<UpdateEntityPositionRotationS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void UpdateEntityPositionRotationS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionRotationS2CPacket>& event)
 {
     EntityType type = bot.entity_id_to_type[event.data.entity_id];
@@ -29,3 +30,4 @@ void UpdateEntityPositionRotationS2CPacket::default_handler(Bot& bot, Event<Upda
         it->second = it->second.add(event.data.position_delta);
     }
 }
+#endif

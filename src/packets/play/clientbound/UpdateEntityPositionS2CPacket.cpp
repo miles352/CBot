@@ -17,6 +17,7 @@ UpdateEntityPositionS2CPacket::UpdateEntityPositionS2CPacket(std::vector<uint8_t
     event_bus.emit<UpdateEntityPositionS2CPacket>(this->data);
 }
 
+#ifndef NO_REGISTRY
 void UpdateEntityPositionS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionS2CPacket>& event)
 {
     EntityType type = bot.entity_id_to_type[event.data.entity_id];
@@ -26,3 +27,4 @@ void UpdateEntityPositionS2CPacket::default_handler(Bot& bot, Event<UpdateEntity
         it->second = it->second.add(event.data.position_delta);
     }
 }
+#endif
