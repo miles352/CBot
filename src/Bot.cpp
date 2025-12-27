@@ -137,6 +137,7 @@ void Bot::tick_loop()
         {
             RawPacket& raw_packet = this->packets_to_process.front();
 
+            // TODO: not sure why this is handled here instead of in the read loop
             if (raw_packet.id == -1) // socket closed for some reason
             {
                 this->disconnected = true;

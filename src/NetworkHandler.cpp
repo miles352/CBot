@@ -154,21 +154,24 @@ RawPacket NetworkHandler::read_packet()
     }
 
     std::vector<uint8_t> data_array(remaining_bytes);
-    int total_read_bytes = 0;
+    if (remaining_bytes > 0)
+    {
+        int total_read_bytes = 0;
 
-    do
-    { // the full packet might not be read at once, so we loop until we read it all
-        int bytes_read = this->read_raw(data_array.data() + total_read_bytes, remaining_bytes - total_read_bytes);
-        if (bytes_read <= 0)
-        {
-            if (bytes_read == -1) perror("Reading error");
-            this->connection_closed = true;
-            return RawPacket{-1, {}};
+        do
+        { // the full packet might not be read at once, so we loop until we read it all
+            int bytes_read = this->read_raw(data_array.data() + total_read_bytes, remaining_bytes - total_read_bytes);
+            if (bytes_read <= 0)
+            {
+                if (bytes_read == -1) perror("Reading error");
+                this->connection_closed = true;
+                return RawPacket{-1, {}};
+            }
+            total_read_bytes += bytes_read;
+
         }
-        total_read_bytes += bytes_read;
-
+        while (total_read_bytes < remaining_bytes);
     }
-    while (total_read_bytes < remaining_bytes);
 
     if (is_data_compressed)
     {
