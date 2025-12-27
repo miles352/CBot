@@ -1,5 +1,6 @@
 #include "NetworkHandler.hpp"
 
+#include <csignal>
 #include <iostream>
 
 #include "conversions/VarInt.hpp"
@@ -20,6 +21,8 @@ NetworkHandler::NetworkHandler(EventBus& event_bus) : sockfd(-1), event_bus(even
     this->use_compression = false;
 
     this->client_state = ClientState::HANDSHAKING;
+
+    signal(SIGPIPE, SIG_IGN);
 }
 
 NetworkHandler::~NetworkHandler()
@@ -35,18 +38,17 @@ NetworkHandler::~NetworkHandler()
 
 void NetworkHandler::join_server(const std::string& server_ip, const std::string& server_port)
 {
-    addrinfo hints;
-    addrinfo *servInfo;
-    memset(&hints, 0, sizeof(hints)); // make sure hints is zeroed
+    addrinfo hints{};
+    addrinfo *serv_info;
     hints.ai_family = AF_INET; // minecraft servers use ipv4
     hints.ai_socktype = SOCK_STREAM; // tcp
     hints.ai_flags = 0;
-    if (getaddrinfo(server_ip.c_str(), server_port.c_str(), &hints, &servInfo) != 0)
+    if (getaddrinfo(server_ip.c_str(), server_port.c_str(), &hints, &serv_info) != 0)
     {
         throw std::runtime_error("Error getting address info!");
     }
 
-    this->sockfd = socket(servInfo->ai_family, servInfo->ai_socktype, 0);
+    this->sockfd = socket(serv_info->ai_family, serv_info->ai_socktype, 0);
 
     int enable_nodelay = 1;
     if (setsockopt(this->sockfd, IPPROTO_TCP, TCP_NODELAY, &enable_nodelay, sizeof(enable_nodelay)) < 0) {
@@ -58,32 +60,39 @@ void NetworkHandler::join_server(const std::string& server_ip, const std::string
         throw std::runtime_error("Error creating socket!");
     }
 
-    if (connect(this->sockfd, servInfo->ai_addr, servInfo->ai_addrlen) == -1)
+    if (connect(this->sockfd, serv_info->ai_addr, serv_info->ai_addrlen) == -1)
     {
         throw std::runtime_error("Error connecting to socket!");
     }
 
-    freeaddrinfo(servInfo);
+    freeaddrinfo(serv_info);
 }
 
 void NetworkHandler::write_raw(const void* data, int size)
 {
     if (connection_closed) return;
     // TODO: Emit raw packet event
+    std::unique_ptr<unsigned char[]> encrypted_data = nullptr;
     if (this->use_encryption)
     {
-        std::vector<unsigned char> out(size);
+        encrypted_data = std::make_unique<unsigned char[]>(size);
         int out_len;
-        EVP_EncryptUpdate(this->encrypt_ctx, out.data(), &out_len, static_cast<const unsigned char*>(data), size);
+        EVP_EncryptUpdate(this->encrypt_ctx, encrypted_data.get(), &out_len, static_cast<const unsigned char*>(data), size);
         if (out_len != size)
         {
             throw std::runtime_error("Failed to encrypt packet!");
         }
-        write(this->sockfd, out.data(), out_len);
     }
-    else
+    if (encrypted_data) data = encrypted_data.get();
+    long return_val = send(this->sockfd, data, size, 0);
+    if (return_val == -1)
     {
-        write(this->sockfd, data, size);
+        perror("Writing error");
+        connection_closed = true;
+    }
+    else if (return_val != size)
+    {
+        throw std::runtime_error("Did not send enough bytes through socket");
     }
 }
 
@@ -91,7 +100,7 @@ int NetworkHandler::read_raw(void* buffer, int size) const
 {
     int bytes_read = read(this->sockfd, buffer, size);
 
-    if (this->use_encryption)
+    if (bytes_read > 0 && this->use_encryption) // if succeeded and we need to decrypt
     {
         int out_len;
         EVP_DecryptUpdate(this->decrypt_ctx, static_cast<uint8_t*>(buffer), &out_len, static_cast<uint8_t*>(buffer), bytes_read);
@@ -100,6 +109,7 @@ int NetworkHandler::read_raw(void* buffer, int size) const
             throw std::runtime_error("Failed to decrypt packet!");
         }
     }
+
     return bytes_read;
 }
 
@@ -148,7 +158,15 @@ RawPacket NetworkHandler::read_packet()
 
     do
     { // the full packet might not be read at once, so we loop until we read it all
-        total_read_bytes += this->read_raw(data_array.data() + total_read_bytes, remaining_bytes - total_read_bytes);
+        int bytes_read = this->read_raw(data_array.data() + total_read_bytes, remaining_bytes - total_read_bytes);
+        if (bytes_read <= 0)
+        {
+            if (bytes_read == -1) perror("Reading error");
+            this->connection_closed = true;
+            return RawPacket{-1, {}};
+        }
+        total_read_bytes += bytes_read;
+
     }
     while (total_read_bytes < remaining_bytes);
 

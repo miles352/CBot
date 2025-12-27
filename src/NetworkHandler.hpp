@@ -12,6 +12,7 @@
 #include "EventBus.hpp"
 #include "conversions/VarInt.hpp"
 
+/** Struct to pass around a packet id and byte data. If id is -1, there is some error and data is unspecified */
 struct RawPacket
 {
     int id;
@@ -48,10 +49,10 @@ class NetworkHandler
      */
     void write_raw(const void* data, int size);
 
-    /** Reads raw bytes into a buffer.
+    /** Reads raw bytes into a buffer and decrypts it if encryption is enabled.
      * @param buffer A pointer to memory to write the data to. 
      * @param size The amount of bytes to read.
-     * @returns The amount of bytes that was read.
+     * @returns The same return value that the read system call returns. -1 for error, 0 for EOF, otherwise value equals amount read
      */
     int read_raw(void* buffer, int size) const;
 
