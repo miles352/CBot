@@ -101,6 +101,11 @@ add_library(CBot
         src/packets/play/clientbound/UnloadChunkS2CPacket.hpp
         src/packets/play/serverbound/ClientInformationC2SPacket.cpp
         src/packets/play/serverbound/ClientInformationC2SPacket.hpp
+        src/packets/play/serverbound/PlayerChatC2SPacket.cpp
+        src/packets/play/serverbound/PlayerChatC2SPacket.hpp
+        src/packets/play/clientbound/SystemChatS2CPacket.cpp
+        src/packets/play/clientbound/SystemChatS2CPacket.hpp
+        src/conversions/TextComponent.cpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
