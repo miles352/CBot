@@ -2,10 +2,7 @@
 #include "conversions/PrefixedArray.hpp"
 
 EncryptionResponseC2SPacket::EncryptionResponseC2SPacket(std::vector<uint8_t> shared_secret, std::vector<uint8_t> verify_token)
-{
-    this->data.shared_secret = shared_secret;
-    this->data.verify_token = verify_token;
-}
+: data{std::move(shared_secret), std::move(verify_token)} {};
 
 std::vector<uint8_t> EncryptionResponseC2SPacket::encode()
 {

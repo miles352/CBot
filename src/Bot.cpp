@@ -102,13 +102,13 @@ void Bot::packet_read_loop()
         if (raw_packet.id == SetCompressionS2CPacket::id && this->network_handler.client_state == ClientState::LOGIN)
         {
             const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
-            auto packet_constructor = clientbound_packet_registry[key];
+            auto& packet_constructor = clientbound_packet_registry[key];
             packet_constructor(raw_packet.data, this->event_bus);
         }
         else if (raw_packet.id == KeepAliveS2CPacket::id && this->network_handler.client_state == ClientState::PLAY)
         {
             const PacketRegistryKey key = std::make_pair(this->network_handler.client_state, raw_packet.id);
-            auto packet_constructor = clientbound_packet_registry[key];
+            auto& packet_constructor = clientbound_packet_registry[key];
             packet_constructor(raw_packet.data, this->event_bus);
         }
         else
@@ -152,7 +152,7 @@ void Bot::tick_loop()
                 continue;
             }
 
-            auto packet_constructor = clientbound_packet_registry[key];
+            auto& packet_constructor = clientbound_packet_registry[key];
 
             // printf("Received packet id 0x%02x\n", raw_packet.id);
 

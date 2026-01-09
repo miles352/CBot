@@ -126,6 +126,7 @@ namespace NBT
         std::optional<float> read_float(const std::string& tag_name) const;
         std::optional<double> read_double(const std::string& tag_name) const;
         std::optional<std::vector<int8_t>> read_byte_array(const std::string& tag_name) const;
+        /** TODO: Make read_string return a reference instead of copy */
         std::optional<std::string> read_string(const std::string& tag_name) const;
         std::optional<std::vector<Tag>> read_list(const std::string& tag_name) const;
         std::optional<TagCompound> read_compound(const std::string& tag_name) const;

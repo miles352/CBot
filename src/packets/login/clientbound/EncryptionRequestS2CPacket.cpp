@@ -23,7 +23,7 @@ EncryptionRequestS2CPacket::EncryptionRequestS2CPacket(const std::vector<uint8_t
 
 void EncryptionRequestS2CPacket::default_handler(Bot& bot, Event<EncryptionRequestS2CPacket>& event)
 {
-    Data data = event.data;
+    const Data& data = event.data;
     unsigned char shared_secret[16];
     if (RAND_bytes(shared_secret, 16) <= 0)
     {
