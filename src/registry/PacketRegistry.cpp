@@ -22,6 +22,7 @@
 #include "packets/play/clientbound/LoginS2CPacket.hpp"
 #include "packets/play/clientbound/PingS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerAbilitiesS2CPacket.hpp"
+#include "packets/play/clientbound/SystemChatS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerInfoRemoveS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerInfoUpdateS2CPacket.hpp"
 #include "packets/play/clientbound/SetContainerContentS2CPacket.hpp"
@@ -42,6 +43,7 @@
 #include "packets/play/serverbound/ClientInformationC2SPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
+#include "packets/play/serverbound/PlayerChatC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerCommandC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerLoadedC2SPacket.hpp"
@@ -83,6 +85,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<UpdateEntityPositionRotationS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<TeleportEntityS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<UnloadChunkS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SystemChatS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)
@@ -110,6 +113,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<PlayerCommandC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<ClickContainerC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<ClientInformationC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<PlayerChatC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>
