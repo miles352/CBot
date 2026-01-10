@@ -12,8 +12,10 @@ std::vector<uint8_t> PlayerChatC2SPacket::encode()
     auto timestamp = StandardTypes::to_bytes<int64_t>(this->data.timestamp);
     auto salt = StandardTypes::to_bytes<int64_t>(this->data.salt);
 
-    bytes.append_range(timestamp);
-    bytes.append_range(salt);
+    // bytes.append_range(timestamp);
+    // bytes.append_range(salt);
+    bytes.insert(bytes.end(), timestamp.begin(), timestamp.end());
+    bytes.insert(bytes.end(), salt.begin(), salt.end());
     bytes.push_back(0); // prefixed signature (false, so no signature)
 
     bytes.push_back(0); // amount of previous messages seen
