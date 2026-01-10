@@ -111,5 +111,6 @@ std::string TextComponent::to_chat_string()
         {
             return read_chat_tag(tag);
         }
+        return "";
     }, data);
 }
