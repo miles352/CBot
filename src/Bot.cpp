@@ -51,8 +51,8 @@ Bot::Bot(std::string server_ip, std::string server_port, std::string save_name, 
                                                                                                        ticks_since_last_position_packet_sent(0), disconnected(false),
                                                                                                        server_ip(std::move(server_ip)), server_port(std::move(server_port))
 {
-    if (this->offline) this->account = MCAccount{save_name, Crypto::get_random_uuid(), ""};
-    else this->account = FullAuth::login(save_name + ".txt");
+    if (this->offline) this->account = MCAccount{this->save_name, Crypto::get_random_uuid(), ""};
+    else this->account = FullAuth::login(this->save_name + ".txt");
 
     this->init();
 
