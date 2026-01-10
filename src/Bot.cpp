@@ -25,6 +25,7 @@
 #include "packets/play/serverbound/ClientInformationC2SPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
+#include "packets/play/serverbound/PlayerChatC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerMovementFlagsC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
@@ -32,12 +33,13 @@
 #include "registry/BlockRegistryGenerated.hpp"
 #include "utils/Crypto.hpp"
 
-Bot::Bot(std::string server_ip, std::string server_port, const std::string& save_name, bool offline) : event_bus(*this),
+Bot::Bot(std::string server_ip, std::string server_port, std::string save_name, bool offline) : event_bus(*this),
                                                                                                        network_handler(event_bus),
 #ifndef NO_REGISTRY
                                                                                                        pathfinder(*this),
 #endif
                                                                                                        ticks(0),
+                                                                                                       save_name(std::move(save_name)),
                                                                                                        currently_mining(false), current_block_break_delay(0),
                                                                                                        is_alive(true), on_ground(true),
                                                                                                        last_on_ground(true), horizontal_collision(false),
@@ -195,6 +197,11 @@ void Bot::disconnect()
 {
     // this->event_bus.emit<DisconnectEvent>();
     this->disconnected = true;
+}
+
+const std::string& Bot::get_save_name() const
+{
+    return this->save_name;
 }
 
 Bot::Input Bot::get_input() const
@@ -415,6 +422,15 @@ void Bot::look_at(Vec3d pos)
 void Bot::look_at_block(BlockPos pos)
 {
     this->look_at(Vec3d(pos.x + 0.5, pos.y, pos.z + 0.5));
+}
+
+void Bot::send_chat_msg(std::string_view msg)
+{
+    using namespace std::chrono;
+
+    network_handler.write_packet(PlayerChatC2SPacket{std::string{msg},
+        duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count(),
+        19726121411952726}); // TODO: Randomize salt when implementing chat signing
 }
 
 #ifndef NO_REGISTRY

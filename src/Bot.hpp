@@ -24,7 +24,7 @@ public:
      * If offline is true, then this name is used as the username for the bot.
      * @param offline A boolean deciding whether online authentication will be done.
      */
-    explicit Bot(std::string server_ip, std::string server_port = "25565", const std::string& save_name = "saved_account", bool offline = false);
+    explicit Bot(std::string server_ip, std::string server_port = "25565", std::string save_name = "saved_account", bool offline = false);
 
     void start();
 
@@ -107,6 +107,8 @@ public:
     std::unordered_map<int, EntityType> entity_id_to_type;
 #endif
 
+    const std::string& get_save_name() const;
+
     /** Returns the current input state of the bot. */
     Input get_input() const;
     /** Used to change the input state of the bot, which will cause it to move. PlayerInput packets will automatically be sent when the state changes. */
@@ -123,6 +125,8 @@ public:
     void look_at(Vec3d pos);
     /** Changes the bots yaw and pitch to look at the center of the block position passed to this method. */
     void look_at_block(BlockPos pos);
+
+    void send_chat_msg(std::string_view msg);
 
 #ifndef NO_REGISTRY
     void mine_block(BlockPos pos);
@@ -152,6 +156,8 @@ private:
     bool disconnected;
 
     int ticks_since_last_position_packet_sent;
+
+    std::string save_name;
 
 #ifndef NO_REGISTRY
     /** Calculates the time needed to break a block. Assumes you are using a diamond pickaxe and breaking blocks that drop items when using a pickaxe. Otherwise, uses hand breaking time.*/

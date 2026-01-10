@@ -7,9 +7,9 @@
 class MCString
 {
 public:
-    using type = std::string;
+    using type = std::string; // Type is used when parsing so it cannot be a string_view
     /** Converts an ASCII ONLY string to a VarInt length prefixed utf-8 string */
-    static std::vector<std::uint8_t> to_bytes(const std::string& str)
+    static std::vector<std::uint8_t> to_bytes(std::string_view str)
     {
         std::vector<std::uint8_t> result = VarInt::to_bytes(str.size());
         for (int i = 0; i < str.size(); i++)
