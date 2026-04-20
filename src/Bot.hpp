@@ -76,6 +76,8 @@ public:
     bool vertical_collision;
     bool last_horizontal_collision;
 
+    /** Keeps track of the last time the server sent us a keepalive packet.
+     * The client will by default timeout if it does not receive one for 20 seconds. */
     std::chrono::time_point<std::chrono::system_clock> _last_keepalive_time;
 
     /** Controls whether gravity is used in the collision calculations. */

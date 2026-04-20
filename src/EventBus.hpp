@@ -64,6 +64,11 @@ class EventBus
 public:
     explicit EventBus(Bot& bot) : bot(bot) {};
 
+    /** A priority lower than the default */
+    static constexpr int LOW_PRIORITY = -1;
+    /** A priority higher than the default */
+    static constexpr int HIGH_PRIORITY = 1;
+
     /** A method to add a callback when this event is fired.
      * @param callback The callback function to run when the event is emitted.
      * @param listener_name The name of the event listener, to be used when removing it. Passing an empty string leaves the callback unnamed.
