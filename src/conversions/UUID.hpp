@@ -68,4 +68,18 @@ struct UUID
         }
         return converted;
     }
+
+    bool operator==(const UUID& other) const
+    {
+        return std::memcmp(&other.bytes, &bytes, sizeof(bytes)) == 0;
+    }
+
+    struct HashFn
+    {
+        size_t operator()(const UUID& uuid) const
+        {
+            auto chars = std::bit_cast<std::array<uint64_t, 2>>(uuid.bytes);
+            return chars[0] ^ chars[1];
+        }
+    };
 };
