@@ -106,6 +106,10 @@ add_library(CBot
         src/packets/play/clientbound/SystemChatS2CPacket.cpp
         src/packets/play/clientbound/SystemChatS2CPacket.hpp
         src/conversions/TextComponent.cpp
+        src/packets/play/clientbound/SetDefaultSpawnPositionS2CPacket.cpp
+        src/packets/play/clientbound/SetDefaultSpawnPositionS2CPacket.hpp
+        src/packets/play/clientbound/SetRenderDistanceS2CPacket.cpp
+        src/packets/play/clientbound/SetRenderDistanceS2CPacket.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
