@@ -21,6 +21,7 @@ struct StructuredComponents
         CUSTOM_NAME = 5,
         ENCHANTMENTS = 10,
         REPAIR_COST = 16,
+        MAP_ID = 37,
         TRIM = 47,
         FIREWORK = 60,
         CONTAINER = 66,

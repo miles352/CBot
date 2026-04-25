@@ -31,6 +31,7 @@
 #include "packets/play/clientbound/SetHealthS2CPacket.hpp"
 #include "packets/play/clientbound/SetHeldItemS2CPacket.hpp"
 #include "packets/play/clientbound/SetRenderDistanceS2CPacket.hpp"
+#include "packets/play/clientbound/SetTabHeaderFooterS2CPacket.hpp"
 #include "packets/play/clientbound/SpawnEntityS2CPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerRotationC2SPacket.hpp"
@@ -90,6 +91,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<SystemChatS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetDefaultSpawnPositionS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetRenderDistanceS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SetTabHeaderFooterS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)

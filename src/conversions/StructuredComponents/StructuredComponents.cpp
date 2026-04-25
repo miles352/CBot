@@ -25,6 +25,7 @@ StructuredComponents::readers = {
     { ComponentId::CUSTOM_NAME, TextComponent::from_bytes },
     { ComponentId::ENCHANTMENTS, EnchantmentComponent::from_bytes },
     { ComponentId::REPAIR_COST,  VarInt::from_bytes },
+    { ComponentId::MAP_ID, VarInt::from_bytes },
     { ComponentId::TRIM, TrimComponent::from_bytes },
     { ComponentId::FIREWORK, FireworkComponent::from_bytes },
     { ComponentId::CONTAINER, PrefixedArray::from_bytes_variable_typed<Slot> }
