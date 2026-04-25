@@ -14,7 +14,7 @@ int main()
 
     // Look at closest player every tick
     bot.event_bus.on<TickEvent>([](Bot& bot) {
-        const std::unordered_map<int, Vec3d>& players = bot.entities[static_cast<int>(EntityType::PLAYER)];
+        const std::unordered_map<int, Vec3d>& players = bot.entities[EntityType::PLAYER];
 
         auto it = std::ranges::min_element(players.begin(), players.end(),
             [&bot](const std::pair<int, Vec3d>& a, const std::pair<int, Vec3d>& b) {
