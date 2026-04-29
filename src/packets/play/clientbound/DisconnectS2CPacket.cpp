@@ -1,9 +1,7 @@
 #include "DisconnectS2CPacket.hpp"
 
-#include <iostream>
-
-#include "conversions/MCString.hpp"
-#include "conversions/NBT.hpp"
+#include "Bot.hpp"
+#include "events/DisconnectEvent.hpp"
 
 DisconnectS2CPacket::DisconnectS2CPacket(const std::vector<uint8_t>& data, EventBus &event_bus)
 {
@@ -15,5 +13,5 @@ DisconnectS2CPacket::DisconnectS2CPacket(const std::vector<uint8_t>& data, Event
 
 void DisconnectS2CPacket::default_handler(Bot& bot, Event<DisconnectS2CPacket>& event)
 {
-    std::cout << "Disconnected: " << event.data.reason.to_string() << std::endl;
+    bot.event_bus.emit<DisconnectEvent>({event.data.reason.to_string()});
 }

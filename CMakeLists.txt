@@ -112,6 +112,11 @@ add_library(CBot
         src/packets/play/clientbound/SetRenderDistanceS2CPacket.hpp
         src/packets/play/clientbound/SetTabHeaderFooterS2CPacket.cpp
         src/packets/play/clientbound/SetTabHeaderFooterS2CPacket.hpp
+        src/packets/login/clientbound/LoginDisconnectS2CPacket.cpp
+        src/packets/login/clientbound/LoginDisconnectS2CPacket.hpp
+        src/packets/configuration/clientbound/ConfigurationDisconnectS2CPacket.cpp
+        src/packets/configuration/clientbound/ConfigurationDisconnectS2CPacket.hpp
+        src/events/DisconnectEvent.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
