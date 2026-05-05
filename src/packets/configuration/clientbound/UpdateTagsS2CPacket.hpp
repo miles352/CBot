@@ -1,4 +1,7 @@
 #pragma once
+
+#include <cstdint>
+
 #include "EventBus.hpp"
 #include "packets/ClientboundPacket.hpp"
 
