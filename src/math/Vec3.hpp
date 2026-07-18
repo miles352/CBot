@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <format>
+#include "conversions/StandardTypes.hpp"
 
 template <typename T>
 class Vec3
@@ -129,6 +130,19 @@ public:
     [[nodiscard]] constexpr std::string to_string() const
     {
         return std::format("({}, {}, {})", this->x, this->y, this->z);
+    }
+
+    /** Converts a vector into bytes for use in the Minecraft protocol */
+    [[nodiscard]] constexpr std::vector<uint8_t> to_bytes() const
+    {
+        std::vector<uint8_t> bytes;
+        auto x_bytes = StandardTypes::to_bytes(x);
+        auto y_bytes = StandardTypes::to_bytes(y);
+        auto z_bytes = StandardTypes::to_bytes(z);
+        bytes.insert(bytes.end(), x_bytes.begin(), x_bytes.end());
+        bytes.insert(bytes.end(), y_bytes.begin(), y_bytes.end());
+        bytes.insert(bytes.end(), z_bytes.begin(), z_bytes.end());
+        return bytes;
     }
 
     [[nodiscard]] constexpr bool operator==(const Vec3& other) const = default;

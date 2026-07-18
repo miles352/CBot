@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(CBot)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -117,6 +117,8 @@ add_library(CBot
         src/packets/configuration/clientbound/ConfigurationDisconnectS2CPacket.cpp
         src/packets/configuration/clientbound/ConfigurationDisconnectS2CPacket.hpp
         src/events/DisconnectEvent.hpp
+        src/packets/play/serverbound/InteractC2SPacket.cpp
+        src/packets/play/serverbound/InteractC2SPacket.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

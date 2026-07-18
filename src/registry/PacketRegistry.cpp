@@ -47,6 +47,7 @@
 #include "packets/play/serverbound/ClickContainerC2SPacket.hpp"
 #include "packets/play/serverbound/ClientInformationC2SPacket.hpp"
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
+#include "packets/play/serverbound/InteractC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerChatC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerCommandC2SPacket.hpp"
@@ -124,6 +125,7 @@ void register_serverbound_packets(EventBus& event_bus)
     register_serverbound_packet<ClickContainerC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<ClientInformationC2SPacket>(ClientState::PLAY, event_bus);
     register_serverbound_packet<PlayerChatC2SPacket>(ClientState::PLAY, event_bus);
+    register_serverbound_packet<InteractC2SPacket>(ClientState::PLAY, event_bus);
 }
 
 template <IncomingPacket T>
