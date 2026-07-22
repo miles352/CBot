@@ -28,6 +28,7 @@
 #include "packets/play/clientbound/PlayerInfoRemoveS2CPacket.hpp"
 #include "packets/play/clientbound/PlayerInfoUpdateS2CPacket.hpp"
 #include "packets/play/clientbound/SetContainerContentS2CPacket.hpp"
+#include "packets/play/clientbound/SetContainerSlotS2CPacket.hpp"
 #include "packets/play/clientbound/SetDefaultSpawnPositionS2CPacket.hpp"
 #include "packets/play/serverbound/PongC2SPacket.hpp"
 #include "packets/play/clientbound/SetHealthS2CPacket.hpp"
@@ -97,6 +98,7 @@ void register_clientbound_packets(EventBus& event_bus)
     register_clientbound_packet<SetDefaultSpawnPositionS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetRenderDistanceS2CPacket>(ClientState::PLAY, event_bus);
     register_clientbound_packet<SetTabHeaderFooterS2CPacket>(ClientState::PLAY, event_bus);
+    register_clientbound_packet<SetContainerSlotS2CPacket>(ClientState::PLAY, event_bus);
 }
 
 void register_serverbound_packets(EventBus& event_bus)

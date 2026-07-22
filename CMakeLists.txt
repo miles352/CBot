@@ -119,6 +119,8 @@ add_library(CBot
         src/events/DisconnectEvent.hpp
         src/packets/play/serverbound/InteractC2SPacket.cpp
         src/packets/play/serverbound/InteractC2SPacket.hpp
+        src/packets/play/clientbound/SetContainerSlotS2CPacket.cpp
+        src/packets/play/clientbound/SetContainerSlotS2CPacket.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

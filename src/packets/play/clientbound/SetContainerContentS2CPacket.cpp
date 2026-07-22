@@ -18,6 +18,7 @@ SetContainerContentS2CPacket::SetContainerContentS2CPacket(const std::vector<uin
 #ifndef NO_REGISTRY
 void SetContainerContentS2CPacket::default_handler(Bot& bot, Event<SetContainerContentS2CPacket>& event)
 {
+    // TODO: Implement other containers besides 0
     if (event.data.window_id == 0) // Player inventory window id
     {
         std::vector<Slot>& data = event.data.slot_data;
