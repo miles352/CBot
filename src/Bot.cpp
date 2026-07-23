@@ -41,13 +41,12 @@ Bot::Bot(std::string server_ip, std::string server_port, std::string save_name, 
                                                                                                        ticks(0),
                                                                                                        save_name(std::move(save_name)),
                                                                                                        currently_mining(false), current_block_break_delay(0),
-                                                                                                       is_alive(true), on_ground(true),
+                                                                                                       is_alive(true), on_ground(false),
                                                                                                        last_on_ground(true), horizontal_collision(false),
                                                                                                        vertical_collision(false),
                                                                                                        last_horizontal_collision(false),
                                                                                                        use_gravity(true),
-                                                                                                       offline(offline), jumping(false),
-                                                                                                       sneaking(false), sprinting(false),
+                                                                                                       offline(offline),
                                                                                                        ticks_since_last_position_packet_sent(0), disconnected(false),
                                                                                                        server_ip(std::move(server_ip)), server_port(std::move(server_port))
 {
@@ -334,6 +333,7 @@ void Bot::travel(Vec3d movement_input)
 // ClientPlayerEntity#tick
 void Bot::tick()
 {
+    if (!loaded) return;
 
     // code from LivingEntity#tickMovement
     if (this->velocity.horizontal_length_squared() < 0.003 * 0.003)
@@ -349,6 +349,21 @@ void Bot::tick()
 
     Vec3d movement_input = Vec3d((this->input.left - this->input.right) * 0.98, 0, (this->input.forwards - this->input.backwards) * 0.98);
     this->travel(movement_input);
+
+    // ClientPlayerEntity#tick
+    if (last_sneaking != input.sneak)
+    {
+        // cast works because 0 = start sneaking, 1 = stop sneaking
+        network_handler.write_packet(PlayerCommandC2SPacket{entity_id, static_cast<PlayerCommandC2SPacket::Action>(!input.sneak)});
+        last_sneaking = input.sneak;
+    }
+    if (last_input != input)
+    {
+        network_handler.write_packet(PlayerInputC2SPacket(input.forwards, input.backwards,
+                                                            input.left, input.right, input.jump, input.sneak, input.sprint));
+        last_input = input;
+    }
+
 
     // printf("%s\n", this->position.to_string().c_str());
 

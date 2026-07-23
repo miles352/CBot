@@ -17,6 +17,7 @@ void GameEventS2CPacket::default_handler(Bot& bot, Event<GameEventS2CPacket>& ev
 {
     if (event.data.event == GameEvent::LEVEL_READY)
     {
-        bot.network_handler.write_packet(PlayerLoadedC2SPacket());
+        bot.network_handler.write_packet(PlayerLoadedC2SPacket{});
+        bot.loaded = true;
     }
 }

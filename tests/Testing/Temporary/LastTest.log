@@ -1,0 +1,18 @@
+Start testing: Sep 05 14:45 EDT
+----------------------------------------------------------
+1/1 Testing: test
+1/1 Test: test
+Command: "/home/miles/Projects/CBot/CBot/tests/tests"
+Directory: /home/miles/Projects/CBot/CBot/tests
+"test" start time: Sep 05 14:45 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"test" end time: Sep 05 14:45 EDT
+"test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 05 14:45 EDT

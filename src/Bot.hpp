@@ -70,6 +70,9 @@ public:
     /** If the bot is alive or not. */
     bool is_alive;
 
+    /** If the bot is currently loaded in the world */
+    bool loaded{};
+
     bool on_ground;
     bool last_on_ground;
 
@@ -93,12 +96,16 @@ public:
 
     int temp_sequence = 1;
 
+    // TODO: Make private and make methods to set each thing
     struct Input
     {
         bool forwards;
         bool backwards;
         bool left;
         bool right;
+        bool jump;
+        bool sneak;
+        bool sprint;
 
         bool operator==(const Input& input) const = default;
     };
@@ -114,7 +121,7 @@ public:
 
     /** Returns the current input state of the bot. */
     Input get_input() const;
-    /** Used to change the input state of the bot, which will cause it to move. PlayerInput packets will automatically be sent when the state changes. */
+    /** Used to change the input state of the bot, which will cause it to move. */
     void set_input(Input input);
     /** Clears the input by disabling each direction. */
     void clear_input();
@@ -149,12 +156,12 @@ private:
 
     void tick();
 
-    /** The input for the bot, used for movement. */
+    /** The input for the bot, used for movement. Unlike a vanilla client where you could press sprint and then let it
+     * go and continue sprinting, this struct represents both the "keyboard" input and the current state of the bot. */
     Input input{};
+    Input last_input{};
 
-    bool jumping;
-    bool sneaking;
-    bool sprinting;
+    bool last_sneaking{};
 
     bool disconnected;
 
