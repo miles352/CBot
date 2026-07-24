@@ -42,7 +42,7 @@ Bot::Bot(std::string server_ip, std::string server_port, std::string save_name, 
                                                                                                        save_name(std::move(save_name)),
                                                                                                        currently_mining(false), current_block_break_delay(0),
                                                                                                        is_alive(true), on_ground(false),
-                                                                                                       last_on_ground(true), horizontal_collision(false),
+                                                                                                       last_on_ground(false), horizontal_collision(false),
                                                                                                        vertical_collision(false),
                                                                                                        last_horizontal_collision(false),
                                                                                                        use_gravity(true),
@@ -299,7 +299,7 @@ double Bot::get_effective_gravity()
 void Bot::travel(Vec3d movement_input)
 {
     // TODO: get effecting block slipperiness
-    float slipperiness = 0.6F;
+    float slipperiness = on_ground ? 0.6F : 1.0F;
     float slipperiness_scaled = slipperiness * 0.91F;
     Vec3d new_velocity = this->apply_movement_input(movement_input, slipperiness);
     double y_velocity = new_velocity.y;
@@ -309,8 +309,7 @@ void Bot::travel(Vec3d movement_input)
     {
         if (!this->world._loaded_chunks.contains(ChunkPos(this->get_block_pos())))
         {
-            int minimum_y = this->world._dimension_types[this->world._current_dimension_index].data.read_int("min_y").value();
-            if (this->position.y > minimum_y)
+            if (this->position.y > this->world.get_min_height())
             {
                 y_velocity = -0.1;
             }
