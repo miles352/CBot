@@ -69,6 +69,8 @@ public:
     int entity_id;
     /** If the bot is alive or not. */
     bool is_alive;
+    /** If the bot is flying with an elytra */
+    bool gliding{};
 
     /** If the bot is currently loaded in the world */
     bool loaded{};
@@ -126,6 +128,9 @@ public:
     /** Clears the input by disabling each direction. */
     void clear_input();
 
+    /** Makes the bot jump. */
+    void jump();
+
     /** Disconnects the bot by closing the TCP connection like the vanilla client. */
     void disconnect();
 
@@ -180,6 +185,8 @@ private:
     void move();
     double get_effective_gravity();
     void travel(Vec3d movement_input);
+    void travel_mid_air(Vec3d movement_input);
+    void travel_gliding(Vec3d movement_input);
 
     std::mutex loop_mutex;
 

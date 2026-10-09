@@ -1,7 +1,8 @@
 #pragma once
+
 #include "Box.hpp"
 #include "registry/BlockRegistryGenerated.hpp"
-#include "Bot.hpp"
+#include "AngleHelper.hpp"
 
 class Physics
 {
@@ -11,6 +12,41 @@ public:
     /** The base movement speed of the player */
     static constexpr float PLAYER_MOVE_SPEED = 0.1F;
     static constexpr double PLAYER_GRAVITY = 0.08;
+
+    static Vec3d calc_gliding_velocity(Vec3d velocity, float yaw, float pitch, double gravity)
+    {
+        Vec3d rot_vec = AngleHelper::unit_dir_vec(yaw, pitch);
+        double pitch_rads = pitch * std::numbers::pi / 180;
+        double rot_horizontal_length = rot_vec.horizontal_length();
+        double velocity_length = velocity.horizontal_length();
+        double pitch_cos_squared = std::pow(std::cos(pitch_rads), 2);
+        velocity = velocity.add(0.0, gravity * (-1.0 + pitch_cos_squared * 0.75), 0.0);
+
+        if (velocity.y < 0.0 && rot_horizontal_length > 0.0)
+        {
+            double lift = velocity.y * -0.1 * pitch_cos_squared;
+            velocity = velocity.add(rot_vec.x * lift / rot_horizontal_length,
+                                    lift,
+                                    rot_vec.z * lift / rot_horizontal_length);
+        }
+
+        if (pitch_rads < 0.0 && rot_horizontal_length > 0.0)
+        {
+            double climb_boost = velocity_length * -std::sin(pitch_rads) * 0.04;
+            velocity = velocity.add(-rot_vec.x * climb_boost / rot_horizontal_length,
+                                    climb_boost * 3.2,
+                                    -rot_vec.z * climb_boost / rot_horizontal_length);
+        }
+
+        if (rot_horizontal_length > 0.0)
+        {
+            velocity = velocity.add((rot_vec.x / rot_horizontal_length * velocity_length - velocity.x) * 0.1,
+                                    0.0,
+                                    (rot_vec.z / rot_horizontal_length * velocity_length - velocity.z) * 0.1);
+        }
+
+        return velocity.multiply(0.99, 0.98, 0.99);
+    }
 
     static Vec3d adjust_movement_for_collisions(Bot& bot, Vec3d velocity, Box bot_bounding_box, std::vector<Box> collisions)
     {

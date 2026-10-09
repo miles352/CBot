@@ -6,6 +6,10 @@
 #include "conversions/VarInt.hpp"
 #include "packets/play/serverbound/SetPlayerPositionRotationC2SPacket.hpp"
 
+#include <print>
+
+#include "math/Physics.hpp"
+
 SynchronizePlayerPositionS2CPacket::SynchronizePlayerPositionS2CPacket(const std::vector<uint8_t>& data, EventBus& event_bus)
 {
     const uint8_t* data_ptr = data.data();
@@ -42,7 +46,14 @@ void SynchronizePlayerPositionS2CPacket::default_handler(Bot& bot, const Event<S
 
     // Idk what the rotate velocity thingy is for: event.data.teleport_flags.rotate_velocity_rotation
 
-    // TODO: Set last position to current position + velocity (see setPosition in ClientPlayNetworkHandler.java)
+    if (event.data.teleport_flags.rotate_velocity_rotation) std::println("\nrotate delta!\n\n");
+
+    
+    // TODO: Adding this satisfys grim, but  it should not be here in the code. Need to figure out where it belongs
+    // if (bot.use_gravity)
+    // {
+    //     bot.velocity.y -= 0.0784000015258789;
+    // }
 
     bot.network_handler.write_packet(ConfirmTeleportationC2SPacket(event.data.teleport_id));
     bot.network_handler.write_packet(SetPlayerPositionRotationC2SPacket(bot.position, bot.yaw, bot.pitch, false, false));

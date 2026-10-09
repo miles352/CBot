@@ -4,6 +4,7 @@
 #include <mutex>
 #include <thread>
 #include <utility>
+#include <print>
 
 #include "Constants.hpp"
 #include "events/BlockUpdateEvent.hpp"
@@ -26,6 +27,7 @@
 #include "packets/play/serverbound/ClientTickEndC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerActionC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerChatC2SPacket.hpp"
+#include "packets/play/serverbound/PlayerCommandC2SPacket.hpp"
 #include "packets/play/serverbound/PlayerInputC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerMovementFlagsC2SPacket.hpp"
 #include "packets/play/serverbound/SetPlayerPositionC2SPacket.hpp"
@@ -213,8 +215,6 @@ void Bot::set_input(Input input)
     if (input == this->input) return;
 
     this->input = input;
-    this->network_handler.write_packet(PlayerInputC2SPacket(this->input.forwards, this->input.backwards,
-        this->input.left, this->input.right, this->jumping, this->sneaking, this->sprinting));
 }
 
 void Bot::clear_input()
@@ -223,13 +223,29 @@ void Bot::clear_input()
     this->network_handler.write_packet(PlayerInputC2SPacket(false, false, false, false, false, false, false));
 }
 
+void Bot::jump()
+{
+    input.jump = true;
+    static float jump_velocity = 0.42; // default for normal blocks and no jump boost TODO: add that stuff
+    if (jump_velocity > 1.0e-5f)
+    {
+        velocity.y = std::max(static_cast<double>(jump_velocity), velocity.y);
+        if (input.sprint)
+        {
+            float yaw_rads = yaw * std::numbers::pi / 180.0f;
+            velocity = velocity.add(-std::sin(yaw_rads) * 0.2, 0.0, std::cos(yaw_rads) * 0.2);
+        }
+    }
+}
+
 float Bot::get_movement_speed(float slipperiness)
 {
     if (this->on_ground)
     {
         return Physics::PLAYER_MOVE_SPEED * (Physics::PLAYER_WALK_SPEED / (slipperiness * slipperiness * slipperiness));
     }
-    return Physics::PLAYER_MOVE_SPEED * 0.1F;
+    // TODO: Add fly speed (PlayerEntity#getOffGroundSpeed)
+    return input.sprint ? 0.025999999F : 0.02F;
 }
 
 Vec3d Bot::movement_input_to_velocity(Vec3d movement_input, float speed, float yaw)
@@ -242,10 +258,7 @@ Vec3d Bot::movement_input_to_velocity(Vec3d movement_input, float speed, float y
 
     Vec3d normalized_movement = length_squared > 1.0 ? movement_input.normalize() : movement_input;
     Vec3d movement_with_speed = normalized_movement.scale(speed);
-    Vec3d direction = AngleHelper::unit_direction_vec(yaw);
-    // printf("Direction: %s\n", direction.to_string().c_str());
-    // F: 1.2246469E-16 G: -1.0
-    // 1.2246467991473532e-16
+    Vec3d direction = AngleHelper::unit_dir_vec(yaw);
     return Vec3d(movement_with_speed.x * direction.z + movement_with_speed.z * direction.x,
             movement_with_speed.y,
             movement_with_speed.z * direction.z - movement_with_speed.x * direction.x);
@@ -256,10 +269,8 @@ void Bot::move()
 {
     // TODO: Figure out how movementMuliplier gets used. In testing its not used. May be used for speed effects
     // TODO: adjustMovementForSneaking
-    // printf("Velocity before: %s\n", this->velocity.to_string().c_str());
     Vec3d velocity_before_collision = this->velocity;
     this->velocity = Physics::adjust_movement_for_collisions(*this, this->velocity, this->get_bounding_box(), {});
-    // printf("Velocity after: %s\n", this->velocity.to_string().c_str());
     // if the velocity of x or z changed by >= 1e-5 after the collision calculation
     this->horizontal_collision = std::fabs(this->velocity.x - velocity_before_collision.x) >= 1e-5 || std::fabs(this->velocity.z - velocity_before_collision.z) >= 1e-5;
     this->vertical_collision = velocity_before_collision.y != this->velocity.y;
@@ -295,8 +306,21 @@ double Bot::get_effective_gravity()
     return Physics::PLAYER_GRAVITY;
 }
 
-// travelMidAir  // TODO: implement travelInFluid and travelGliding
 void Bot::travel(Vec3d movement_input)
+{
+    // TODO: Implement travelInFluid
+    if (gliding)
+    {
+        travel_gliding(movement_input);
+    }
+    else
+    {
+        travel_mid_air(movement_input);
+    }
+}
+
+// travelMidAir
+void Bot::travel_mid_air(Vec3d movement_input)
 {
     // TODO: get effecting block slipperiness
     float slipperiness = on_ground ? 0.6F : 1.0F;
@@ -329,7 +353,14 @@ void Bot::travel(Vec3d movement_input)
     this->velocity = { new_velocity.x * slipperiness_scaled, y_velocity * drag, new_velocity.z * slipperiness_scaled };
 }
 
-// ClientPlayerEntity#tick
+// LivingEntity#travelGliding
+void Bot::travel_gliding(Vec3d movement_input)
+{
+    // TODO: Implement climbing check
+    this->velocity = Physics::calc_gliding_velocity(velocity, yaw, pitch, get_effective_gravity());
+    this->move();
+}
+
 void Bot::tick()
 {
     if (!loaded) return;
