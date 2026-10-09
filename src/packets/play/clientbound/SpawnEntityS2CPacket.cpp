@@ -9,12 +9,12 @@ static constexpr double SHORT_TO_BLOCKS_PER_TICK = 1.0 / 8000.0;
 SpawnEntityS2CPacket::SpawnEntityS2CPacket(std::vector<uint8_t> data, EventBus& event_bus)
 {
     const uint8_t* bytes = data.data();
-    this->data.entity_id = VarInt::from_bytes(bytes);
-    this->data.entity_uuid = UUID::from_bytes(bytes);
-    this->data.entity_type = static_cast<EntityType>(VarInt::from_bytes(bytes));
-    this->data.position.x = StandardTypes::from_bytes<double>(bytes);
-    this->data.position.y = StandardTypes::from_bytes<double>(bytes);
-    this->data.position.z = StandardTypes::from_bytes<double>(bytes);
+    this->data.id = VarInt::from_bytes(bytes);
+    this->data.uuid = UUID::from_bytes(bytes);
+    this->data.type = static_cast<EntityType>(VarInt::from_bytes(bytes));
+    this->data.pos.x = StandardTypes::from_bytes<double>(bytes);
+    this->data.pos.y = StandardTypes::from_bytes<double>(bytes);
+    this->data.pos.z = StandardTypes::from_bytes<double>(bytes);
     this->data.pitch = *(bytes++) * BYTE_TO_DEGREES;
     this->data.yaw = *(bytes++) * BYTE_TO_DEGREES;
     this->data.head_yaw = *(bytes++) * BYTE_TO_DEGREES;
@@ -29,8 +29,6 @@ SpawnEntityS2CPacket::SpawnEntityS2CPacket(std::vector<uint8_t> data, EventBus& 
 #ifndef NO_REGISTRY
 void SpawnEntityS2CPacket::default_handler(Bot& bot, Event<SpawnEntityS2CPacket>& event)
 {
-    // Set the entity id of the given entity type to the given position
-    bot.entities[event.data.entity_type][event.data.entity_id] = event.data.position;
-    bot.entity_id_to_type[event.data.entity_id] = event.data.entity_type;
+    bot.entities.emplace(event.data.id, event.data);
 }
 #endif

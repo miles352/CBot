@@ -4,6 +4,7 @@
 #include <mutex>
 #include <queue>
 
+#include "Entity.hpp"
 #include "EventBus.hpp"
 #include "NetworkHandler.hpp"
 #include "Pathfinder.hpp"
@@ -113,10 +114,8 @@ public:
     };
 
 #ifndef NO_REGISTRY
-    /** A list where each index corresponds to an entity type id. Each one contains a map of entity id to position in the world. */
-    std::unordered_map<EntityType, std::unordered_map<int, Vec3d>> entities;
-    /** A helper map for when you only know the id of the entity. */
-    std::unordered_map<int, EntityType> entity_id_to_type;
+    /** A map of entity ids the entity. */
+    std::unordered_map<int, Entity> entities;
 #endif
 
     const std::string& get_save_name() const;

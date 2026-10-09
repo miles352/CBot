@@ -24,11 +24,13 @@ TeleportEntityS2CPacket::TeleportEntityS2CPacket(std::vector<uint8_t> data, Even
 #ifndef NO_REGISTRY
 void TeleportEntityS2CPacket::default_handler(Bot& bot, Event<TeleportEntityS2CPacket>& event)
 {
-    EntityType type = bot.entity_id_to_type[event.data.entity_id];
-    auto it = bot.entities[type].find(event.data.entity_id);
-    if (it != bot.entities[type].end())
+    auto entity = bot.entities.find(event.data.entity_id);
+    if (entity != bot.entities.end())
     {
-        it->second = event.data.position;
+        entity->second.pos = event.data.position;
+        entity->second.velocity = event.data.velocity;
+        entity->second.yaw = event.data.yaw;
+        entity->second.pitch = event.data.pitch;
     }
 }
 #endif

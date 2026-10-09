@@ -121,6 +121,10 @@ add_library(CBot
         src/packets/play/serverbound/InteractC2SPacket.hpp
         src/packets/play/clientbound/SetContainerSlotS2CPacket.cpp
         src/packets/play/clientbound/SetContainerSlotS2CPacket.hpp
+        src/packets/play/clientbound/RemoveEntitiesS2CPacket.cpp
+        src/packets/play/clientbound/RemoveEntitiesS2CPacket.hpp
+        src/events/EntityUnloaded.hpp
+        src/Entity.hpp
 )
 
 target_include_directories(CBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

@@ -20,11 +20,10 @@ UpdateEntityPositionS2CPacket::UpdateEntityPositionS2CPacket(std::vector<uint8_t
 #ifndef NO_REGISTRY
 void UpdateEntityPositionS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionS2CPacket>& event)
 {
-    EntityType type = bot.entity_id_to_type[event.data.entity_id];
-    auto it = bot.entities[type].find(event.data.entity_id);
-    if (it != bot.entities[type].end())
+    auto entity = bot.entities.find(event.data.entity_id);
+    if (entity != bot.entities.end())
     {
-        it->second = it->second.add(event.data.position_delta);
+        entity->second.pos = entity->second.pos.add(event.data.position_delta);
     }
 }
 #endif

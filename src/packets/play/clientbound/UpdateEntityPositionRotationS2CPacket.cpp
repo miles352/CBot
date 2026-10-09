@@ -23,11 +23,12 @@ UpdateEntityPositionRotationS2CPacket::UpdateEntityPositionRotationS2CPacket(std
 #ifndef NO_REGISTRY
 void UpdateEntityPositionRotationS2CPacket::default_handler(Bot& bot, Event<UpdateEntityPositionRotationS2CPacket>& event)
 {
-    EntityType type = bot.entity_id_to_type[event.data.entity_id];
-    auto it = bot.entities[type].find(event.data.entity_id);
-    if (it != bot.entities[type].end())
+    auto entity = bot.entities.find(event.data.entity_id);
+    if (entity != bot.entities.end())
     {
-        it->second = it->second.add(event.data.position_delta);
+        entity->second.pos = entity->second.pos.add(event.data.position_delta);
+        entity->second.yaw = event.data.yaw;
+        entity->second.pitch = event.data.pitch;
     }
 }
 #endif
